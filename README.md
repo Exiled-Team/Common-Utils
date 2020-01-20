@@ -13,6 +13,7 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 
 # Default config:
 ```yaml
+util_enable: true # Enable the plugin or not
 util_role_health: NtfCommand:400,NtfScientist:350 # Simple dictonary
 util_914_roles: ClassD:Scientist,NtfCadet:NtfLieutenant,NtfLieutenant:NtfScientist,NtfScientist:NtfCommander # Another dictonary
 util_914_items: Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne # A custom dictonary with a second value.
