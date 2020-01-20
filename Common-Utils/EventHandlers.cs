@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -97,7 +97,7 @@ namespace Common_Utils
             }   
         }
 
-        internal void PlayerJoin(PlayerJoinEvent ev) => Extenstions.Broadcast(ev.Player, (uint) J_Time, J_Message.Replace("%player%", ev.Player.name));
+        internal void PlayerJoin(PlayerJoinEvent ev) => Extenstions.Broadcast(ev.Player, (uint) J_Time, J_Message.Replace("%player%", ev.Player.nicknameSync.MyNick));
 
         internal void SetClass(SetClassEvent ev)
         {
