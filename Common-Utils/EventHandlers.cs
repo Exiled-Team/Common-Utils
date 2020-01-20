@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,13 +55,10 @@ namespace Common_Utils
                     {
                         Vector3 pos = p.characterClassManager.transform.position;
                         p.characterClassManager.SetClassID(Roles[p.characterClassManager.CurClass]);
-                        Timing.RunCoroutine(frick());
-                        p.GetComponent<PlyMovementSync>().OverridePosition(pos, 0f, false);
+                        Timing.RunCoroutine(telPlayer(p,pos));
                     }
                 }
             }
-
-            List<Pickup> tpItems = new List<Pickup>();
 
             foreach(KeyValuePair<Scp914ItemUpgrade, Scp914.Scp914Knob> kvp in Items)
             {
@@ -71,18 +68,16 @@ namespace Common_Utils
                 {
                     if (kvp.Key.ToUpgrade == item.ItemId)
                     {
-                        item.ItemId = kvp.Key.UpgradedTo;
-                        tpItems.Add(item);
+                        SpawnItem(kvp.Key.UpgradedTo, item.transform.position + tpPos, item.transform.position);
+                        item.Delete();
                     }
                 }
             }
+        }
 
-            foreach (Pickup p in tpItems)
-            {
-                ev.Items.Remove(p);
-                p.transform.position = p.transform.position + tpPos;
-            }
-
+        public void SpawnItem(ItemType type, Vector3 pos, Vector3 rot)
+        {
+            PlayerManager.localPlayer.GetComponent<Inventory>().SetPickup(type, -4.656647E+11f, pos, Quaternion.Euler(rot), 0, 0, 0);
         }
 
         public IEnumerator<float> CustomBroadcast()
@@ -107,75 +102,99 @@ namespace Common_Utils
                 ev.Player.playerStats.maxHP = RolesHealth[ev.Role];
             }
 
-            Timing.RunCoroutine(frick());
+            Plugin.DebugBoi("Waiting to spawn in...");
 
+            Timing.RunCoroutine(frick(ev.Player, ev.Role));
+        }
+
+
+        IEnumerator<float> telPlayer(ReferenceHub p, Vector3 pos)
+        {
+            yield return Timing.WaitForSeconds(0.4f);
+            p.GetComponent<PlyMovementSync>().OverridePosition(pos, 0f, false);
+        }
+
+        IEnumerator<float> frick(ReferenceHub p, RoleType role)
+        {
+            yield return Timing.WaitForSeconds(1f);
             // Bloat code :D
 
-            switch(ev.Role)
+            Plugin.DebugBoi("Giving items for Custom Inventories.");
+            switch (role)
             {
                 case RoleType.ClassD:
                     if (Inventories.ClassD != null)
                     {
-                        ev.Player.inventory.Clear();
+                        Plugin.DebugBoi("Passed CD");
+                        p.inventory.Clear();
                         foreach (ItemType item in Inventories.ClassD)
-                            ev.Player.inventory.AddNewItem(item);
+                            p.inventory.AddNewItem(item);
                     }
                     break;
                 case RoleType.ChaosInsurgency:
                     if (Inventories.Chaos != null)
                     {
-                        ev.Player.inventory.Clear();
+                        Plugin.DebugBoi("Passed CS");
+                        p.inventory.Clear();
                         foreach (ItemType item in Inventories.Chaos)
-                            ev.Player.inventory.AddNewItem(item);
+                            p.inventory.AddNewItem(item);
                     }
                     break;
                 case RoleType.Scientist:
                     if (Inventories.Scientist != null)
                     {
-                        ev.Player.inventory.Clear();
+                        Plugin.DebugBoi("Passed SC");
+                        p.inventory.Clear();
                         foreach (ItemType item in Inventories.Scientist)
-                            ev.Player.inventory.AddNewItem(item);
+                            p.inventory.AddNewItem(item);
                     }
                     break;
                 case RoleType.NtfScientist:
                     if (Inventories.NtfScientist != null)
                     {
-                        ev.Player.inventory.Clear();
+                        Plugin.DebugBoi("Passed NS");
+                        p.inventory.Clear();
                         foreach (ItemType item in Inventories.NtfScientist)
-                            ev.Player.inventory.AddNewItem(item);
+                            p.inventory.AddNewItem(item);
                     }
                     break;
                 case RoleType.NtfLieutenant:
                     if (Inventories.NtfLieutenant != null)
                     {
-                        ev.Player.inventory.Clear();
+                        Plugin.DebugBoi("Passed NL");
+                        p.inventory.Clear();
                         foreach (ItemType item in Inventories.NtfLieutenant)
-                            ev.Player.inventory.AddNewItem(item);
+                            p.inventory.AddNewItem(item);
                     }
                     break;
                 case RoleType.NtfCommander:
                     if (Inventories.NtfCommander != null)
                     {
-                        ev.Player.inventory.Clear();
+                        Plugin.DebugBoi("Passed NCC");
+                        p.inventory.Clear();
                         foreach (ItemType item in Inventories.NtfCommander)
-                            ev.Player.inventory.AddNewItem(item);
+                            p.inventory.AddNewItem(item);
                     }
                     break;
                 case RoleType.FacilityGuard:
                     if (Inventories.Guard != null)
                     {
-                        ev.Player.inventory.Clear();
+                        Plugin.DebugBoi("Passed GD");
+                        p.inventory.Clear();
                         foreach (ItemType item in Inventories.Guard)
-                            ev.Player.inventory.AddNewItem(item);
+                            p.inventory.AddNewItem(item);
+                    }
+                    break;
+                case RoleType.NtfCadet:
+                    if (Inventories.NtfCadet != null)
+                    {
+                        Plugin.DebugBoi("Passed NC");
+                        p.inventory.Clear();
+                        foreach (ItemType item in Inventories.NtfCadet)
+                            p.inventory.AddNewItem(item);
                     }
                     break;
             }
-        }
-
-
-        IEnumerator<float> frick()
-        {
-            yield return Timing.WaitForOneFrame;
         }
     }
 }

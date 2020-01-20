@@ -22,7 +22,8 @@ namespace Common_Utils
             public static Scp914ItemUpgrade ParseString(string config)
             {
                 string[] splitted = config.Split('-');
-                return new Scp914ItemUpgrade() { ToUpgrade = (ItemType)Enum.Parse(typeof(ItemType), splitted[0]), UpgradedTo = (ItemType)Enum.Parse(typeof(ItemType), splitted[1]) };
+                DebugBoi("Adding upgrade: " + splitted[0] + " --> " + splitted[1]);
+                return new Scp914ItemUpgrade() { ToUpgrade = (ItemType)Enum.Parse(typeof(ItemType), splitted[0], true), UpgradedTo = (ItemType)Enum.Parse(typeof(ItemType), splitted[1], true) };
             }
         }
 
@@ -30,30 +31,34 @@ namespace Common_Utils
 
         public partial class CustomInventory
         {
-            public List<ItemType> NtfCadet;
+            public List<ItemType> NtfCadet = null;
 
-            public List<ItemType> NtfLieutenant;
+            public List<ItemType> NtfLieutenant = null;
 
-            public List<ItemType> NtfCommander;
+            public List<ItemType> NtfCommander = null;
 
-            public List<ItemType> ClassD;
+            public List<ItemType> ClassD = null;
 
-            public List<ItemType> Scientist;
+            public List<ItemType> Scientist = null;
 
-            public List<ItemType> NtfScientist;
+            public List<ItemType> NtfScientist = null;
 
-            public List<ItemType> Chaos;
+            public List<ItemType> Chaos = null;
 
-            public List<ItemType> Guard;
+            public List<ItemType> Guard = null;
 
             public static List<ItemType> ConvertToItemList(List<string> list)
             {
-                if (list.Count == 0)
+                if (list == null)
+                {
+                    DebugBoi("Ignoring a inventory.");
                     return null;
+                }
                 List<ItemType> listd = new List<ItemType>();
                 foreach(string s in list)
                 {
-                    listd.Add((ItemType)Enum.Parse(typeof(ItemType), s));
+                    DebugBoi("Adding item " + s);
+                    listd.Add((ItemType)Enum.Parse(typeof(ItemType), s, true));
                 }
                 return listd;
             }
@@ -93,6 +98,12 @@ namespace Common_Utils
             scp914Items = null;
             scp914Roles = null;
             EventHandler = null;
+        }
+
+        public static void DebugBoi(string line)
+        {
+            if (Plugin.Config.GetBool("util_debug", false))
+                Plugin.Info("CU-DEBUG | " + line);
         }
 
         public override void OnEnable()
@@ -141,21 +152,28 @@ namespace Common_Utils
             }
             catch (Exception e)
             {
-                Error("Failed to add items. Check your 'util_914_items' config values for errors!\n" + e);
+                Error("Failed to add items to 914. Check your 'util_914_items' config values for errors!\n" + e);
                 return;
             }
 
             // Custom items
-
-            Inventories = new CustomInventory();
-            Inventories.ClassD = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_classd_inventory"));
-            Inventories.Chaos = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_choas_inventory"));
-            Inventories.NtfCadet = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_ntfcadet_inventory"));
-            Inventories.NtfCommander = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_ntfcommander_inventory"));
-            Inventories.NtfLieutenant = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_ntflieutenant_inventory"));
-            Inventories.NtfScientist = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_ntfscientist_inventory"));
-            Inventories.Scientist = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_scientist_inventory"));
-            Inventories.Guard = CustomInventory.ConvertToItemList(Plugin.Config.GetStringList("util_guard_inventory"));
+            try
+            {
+                Inventories = new CustomInventory();
+                Inventories.ClassD = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_classd_inventory", null)));
+                Inventories.Chaos = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_choas_inventory", null)));
+                Inventories.NtfCadet = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcadet_inventory", null)));
+                Inventories.NtfCommander = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcommander_inventory", null)));
+                Inventories.NtfLieutenant = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntflieutenant_inventory", null)));
+                Inventories.NtfScientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfscientist_inventory", null)));
+                Inventories.Scientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_scientist_inventory", null)));
+                Inventories.Guard = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_guard_inventory", null)));
+            }
+            catch (Exception e)
+            {
+                Error("Failed to add items to custom inventorys!. Check your inventory config values for errors!\n[EXCEPTION] For Developers:\n" + e);
+                return;
+            }
 
             string broadcastMessage = Config.GetString("util_broadcast_message", "<color=lime>This server is running <color=red>EXILED-CommonUtils</color>, enjoy playing!</color>");
 
