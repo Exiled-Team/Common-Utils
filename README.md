@@ -15,7 +15,7 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 ```yaml
 util_enable: true # Enable the plugin or not
 util_role_health: NtfCommand:400,NtfScientist:350 # Simple dictonary
-util_914_roles: ClassD:Scientist,NtfCadet:NtfLieutenant,NtfLieutenant:NtfScientist,NtfScientist:NtfCommander # Another dictonary
+util_914_roles: Scientist-ClassD:Coarse, ClassD-Spectator:Rough
 util_914_items: Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne # A custom dictonary with a second value.
 # If you do want to make Custom Inventorys. You must set only the ones you want!
 # Example of a custom inventory: "util_classd_inventory: Coin" or "util_ntfcadet_inventory: Adrenaline,Ammo556,Flashlight,GrenadeFlash,KeycardGuard,GunMP7"
