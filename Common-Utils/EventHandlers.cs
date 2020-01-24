@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EXILED;
 using MEC;
+using Scp914;
 using UnityEngine;
 using static Common_Utils.Plugin;
 
@@ -14,31 +15,31 @@ namespace Common_Utils
     {
 
         // e
-        public string B_Message;
-        public string J_Message;
+        public string BMessage;
+        public string JMessage;
 
-        public int B_Time;
-        public int B_Seconds;
+        public int BTime;
+        public int BSeconds;
 
-        public int J_Time;
+        public int JTime;
 
-        public Dictionary<RoleType, int> RolesHealth = new Dictionary<RoleType, int>();
+        public Dictionary<RoleType, int> RolesHealth;
 
-        public Dictionary<RoleType, RoleType> Roles = new Dictionary<RoleType, RoleType>();
+        public Dictionary<Scp914PlayerUpgrade, Scp914Knob> Roles;
 
         public CustomInventory Inventories;
 
-        public Dictionary<Scp914ItemUpgrade, Scp914.Scp914Knob> Items = new Dictionary<Scp914ItemUpgrade, Scp914.Scp914Knob>();
+        public Dictionary<Scp914ItemUpgrade, Scp914Knob> Items;
 
-        public EventHandlers(Dictionary<RoleType, RoleType> roles, Dictionary<Scp914ItemUpgrade, Scp914.Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven)
+        public EventHandlers(Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven)
         {
             Roles = roles;
             Items = items;
-            B_Message = bm;
-            J_Message = jm;
-            B_Time = bt;
-            B_Seconds = bs;
-            J_Time = jt;
+            BMessage = bm;
+            JMessage = jm;
+            BTime = bt;
+            BSeconds = bs;
+            JTime = jt;
             RolesHealth = health;
             Inventories = inven;
         }
@@ -47,20 +48,19 @@ namespace Common_Utils
         internal void SCP914Upgrade(ref SCP914UpgradeEvent ev)
         {
             Vector3 tpPos = ev.Machine.output.position - ev.Machine.intake.position;
-            if (ev.KnobSetting == Scp914.Scp914Knob.Fine || ev.KnobSetting == Scp914.Scp914Knob.VeryFine)
+            foreach (KeyValuePair<Scp914PlayerUpgrade, Scp914Knob> kv in Roles)
             {
-                foreach (ReferenceHub p in ev.Players)
-                {
-                    if (Roles.ContainsKey(p.characterClassManager.CurClass))
+                if (ev.KnobSetting != kv.Value)
+                    continue;
+                foreach (ReferenceHub hub in ev.Players)
+                    if (kv.Key.ToUpgrade == hub.characterClassManager.CurClass)
                     {
-                        Vector3 pos = p.characterClassManager.transform.position;
-                        p.characterClassManager.SetClassID(Roles[p.characterClassManager.CurClass]);
-                        Timing.RunCoroutine(telPlayer(p,pos));
+                        hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
+                        Timing.RunCoroutine(TeleportToOutput(hub, tpPos));
                     }
-                }
             }
 
-            foreach(KeyValuePair<Scp914ItemUpgrade, Scp914.Scp914Knob> kvp in Items)
+            foreach(KeyValuePair<Scp914ItemUpgrade, Scp914Knob> kvp in Items)
             {
                 if (ev.KnobSetting != kvp.Value)
                     continue;
@@ -68,11 +68,18 @@ namespace Common_Utils
                 {
                     if (kvp.Key.ToUpgrade == item.ItemId)
                     {
-                        SpawnItem(kvp.Key.UpgradedTo, item.transform.position + tpPos, item.transform.position);
+                        SpawnItem(kvp.Key.UpgradedTo, item.transform.position + tpPos, Vector3.zero);
                         item.Delete();
                     }
                 }
             }
+        }
+
+        private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 tpPos)
+        {
+            yield return Timing.WaitForSeconds(0.3f);
+            
+            hub.plyMovementSync.OverridePosition(hub.gameObject.transform.position + tpPos, hub.gameObject.transform.rotation.y);
         }
 
         public void SpawnItem(ItemType type, Vector3 pos, Vector3 rot)
@@ -84,25 +91,19 @@ namespace Common_Utils
         {
             while (true)
             {
-                yield return Timing.WaitForSeconds(B_Seconds);
+                yield return Timing.WaitForSeconds(BSeconds);
                 foreach (ReferenceHub hub in Plugin.GetHubs())
                 {
-                    Extenstions.Broadcast(hub, (uint) B_Time, B_Message);
+                    Extenstions.Broadcast(hub, (uint) BTime, BMessage);
                 }
             }   
         }
 
-        internal void PlayerJoin(PlayerJoinEvent ev) => Extenstions.Broadcast(ev.Player, (uint) J_Time, J_Message.Replace("%player%", ev.Player.nicknameSync.MyNick));
+        internal void PlayerJoin(PlayerJoinEvent ev) => Extenstions.Broadcast(ev.Player, (uint) JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
 
         internal void SetClass(SetClassEvent ev)
         {
-            if (RolesHealth.ContainsKey(ev.Role))
-            {
-                ev.Player.playerStats.health = RolesHealth[ev.Role];
-                ev.Player.playerStats.maxHP = RolesHealth[ev.Role];
-            }
-
-            Plugin.DebugBoi("Waiting to spawn in...");
+            DebugBoi("Waiting to spawn in...");
 
             Timing.RunCoroutine(frick(ev.Player, ev.Role));
         }
@@ -118,14 +119,20 @@ namespace Common_Utils
         {
             yield return Timing.WaitForSeconds(1f);
             // Bloat code :D
+            
+            if (RolesHealth.ContainsKey(role))
+            {
+                p.playerStats.health = RolesHealth[role];
+                p.playerStats.maxHP = RolesHealth[role];
+            }
 
-            Plugin.DebugBoi("Giving items for Custom Inventories.");
+            DebugBoi("Giving items for Custom Inventories.");
             switch (role)
             {
                 case RoleType.ClassD:
                     if (Inventories.ClassD != null)
                     {
-                        Plugin.DebugBoi("Passed CD");
+                        DebugBoi("Passed CD");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.ClassD)
                             p.inventory.AddNewItem(item);
@@ -134,7 +141,7 @@ namespace Common_Utils
                 case RoleType.ChaosInsurgency:
                     if (Inventories.Chaos != null)
                     {
-                        Plugin.DebugBoi("Passed CS");
+                        DebugBoi("Passed CS");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.Chaos)
                             p.inventory.AddNewItem(item);
@@ -143,7 +150,7 @@ namespace Common_Utils
                 case RoleType.Scientist:
                     if (Inventories.Scientist != null)
                     {
-                        Plugin.DebugBoi("Passed SC");
+                        DebugBoi("Passed SC");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.Scientist)
                             p.inventory.AddNewItem(item);
@@ -152,7 +159,7 @@ namespace Common_Utils
                 case RoleType.NtfScientist:
                     if (Inventories.NtfScientist != null)
                     {
-                        Plugin.DebugBoi("Passed NS");
+                        DebugBoi("Passed NS");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.NtfScientist)
                             p.inventory.AddNewItem(item);
@@ -161,7 +168,7 @@ namespace Common_Utils
                 case RoleType.NtfLieutenant:
                     if (Inventories.NtfLieutenant != null)
                     {
-                        Plugin.DebugBoi("Passed NL");
+                        DebugBoi("Passed NL");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.NtfLieutenant)
                             p.inventory.AddNewItem(item);
@@ -170,7 +177,7 @@ namespace Common_Utils
                 case RoleType.NtfCommander:
                     if (Inventories.NtfCommander != null)
                     {
-                        Plugin.DebugBoi("Passed NCC");
+                        DebugBoi("Passed NCC");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.NtfCommander)
                             p.inventory.AddNewItem(item);
@@ -179,7 +186,7 @@ namespace Common_Utils
                 case RoleType.FacilityGuard:
                     if (Inventories.Guard != null)
                     {
-                        Plugin.DebugBoi("Passed GD");
+                        DebugBoi("Passed GD");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.Guard)
                             p.inventory.AddNewItem(item);
@@ -188,7 +195,7 @@ namespace Common_Utils
                 case RoleType.NtfCadet:
                     if (Inventories.NtfCadet != null)
                     {
-                        Plugin.DebugBoi("Passed NC");
+                        DebugBoi("Passed NC");
                         p.inventory.Clear();
                         foreach (ItemType item in Inventories.NtfCadet)
                             p.inventory.AddNewItem(item);

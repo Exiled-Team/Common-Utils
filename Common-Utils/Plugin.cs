@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MEC;
+using Scp914;
 
 namespace Common_Utils
 {
@@ -24,6 +25,19 @@ namespace Common_Utils
                 string[] splitted = config.Split('-');
                 DebugBoi("Adding upgrade: " + splitted[0] + " --> " + splitted[1]);
                 return new Scp914ItemUpgrade() { ToUpgrade = (ItemType)Enum.Parse(typeof(ItemType), splitted[0], true), UpgradedTo = (ItemType)Enum.Parse(typeof(ItemType), splitted[1], true) };
+            }
+        }
+        
+        public partial class Scp914PlayerUpgrade
+        {
+            public RoleType ToUpgrade { get; set; }
+            public RoleType UpgradedTo { get; set; }
+
+            public static Scp914PlayerUpgrade ParseString(string config)
+            {
+                string[] splitted = config.Split('-');
+                DebugBoi("Adding upgrade: " + splitted[0] + " --> " + splitted[1]);
+                return new Scp914PlayerUpgrade() { ToUpgrade = (RoleType)Enum.Parse(typeof(ItemType), splitted[0], true), UpgradedTo = (RoleType)Enum.Parse(typeof(ItemType), splitted[1], true) };
             }
         }
 
@@ -76,7 +90,7 @@ namespace Common_Utils
 
         public Dictionary<RoleType, int> roleHealth = new Dictionary<RoleType, int>();
 
-        public Dictionary<RoleType, RoleType> scp914Roles = new Dictionary<RoleType, RoleType>();
+        public Dictionary<Scp914PlayerUpgrade, Scp914.Scp914Knob> scp914Roles = new Dictionary<Scp914PlayerUpgrade, Scp914Knob>();
 
         public Dictionary<Scp914ItemUpgrade, Scp914.Scp914Knob> scp914Items = new Dictionary<Scp914ItemUpgrade, Scp914.Scp914Knob>();
 
@@ -126,18 +140,17 @@ namespace Common_Utils
                 return;
             }
 
-            Dictionary<string, string> configRoles = KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_roles", "ClassD:Scientist,NtfCadet:NtfLieutenant,NtfLieutenant:NtfScientist,NtfScientist:NtfCommander"));
-
+            Dictionary<string, string> configRoles =
+                KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_roles", ""));
             try
             {
                 foreach (KeyValuePair<string, string> kvp in configRoles)
-                {
-                    scp914Roles.Add((RoleType)Enum.Parse(typeof(RoleType), kvp.Key), (RoleType)Enum.Parse(typeof(RoleType), kvp.Value));
-                }
+                    scp914Roles.Add(Scp914PlayerUpgrade.ParseString(kvp.Key),
+                        (Scp914Knob) Enum.Parse(typeof(Scp914Knob), kvp.Value));
             }
             catch (Exception e)
             {
-                Error("Failed to add roles. Check your 'util_914_roles' config values for errors!\n" + e);
+                Error($"Failed to parse 914 role upgrade settings. {e}");
                 return;
             }
 
