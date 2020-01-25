@@ -59,8 +59,7 @@ namespace Common_Utils
                     if (kv.Key.ToUpgrade == hub.characterClassManager.CurClass)
                     {
                         Vector3 oldPos = hub.transform.position;
-                        hub.characterClassManager.CurClass = kv.Key.UpgradedTo;
-                        //hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
+                        hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
                         Timing.RunCoroutine(TeleportToOutput(hub, oldPos, tpPos, hub.inventory));
                     }
             }
@@ -87,7 +86,7 @@ namespace Common_Utils
 
         private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 oldPos, Vector3 tpPos, Inventory inv)
         {
-            yield return Timing.WaitForSeconds(0.3f);
+            yield return Timing.WaitForSeconds(0.5f);
 
             hub.plyMovementSync.OverridePosition(oldPos + tpPos, hub.gameObject.transform.rotation.y);
             hub.inventory.Clear();

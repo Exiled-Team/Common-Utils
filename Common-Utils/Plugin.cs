@@ -96,9 +96,9 @@ namespace Common_Utils
 
         public Dictionary<RoleType, int> roleHealth = new Dictionary<RoleType, int>();
 
-        public Dictionary<Scp914PlayerUpgrade, Scp914.Scp914Knob> scp914Roles = new Dictionary<Scp914PlayerUpgrade, Scp914Knob>();
+        public Dictionary<Scp914PlayerUpgrade, Scp914Knob> scp914Roles = new Dictionary<Scp914PlayerUpgrade, Scp914Knob>();
 
-        public Dictionary<Scp914ItemUpgrade, Scp914.Scp914Knob> scp914Items = new Dictionary<Scp914ItemUpgrade, Scp914.Scp914Knob>();
+        public Dictionary<Scp914ItemUpgrade, Scp914Knob> scp914Items = new Dictionary<Scp914ItemUpgrade, Scp914Knob>();
 
         public EventHandlers EventHandler;
 
@@ -122,8 +122,8 @@ namespace Common_Utils
 
         public static void DebugBoi(string line)
         {
-            if (Plugin.Config.GetBool("util_debug", false))
-                Plugin.Info("CU-DEBUG | " + line);
+            if (Config.GetBool("util_debug", false))
+                Info("CU-DEBUG | " + line);
         }
 
         public override void OnEnable()
@@ -155,8 +155,11 @@ namespace Common_Utils
             try
             {
                 foreach (KeyValuePair<string, string> kvp in configRoles)
-                    scp914Roles.Add(Scp914PlayerUpgrade.ParseString(kvp.Key),
-                        (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
+                {
+                    scp914Roles.Add(Scp914PlayerUpgrade.ParseString(kvp.Key), (Scp914Knob) Enum.Parse(typeof(Scp914Knob), kvp.Value));
+                    Info($"Loaded {kvp.Key} - {kvp.Value} custom 914 upgrade");
+                }
+
             }
             catch (Exception e)
             {
@@ -164,7 +167,7 @@ namespace Common_Utils
                 return;
             }
 
-            Info("Loaded " + configRoles + "('s) custom 914 upgrade classes.");
+            Info("Loaded " + configRoles.Count + "('s) custom 914 upgrade classes.");
 
             Dictionary<string, string> configItems = KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_items", "Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne"));
 
@@ -172,7 +175,7 @@ namespace Common_Utils
             {
                 foreach (KeyValuePair<string, string> kvp in configItems)
                 {
-                    scp914Items.Add(Scp914ItemUpgrade.ParseString(kvp.Key), (Scp914.Scp914Knob)Enum.Parse(typeof(Scp914.Scp914Knob), kvp.Value));
+                    scp914Items.Add(Scp914ItemUpgrade.ParseString(kvp.Key), (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
                 }
             }
             catch (Exception e)
@@ -181,7 +184,7 @@ namespace Common_Utils
                 return;
             }
 
-            Info("Loaded " + configItems.Count() + "('s) custom 914 recipes.");
+            Info("Loaded " + configItems.Count + "('s) custom 914 recipes.");
 
             // Custom items
             try
