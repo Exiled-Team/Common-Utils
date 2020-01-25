@@ -37,7 +37,7 @@ namespace Common_Utils
             {
                 string[] splitted = config.Split('-');
                 DebugBoi("Adding upgrade: " + splitted[0] + " --> " + splitted[1]);
-                return new Scp914PlayerUpgrade() { ToUpgrade = (RoleType)Enum.Parse(typeof(ItemType), splitted[0], true), UpgradedTo = (RoleType)Enum.Parse(typeof(ItemType), splitted[1], true) };
+                return new Scp914PlayerUpgrade() { ToUpgrade = (RoleType)Enum.Parse(typeof(RoleType), splitted[0], true), UpgradedTo = (RoleType)Enum.Parse(typeof(RoleType), splitted[1], true) };
             }
         }
 

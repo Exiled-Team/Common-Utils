@@ -55,8 +55,9 @@ namespace Common_Utils
                 foreach (ReferenceHub hub in ev.Players)
                     if (kv.Key.ToUpgrade == hub.characterClassManager.CurClass)
                     {
-                        hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
-                        Timing.RunCoroutine(TeleportToOutput(hub, tpPos));
+                        hub.characterClassManager.CurClass = kv.Key.UpgradedTo;
+                        //hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
+                        Timing.RunCoroutine(TeleportToOutput(hub, tpPos, hub.inventory));
                     }
             }
 
@@ -75,11 +76,13 @@ namespace Common_Utils
             }
         }
 
-        private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 tpPos)
+        private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 tpPos, Inventory inv)
         {
             yield return Timing.WaitForSeconds(0.3f);
             
             hub.plyMovementSync.OverridePosition(hub.gameObject.transform.position + tpPos, hub.gameObject.transform.rotation.y);
+            hub.inventory.Clear();
+            hub.inventory = inv;
         }
 
         public void SpawnItem(ItemType type, Vector3 pos, Vector3 rot)
