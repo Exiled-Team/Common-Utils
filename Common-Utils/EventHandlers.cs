@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,7 +31,9 @@ namespace Common_Utils
 
         public Dictionary<Scp914ItemUpgrade, Scp914Knob> Items;
 
-        public EventHandlers(Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven)
+        public bool UpgradeHand;
+
+        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven)
         {
             Roles = roles;
             Items = items;
@@ -42,6 +44,7 @@ namespace Common_Utils
             JTime = jt;
             RolesHealth = health;
             Inventories = inven;
+            UpgradeHand = uh;
         }
 
 
@@ -55,17 +58,22 @@ namespace Common_Utils
                 foreach (ReferenceHub hub in ev.Players)
                     if (kv.Key.ToUpgrade == hub.characterClassManager.CurClass)
                     {
+                        Vector3 oldPos = hub.transform.position;
                         hub.characterClassManager.CurClass = kv.Key.UpgradedTo;
                         //hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
-                        Timing.RunCoroutine(TeleportToOutput(hub, tpPos, hub.inventory));
+                        Timing.RunCoroutine(TeleportToOutput(hub, oldPos, tpPos, hub.inventory));
                     }
             }
 
-            foreach(KeyValuePair<Scp914ItemUpgrade, Scp914Knob> kvp in Items)
+            if (UpgradeHand) // Upgrade hand items like a boss
+                foreach (ReferenceHub hub in ev.Players)
+                    ev.Machine.UpgradeHeldItem(hub.inventory, hub.characterClassManager, ev.Machine.players); // use default game functions yeehaw
+
+            foreach (KeyValuePair<Scp914ItemUpgrade, Scp914Knob> kvp in Items)
             {
                 if (ev.KnobSetting != kvp.Value)
                     continue;
-                foreach(Pickup item in ev.Items)
+                foreach (Pickup item in ev.Items)
                 {
                     if (kvp.Key.ToUpgrade == item.ItemId)
                     {
@@ -74,13 +82,14 @@ namespace Common_Utils
                     }
                 }
             }
+
         }
 
-        private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 tpPos, Inventory inv)
+        private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 oldPos, Vector3 tpPos, Inventory inv)
         {
             yield return Timing.WaitForSeconds(0.3f);
-            
-            hub.plyMovementSync.OverridePosition(hub.gameObject.transform.position + tpPos, hub.gameObject.transform.rotation.y);
+
+            hub.plyMovementSync.OverridePosition(oldPos + tpPos, hub.gameObject.transform.rotation.y);
             hub.inventory.Clear();
             hub.inventory = inv;
         }
@@ -97,12 +106,12 @@ namespace Common_Utils
                 yield return Timing.WaitForSeconds(BSeconds);
                 foreach (ReferenceHub hub in Plugin.GetHubs())
                 {
-                    Extenstions.Broadcast(hub, (uint) BTime, BMessage);
+                    Extenstions.Broadcast(hub, (uint)BTime, BMessage);
                 }
-            }   
+            }
         }
 
-        internal void PlayerJoin(PlayerJoinEvent ev) => Extenstions.Broadcast(ev.Player, (uint) JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
+        internal void PlayerJoin(PlayerJoinEvent ev) => Extenstions.Broadcast(ev.Player, (uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
 
         internal void SetClass(SetClassEvent ev)
         {
@@ -122,7 +131,7 @@ namespace Common_Utils
         {
             yield return Timing.WaitForSeconds(1f);
             // Bloat code :D
-            
+
             if (RolesHealth.ContainsKey(role))
             {
                 p.playerStats.health = RolesHealth[role];
