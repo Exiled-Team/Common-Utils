@@ -35,6 +35,8 @@ namespace Common_Utils
         public bool EnableInventories;
         public bool UpgradeHand;
 
+        public bool LockAutoNuke;
+
         // T H I C K constructor
         public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories)
         {
@@ -62,6 +64,7 @@ namespace Common_Utils
         {
             yield return Timing.WaitForSeconds(ANTime);
 
+            Patches.AutoWarheadLockPatches.AutoLocked = LockAutoNuke;
             AlphaWarheadController.Host.StartDetonation();
         }
 
@@ -144,6 +147,11 @@ namespace Common_Utils
                 return;
 
             Extenstions.Broadcast(ev.Player, (uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
+        }
+
+        internal void RoundStart()
+        {
+            Patches.AutoWarheadLockPatches.AutoLocked = false;
         }
     }
 }

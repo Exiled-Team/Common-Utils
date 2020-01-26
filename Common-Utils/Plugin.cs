@@ -236,9 +236,13 @@ namespace Common_Utils
 
             int autoNukeTime = Config.GetInt("util_autonuke_time", 600); // 600 seconds is 10 minutes.
 
-            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv);
+            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv)
+            { 
+                LockAutoNuke = Config.GetBool("util_autonuke_lock", false)
+            };
             Events.PlayerJoinEvent += EventHandler.PlayerJoin;
             Events.Scp914UpgradeEvent += EventHandler.SCP914Upgrade;
+            Events.RoundStartEvent += EventHandler.RoundStart;
 
             Info("Common-Utils Loaded! Created by the EXILED Team.");
 
