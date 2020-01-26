@@ -16,6 +16,9 @@ namespace Common_Utils.KConf
         /// <returns></returns>
         public static Dictionary<string,string> GetDictonaryValue(string value)
         {
+            if (string.IsNullOrEmpty(value))
+                return null;
+
             Dictionary<string, string> dict = new Dictionary<string, string>();
             if (!value.Contains(","))
             {

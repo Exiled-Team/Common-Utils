@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MEC;
 using Scp914;
-
+using Harmony;
 
 /// <summary>
 /// Thank you too everyone who contributed to this plugin, ily joker <3
@@ -17,6 +17,7 @@ namespace Common_Utils
 {
     public class Plugin : EXILED.Plugin
     {
+        public static Plugin Instance { private set; get; }
         public override string getName => "Common-Utils";
 
         // classes be like mega stupid amirite ladies?
@@ -84,7 +85,6 @@ namespace Common_Utils
 
 
 
-
         public CoroutineHandle cor;
 
         // Config settings.
@@ -99,11 +99,12 @@ namespace Common_Utils
 
         public EventHandlers EventHandler;
 
+        public HarmonyInstance HarmonyInstance { private set; get; }
+
         public override void OnDisable()
         {
             Events.Scp914UpgradeEvent -= EventHandler.SCP914Upgrade;
             Events.PlayerJoinEvent -= EventHandler.PlayerJoin;
-            Events.SetClassEvent -= EventHandler.SetClass;
 
             Timing.KillCoroutines(cor);
 
@@ -115,6 +116,11 @@ namespace Common_Utils
             scp914Items = null;
             scp914Roles = null;
             EventHandler = null;
+            Instance = null;
+            if (HarmonyInstance != null)
+            {
+                HarmonyInstance.UnpatchAll();
+            }
         }
 
         public static void DebugBoi(string line)
@@ -129,6 +135,11 @@ namespace Common_Utils
                 return;
 
             Info("Loading Common-Utils, created by the EXILED Team!");
+            
+            Instance = this;
+
+            HarmonyInstance = HarmonyInstance.Create("exiled.common.utils");
+            HarmonyInstance.PatchAll();
 
             bool enable914Configs = Config.GetBool("util_914_enable", true);
 
@@ -159,14 +170,15 @@ namespace Common_Utils
                     foreach (KeyValuePair<string, string> kvp in configRoles)
                         scp914Roles.Add(Scp914PlayerUpgrade.ParseString(kvp.Key),
                             (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
+
+                    Info("Loaded " + configRoles.Count + "('s) custom 914 upgrade classes.");
                 }
                 catch (Exception e)
                 {
                     Error($"Failed to parse 914 role upgrade settings. {e}");
-                    return;
                 }
 
-                Info("Loaded " + configRoles + "('s) custom 914 upgrade classes.");
+                
 
                 Dictionary<string, string> configItems = KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_items", "Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne"));
 
@@ -174,14 +186,13 @@ namespace Common_Utils
                 {
                     foreach (KeyValuePair<string, string> kvp in configItems)
                         scp914Items.Add(Scp914ItemUpgrade.ParseString(kvp.Key), (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
+
+                    Info("Loaded " + configItems.Count + "('s) custom 914 recipes.");
                 }
                 catch (Exception e)
                 {
                     Error("Failed to add items to 914. Check your 'util_914_items' config values for errors!\n" + e);
-                    return;
                 }
-
-                Info("Loaded " + configItems.Count() + "('s) custom 914 recipes.");
             }
 
             bool enableCustomInv = Config.GetBool("util_enable_inventories", false);
@@ -193,7 +204,7 @@ namespace Common_Utils
                 {
                     Inventories = new CustomInventory();
                     Inventories.ClassD = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_classd_inventory", null)));
-                    Inventories.Chaos = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_choas_inventory", null)));
+                    Inventories.Chaos = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_chaos_inventory", null)));
                     Inventories.NtfCadet = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcadet_inventory", null)));
                     Inventories.NtfCommander = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcommander_inventory", null)));
                     Inventories.NtfLieutenant = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntflieutenant_inventory", null)));
@@ -204,7 +215,7 @@ namespace Common_Utils
                 }
                 catch (Exception e)
                 {
-                    Error("Failed to add items to custom inventorys!. Check your inventory config values for errors!\n[EXCEPTION] For Developers:\n" + e);
+                    Error("Failed to add items to custom inventories! Check your inventory config values for errors!\n[EXCEPTION] For Developers:\n" + e);
                     return;
                 }
             }
@@ -228,7 +239,6 @@ namespace Common_Utils
             EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv);
             Events.PlayerJoinEvent += EventHandler.PlayerJoin;
             Events.Scp914UpgradeEvent += EventHandler.SCP914Upgrade;
-            Events.SetClassEvent += EventHandler.SetClass;
 
             Info("Common-Utils Loaded! Created by the EXILED Team.");
 
