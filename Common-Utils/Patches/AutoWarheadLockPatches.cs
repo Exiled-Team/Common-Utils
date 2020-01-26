@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Harmony;
 
 namespace Common_Utils.Patches
 {
-	// CancelDetonation(GameObject disabler)
-	[HarmonyPatch(typeof(AlphaWarheadController), nameof(AlphaWarheadController.CancelDetonation))]
+	[HarmonyPatch(typeof(AlphaWarheadController), nameof(AlphaWarheadController.CancelDetonation), new Type[] { typeof(UnityEngine.GameObject) })]
 	class AutoWarheadLockPatches
 	{
 		public static bool AutoLocked;

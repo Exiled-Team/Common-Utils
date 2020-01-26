@@ -154,14 +154,12 @@ namespace Common_Utils
                         roleHealth.Add((RoleType)Enum.Parse(typeof(RoleType), kvp.Key), int.Parse(kvp.Value));
                         DebugBoi(kvp.Key + "'s default health is now: " + kvp.Value);
                     }
+                    Info("Loaded " + configHealth.Keys.Count() + "('s) default health classes.");
                 }
                 catch (Exception e)
                 {
                     Error("Failed to add custom health to roles. Check your 'util_role_health' config values for errors!\n" + e);
-                    return;
                 }
-
-                Info("Loaded " + configHealth.Keys.Count() + "('s) default health classes.");
 
                 Dictionary<string, string> configRoles =
                     KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_roles", ""));
