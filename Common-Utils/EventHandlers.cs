@@ -20,20 +20,23 @@ namespace Common_Utils
 
         public int BTime;
         public int BSeconds;
-
         public int JTime;
+        public int ANTime;
 
         public Dictionary<RoleType, int> RolesHealth;
-
         public Dictionary<Scp914PlayerUpgrade, Scp914Knob> Roles;
+        public Dictionary<Scp914ItemUpgrade, Scp914Knob> Items;
 
         public CustomInventory Inventories;
 
-        public Dictionary<Scp914ItemUpgrade, Scp914Knob> Items;
-
+        public bool EnableBroadcasting;
+        public bool EnableAutoNuke;
+        public bool Enable914;
+        public bool EnableInventories;
         public bool UpgradeHand;
 
-        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven)
+        // T H I C K constructor
+        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories)
         {
             Roles = roles;
             Items = items;
@@ -45,11 +48,28 @@ namespace Common_Utils
             RolesHealth = health;
             Inventories = inven;
             UpgradeHand = uh;
+            ANTime = nukeTime;
+            EnableBroadcasting = enableBroadcasting;
+            EnableAutoNuke = autoNuke;
+            Enable914 = enable914;
+            EnableInventories = enableInventories;
+
+            // Auto nuke
+
         }
 
+        IEnumerator<float> AutoNuke()
+        {
+            yield return Timing.WaitForSeconds(ANTime);
+
+            AlphaWarheadController.Host.StartDetonation();
+        }
 
         internal void SCP914Upgrade(ref SCP914UpgradeEvent ev)
         {
+            if (!Enable914)
+                return;
+
             Vector3 tpPos = ev.Machine.output.position - ev.Machine.intake.position;
 
             if (UpgradeHand) // Upgrade hand items like a boss
@@ -94,6 +114,8 @@ namespace Common_Utils
         {
             yield return Timing.WaitForSeconds(1.1f);
 
+            DebugBoi("Teleporting " + hub.nicknameSync.MyNick + " to the output of 914.");
+
             hub.plyMovementSync.OverridePosition(oldPos + tpPos, hub.gameObject.transform.rotation.y);
             hub.inventory.Clear();
             hub.inventory = inv;
@@ -116,11 +138,20 @@ namespace Common_Utils
             }
         }
 
-        internal void PlayerJoin(PlayerJoinEvent ev) => Extenstions.Broadcast(ev.Player, (uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
+        internal void PlayerJoin(PlayerJoinEvent ev)
+        {
+            if (!EnableBroadcasting)
+                return;
+
+            Extenstions.Broadcast(ev.Player, (uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
+        }
 
         internal void SetClass(SetClassEvent ev)
         {
             DebugBoi("Waiting to spawn in...");
+
+            if (!EnableInventories)
+                return;
 
             Timing.RunCoroutine(frick(ev.Player, ev.Role));
         }
