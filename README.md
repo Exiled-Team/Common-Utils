@@ -48,5 +48,8 @@ util_ntfcadet_inventory: KeycardSeniorGuard, GunProject90, WeaponManagerTablet, 
 util_guard_inventory: KeycardGuard, GunMP7, Medkit, WeaponManagerTablet, Disarmer, GrenadeFlash, Radio
 
 # Other inventories that are completely clean (as in they don't have any single item):
-util_classd_inventory, util_tutorial_inventory, util_scp173_inventory, util_spectator_inventory, util_scp106_inventory, util_scp049_inventory, util_scp079_inventory, util_scp096_inventory, util_scp0492_inventory, util_scp93953_inventory, util_scp93989_inventory
+util_classd_inventory, util_tutorial_inventory, util_scp173_inventory,
+util_spectator_inventory, util_scp106_inventory, util_scp049_inventory,
+util_scp079_inventory, util_scp096_inventory, util_scp0492_inventory,
+util_scp93953_inventory, util_scp93989_inventory
 ```
