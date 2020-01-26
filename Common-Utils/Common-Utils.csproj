@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\References\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\References\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
@@ -66,8 +69,10 @@
     <Compile Include="EventHandlers.cs" />
     <Compile Include="Extenstions.cs" />
     <Compile Include="KConf\ExiledConfiguration.cs" />
+    <Compile Include="Patches\AutoWarheadLockPatches.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Patches\StartItemsPatch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

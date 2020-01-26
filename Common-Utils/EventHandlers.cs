@@ -35,6 +35,8 @@ namespace Common_Utils
         public bool EnableInventories;
         public bool UpgradeHand;
 
+        public bool LockAutoNuke;
+
         // T H I C K constructor
         public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories)
         {
@@ -62,6 +64,7 @@ namespace Common_Utils
         {
             yield return Timing.WaitForSeconds(ANTime);
 
+            Patches.AutoWarheadLockPatches.AutoLocked = LockAutoNuke;
             AlphaWarheadController.Host.StartDetonation();
         }
 
@@ -146,103 +149,9 @@ namespace Common_Utils
             Extenstions.Broadcast(ev.Player, (uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
         }
 
-        internal void SetClass(SetClassEvent ev)
+        internal void RoundStart()
         {
-            DebugBoi("Waiting to spawn in...");
-
-            if (!EnableInventories)
-                return;
-
-            Timing.RunCoroutine(frick(ev.Player, ev.Role));
-        }
-
-        IEnumerator<float> frick(ReferenceHub p, RoleType role)
-        {
-            yield return Timing.WaitForSeconds(1f);
-            // Bloat code :D
-
-            if (RolesHealth.ContainsKey(role))
-            {
-                p.playerStats.health = RolesHealth[role];
-                p.playerStats.maxHP = RolesHealth[role];
-            }
-
-            DebugBoi("Giving items for Custom Inventories.");
-            switch (role)
-            {
-                case RoleType.ClassD:
-                    if (Inventories.ClassD != null)
-                    {
-                        DebugBoi("Passed CD");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.ClassD)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-                case RoleType.ChaosInsurgency:
-                    if (Inventories.Chaos != null)
-                    {
-                        DebugBoi("Passed CS");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.Chaos)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-                case RoleType.Scientist:
-                    if (Inventories.Scientist != null)
-                    {
-                        DebugBoi("Passed SC");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.Scientist)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-                case RoleType.NtfScientist:
-                    if (Inventories.NtfScientist != null)
-                    {
-                        DebugBoi("Passed NS");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.NtfScientist)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-                case RoleType.NtfLieutenant:
-                    if (Inventories.NtfLieutenant != null)
-                    {
-                        DebugBoi("Passed NL");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.NtfLieutenant)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-                case RoleType.NtfCommander:
-                    if (Inventories.NtfCommander != null)
-                    {
-                        DebugBoi("Passed NCC");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.NtfCommander)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-                case RoleType.FacilityGuard:
-                    if (Inventories.Guard != null)
-                    {
-                        DebugBoi("Passed GD");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.Guard)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-                case RoleType.NtfCadet:
-                    if (Inventories.NtfCadet != null)
-                    {
-                        DebugBoi("Passed NC");
-                        p.inventory.Clear();
-                        foreach (ItemType item in Inventories.NtfCadet)
-                            p.inventory.AddNewItem(item);
-                    }
-                    break;
-            }
+            Patches.AutoWarheadLockPatches.AutoLocked = false;
         }
     }
 }
