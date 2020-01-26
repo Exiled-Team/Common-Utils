@@ -51,18 +51,6 @@ namespace Common_Utils
         internal void SCP914Upgrade(ref SCP914UpgradeEvent ev)
         {
             Vector3 tpPos = ev.Machine.output.position - ev.Machine.intake.position;
-            foreach (KeyValuePair<Scp914PlayerUpgrade, Scp914Knob> kv in Roles)
-            {
-                if (ev.KnobSetting != kv.Value)
-                    continue;
-                foreach (ReferenceHub hub in ev.Players)
-                    if (kv.Key.ToUpgrade == hub.characterClassManager.CurClass)
-                    {
-                        Vector3 oldPos = hub.transform.position;
-                        hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
-                        Timing.RunCoroutine(TeleportToOutput(hub, oldPos, tpPos, hub.inventory));
-                    }
-            }
 
             if (UpgradeHand) // Upgrade hand items like a boss
                 foreach (ReferenceHub hub in ev.Players)
@@ -79,14 +67,32 @@ namespace Common_Utils
                         SpawnItem(kvp.Key.UpgradedTo, item.transform.position + tpPos, Vector3.zero);
                         item.Delete();
                     }
+                    else
+                        ev.Machine.UpgradeItem(item);
                 }
+            }
+
+            if (ev.Items.Count > 1)
+                return;
+
+            foreach (KeyValuePair<Scp914PlayerUpgrade, Scp914Knob> kv in Roles)
+            {
+                if (ev.KnobSetting != kv.Value)
+                    continue;
+                foreach (ReferenceHub hub in ev.Players)
+                    if (kv.Key.ToUpgrade == hub.characterClassManager.CurClass)
+                    {
+                        Vector3 oldPos = hub.transform.position;
+                        hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
+                        Timing.RunCoroutine(TeleportToOutput(hub, oldPos, tpPos, hub.inventory));
+                    }
             }
 
         }
 
         private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 oldPos, Vector3 tpPos, Inventory inv)
         {
-            yield return Timing.WaitForSeconds(0.5f);
+            yield return Timing.WaitForSeconds(1.1f);
 
             hub.plyMovementSync.OverridePosition(oldPos + tpPos, hub.gameObject.transform.rotation.y);
             hub.inventory.Clear();
@@ -117,13 +123,6 @@ namespace Common_Utils
             DebugBoi("Waiting to spawn in...");
 
             Timing.RunCoroutine(frick(ev.Player, ev.Role));
-        }
-
-
-        IEnumerator<float> telPlayer(ReferenceHub p, Vector3 pos)
-        {
-            yield return Timing.WaitForSeconds(0.4f);
-            p.GetComponent<PlyMovementSync>().OverridePosition(pos, 0f, false);
         }
 
         IEnumerator<float> frick(ReferenceHub p, RoleType role)
