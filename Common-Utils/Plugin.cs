@@ -70,10 +70,7 @@ namespace Common_Utils
             public static List<ItemType> ConvertToItemList(List<string> list)
             {
                 if (list == null)
-                {
-                    DebugBoi("Ignoring a inventory.");
                     return null;
-                }
                 List<ItemType> listd = new List<ItemType>();
                 foreach (string s in list)
                 {
@@ -133,98 +130,112 @@ namespace Common_Utils
 
             Info("Loading Common-Utils, created by the EXILED Team!");
 
-            Dictionary<string, string> configHealth = KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_role_health", "NtfCommander:400,NtfScientist:350"));
+            bool enable914Configs = Config.GetBool("util_914_enable", true);
 
-            try
+            if (enable914Configs)
             {
-                foreach (KeyValuePair<string, string> kvp in configHealth)
+                Dictionary<string, string> configHealth = KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_role_health", "NtfCommander:400,NtfScientist:350"));
+
+                try
                 {
-                    roleHealth.Add((RoleType)Enum.Parse(typeof(RoleType), kvp.Key), int.Parse(kvp.Value));
+                    foreach (KeyValuePair<string, string> kvp in configHealth)
+                    {
+                        roleHealth.Add((RoleType)Enum.Parse(typeof(RoleType), kvp.Key), int.Parse(kvp.Value));
+                        DebugBoi(kvp.Key + "'s default health is now: " + kvp.Value);
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Error("Failed to add custom health to roles. Check your 'util_role_health' config values for errors!\n" + e);
-                return;
-            }
-
-            Info("Loaded " + configHealth.Count() + "('s) default health classes.");
-
-            Dictionary<string, string> configRoles =
-                KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_roles", ""));
-            try
-            {
-                foreach (KeyValuePair<string, string> kvp in configRoles)
+                catch (Exception e)
                 {
-                    scp914Roles.Add(Scp914PlayerUpgrade.ParseString(kvp.Key), (Scp914Knob) Enum.Parse(typeof(Scp914Knob), kvp.Value));
-                    Info($"Loaded {kvp.Key} - {kvp.Value} custom 914 upgrade");
+                    Error("Failed to add custom health to roles. Check your 'util_role_health' config values for errors!\n" + e);
+                    return;
                 }
 
-            }
-            catch (Exception e)
-            {
-                Error($"Failed to parse 914 role upgrade settings. {e}");
-                return;
-            }
+                Info("Loaded " + configHealth.Keys.Count() + "('s) default health classes.");
 
-            Info("Loaded " + configRoles.Count + "('s) custom 914 upgrade classes.");
-
-            Dictionary<string, string> configItems = KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_items", "Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne"));
-
-            try
-            {
-                foreach (KeyValuePair<string, string> kvp in configItems)
+                Dictionary<string, string> configRoles =
+                    KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_roles", ""));
+                try
                 {
-                    scp914Items.Add(Scp914ItemUpgrade.ParseString(kvp.Key), (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
+                    foreach (KeyValuePair<string, string> kvp in configRoles)
+                        scp914Roles.Add(Scp914PlayerUpgrade.ParseString(kvp.Key),
+                            (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
+                }
+                catch (Exception e)
+                {
+                    Error($"Failed to parse 914 role upgrade settings. {e}");
+                    return;
+                }
+
+                Info("Loaded " + configRoles + "('s) custom 914 upgrade classes.");
+
+                Dictionary<string, string> configItems = KConf.ExiledConfiguration.GetDictonaryValue(Config.GetString("util_914_items", "Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne"));
+
+                try
+                {
+                    foreach (KeyValuePair<string, string> kvp in configItems)
+                        scp914Items.Add(Scp914ItemUpgrade.ParseString(kvp.Key), (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
+                }
+                catch (Exception e)
+                {
+                    Error("Failed to add items to 914. Check your 'util_914_items' config values for errors!\n" + e);
+                    return;
+                }
+
+                Info("Loaded " + configItems.Count() + "('s) custom 914 recipes.");
+            }
+
+            bool enableCustomInv = Config.GetBool("util_enable_inventories", false);
+
+            if (enableCustomInv)
+            {
+                // Custom items
+                try
+                {
+                    Inventories = new CustomInventory();
+                    Inventories.ClassD = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_classd_inventory", null)));
+                    Inventories.Chaos = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_choas_inventory", null)));
+                    Inventories.NtfCadet = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcadet_inventory", null)));
+                    Inventories.NtfCommander = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcommander_inventory", null)));
+                    Inventories.NtfLieutenant = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntflieutenant_inventory", null)));
+                    Inventories.NtfScientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfscientist_inventory", null)));
+                    Inventories.Scientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_scientist_inventory", null)));
+                    Inventories.Guard = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_guard_inventory", null)));
+                    Info("Loaded Inventories.");
+                }
+                catch (Exception e)
+                {
+                    Error("Failed to add items to custom inventorys!. Check your inventory config values for errors!\n[EXCEPTION] For Developers:\n" + e);
+                    return;
                 }
             }
-            catch (Exception e)
-            {
-                Error("Failed to add items to 914. Check your 'util_914_items' config values for errors!\n" + e);
-                return;
-            }
-
-            Info("Loaded " + configItems.Count + "('s) custom 914 recipes.");
-
-            // Custom items
-            try
-            {
-                Inventories = new CustomInventory();
-                Inventories.ClassD = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_classd_inventory", null)));
-                Inventories.Chaos = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_choas_inventory", null)));
-                Inventories.NtfCadet = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcadet_inventory", null)));
-                Inventories.NtfCommander = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcommander_inventory", null)));
-                Inventories.NtfLieutenant = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntflieutenant_inventory", null)));
-                Inventories.NtfScientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfscientist_inventory", null)));
-                Inventories.Scientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_scientist_inventory", null)));
-                Inventories.Guard = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_guard_inventory", null)));
-            }
-            catch (Exception e)
-            {
-                Error("Failed to add items to custom inventorys!. Check your inventory config values for errors!\n[EXCEPTION] For Developers:\n" + e);
-                return;
-            }
-
-            Info("Loaded Inventories.");
 
             bool upgradeHeldItems = Config.GetBool("util_914_upgrade_hand", true);
 
-            string broadcastMessage = Config.GetString("util_broadcast_message", "<color=lime>This server is running <color=red>EXILED-CommonUtils</color>, enjoy playing!</color>");
+            bool enableBroadcasting = Config.GetBool("util_broadcast_enable", true);
+
+            string broadcastMessage = Config.GetString("util_broadcast_message", "<color=lime>This server is running <b><color=red>EXILED-CommonUtils</color></b>, enjoy playing!</color>");
 
             int boradcastSeconds = Config.GetInt("util_broadcast_seconds", 300); // 300 is 5 minutes. :D
             int boradcastTime = Config.GetInt("util_broadcast_time", 4);
 
-            string joinMessage = Config.GetString("util_joinMessage", "<color=lime>Welcome %player%! Please read our rules!</color>");
-            int joinMessageTime = Config.GetInt("util_joinMessage_time", 6);
+            string joinMessage = Config.GetString("util_joinMessage", "<color=lime>Welcome <b>%player%</b>! <i>Please read our rules!</i></color>");
+            int joinMessageTime = Config.GetInt("util_joinMessage_time", 6); // 6 seconds duhhhhh
 
-            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories);
+            bool enableAutoNuke = Config.GetBool("util_enable_autonuke", false);
+
+            int autoNukeTime = Config.GetInt("util_autonuke_time", 600); // 600 seconds is 10 minutes.
+
+            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv);
             Events.PlayerJoinEvent += EventHandler.PlayerJoin;
             Events.Scp914UpgradeEvent += EventHandler.SCP914Upgrade;
             Events.SetClassEvent += EventHandler.SetClass;
 
-            cor = Timing.RunCoroutine(EventHandler.CustomBroadcast());
-
             Info("Common-Utils Loaded! Created by the EXILED Team.");
+
+            if (!enableBroadcasting)
+                return;
+
+            cor = Timing.RunCoroutine(EventHandler.CustomBroadcast());
         }
 
         public override void OnReload()
