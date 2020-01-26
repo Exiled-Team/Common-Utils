@@ -55,7 +55,7 @@ namespace Common_Utils
             EnableInventories = enableInventories;
 
             // Auto nuke
-
+            Timing.RunCoroutine(AutoNuke());
         }
 
         IEnumerator<float> AutoNuke()
