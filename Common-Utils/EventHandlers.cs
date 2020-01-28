@@ -70,47 +70,56 @@ namespace Common_Utils
 
         internal void SCP914Upgrade(ref SCP914UpgradeEvent ev)
         {
-            if (!Enable914)
-                return;
-
-            Vector3 tpPos = ev.Machine.output.position - ev.Machine.intake.position;
-
-            if (UpgradeHand) // Upgrade hand items like a boss
-                foreach (ReferenceHub hub in ev.Players)
-                    ev.Machine.UpgradeHeldItem(hub.inventory, hub.characterClassManager, ev.Machine.players); // use default game functions yeehaw
-
-            foreach (KeyValuePair<Scp914ItemUpgrade, Scp914Knob> kvp in Items)
+            try
             {
-                if (ev.KnobSetting != kvp.Value)
-                    continue;
-                foreach (Pickup item in ev.Items)
+                if (!Enable914)
+                    return;
+
+                Vector3 tpPos = ev.Machine.output.position - ev.Machine.intake.position;
+
+                if (UpgradeHand) // Upgrade hand items like a boss
+                    foreach (ReferenceHub hub in ev.Players)
+                        ev.Machine.UpgradeHeldItem(hub.inventory, hub.characterClassManager,
+                            ev.Machine.players); // use default game functions yeehaw
+
+                foreach (KeyValuePair<Scp914ItemUpgrade, Scp914Knob> kvp in Items)
                 {
-                    if (kvp.Key.ToUpgrade == item.ItemId)
+                    if (ev.KnobSetting != kvp.Value)
+                        continue;
+                    foreach (Pickup item in ev.Items)
                     {
-                        SpawnItem(kvp.Key.UpgradedTo, item.transform.position + tpPos, Vector3.zero);
-                        item.Delete();
+                        if (kvp.Key.ToUpgrade == item.ItemId)
+                        {
+                            SpawnItem(kvp.Key.UpgradedTo, item.transform.position + tpPos, Vector3.zero);
+                            item.Delete();
+                        }
+                        else
+                            ev.Machine.UpgradeItem(item);
                     }
-                    else
-                        ev.Machine.UpgradeItem(item);
                 }
-            }
 
-            if (ev.Items.Count > 1)
-                return;
+                if (ev.Items.Count > 1)
+                    return;
 
-            foreach (KeyValuePair<Scp914PlayerUpgrade, Scp914Knob> kv in Roles)
-            {
-                if (ev.KnobSetting != kv.Value)
-                    continue;
-                foreach (ReferenceHub hub in ev.Players)
-                    if (kv.Key.ToUpgrade == hub.characterClassManager.CurClass)
+                Dictionary<RoleType, RoleType> upgrades = new Dictionary<RoleType, RoleType>();
+                foreach (KeyValuePair<Scp914PlayerUpgrade, Scp914Knob> kvp in Roles)
+                {
+                    if (ev.KnobSetting != kvp.Value)
+                        continue;
+                    upgrades.Add(kvp.Key.ToUpgrade, kvp.Key.UpgradedTo);
+                }
+                foreach (ReferenceHub player in ev.Players)
+                    if (upgrades.ContainsKey(player.characterClassManager.CurClass))
                     {
-                        Vector3 oldPos = hub.transform.position;
-                        hub.characterClassManager.SetPlayersClass(kv.Key.UpgradedTo, hub.gameObject);
-                        Timing.RunCoroutine(TeleportToOutput(hub, oldPos, tpPos, hub.inventory));
+                        Vector3 oldPos = player.gameObject.transform.position;
+                        player.characterClassManager.NetworkCurClass = upgrades[player.characterClassManager.CurClass];
+                        Timing.RunCoroutine(TeleportToOutput(player, oldPos, tpPos, player.inventory));
                     }
             }
-
+            catch (Exception e)
+            {
+                Plugin.Error(e.ToString());
+            }
         }
 
         private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 oldPos, Vector3 tpPos, Inventory inv)
