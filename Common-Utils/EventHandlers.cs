@@ -77,29 +77,36 @@ namespace Common_Utils
 
                 Vector3 tpPos = ev.Machine.output.position - ev.Machine.intake.position;
 
-                if (UpgradeHand) // Upgrade hand items like a boss
-                    foreach (ReferenceHub hub in ev.Players)
-                        ev.Machine.UpgradeHeldItem(hub.inventory, hub.characterClassManager,
-                            ev.Machine.players); // use default game functions yeehaw
-
-                foreach (KeyValuePair<Scp914ItemUpgrade, Scp914Knob> kvp in Items)
+                Dictionary<ItemType, ItemType> upgradeItems = new Dictionary<ItemType, ItemType>();
+                foreach (KeyValuePair<Scp914ItemUpgrade, Scp914Knob> ikvp in Items)
                 {
-                    if (ev.KnobSetting != kvp.Value)
+                    if (ev.KnobSetting != ikvp.Value)
                         continue;
-                    foreach (Pickup item in ev.Items)
+                    upgradeItems.Add(ikvp.Key.ToUpgrade, ikvp.Key.UpgradedTo);
+                }
+                
+                if (UpgradeHand)
+                    foreach (ReferenceHub hub in ev.Players)
                     {
-                        if (kvp.Key.ToUpgrade == item.ItemId)
+                        if (upgradeItems.ContainsKey(hub.inventory.NetworkcurItem))
                         {
-                            SpawnItem(kvp.Key.UpgradedTo, item.transform.position + tpPos, Vector3.zero);
-                            item.Delete();
+                            hub.inventory.NetworkcurItem = upgradeItems[hub.inventory.NetworkcurItem];
                         }
                         else
-                            ev.Machine.UpgradeItem(item);
+                            ev.Machine.UpgradeHeldItem(hub.inventory, hub.characterClassManager, ev.Machine.players);
                     }
-                }
 
-                if (ev.Items.Count > 1)
-                    return;
+                foreach (Pickup item in ev.Items)
+                {
+                    if (upgradeItems.ContainsKey(item.ItemId))
+                    {
+                        Vector3 pos = item.gameObject.transform.position + tpPos;
+                        SpawnItem(upgradeItems[item.ItemId], pos, Vector3.zero);
+                        item.Delete();
+                    }
+                    else
+                        ev.Machine.UpgradeItem(item);
+                }
 
                 Dictionary<RoleType, RoleType> upgrades = new Dictionary<RoleType, RoleType>();
                 foreach (KeyValuePair<Scp914PlayerUpgrade, Scp914Knob> kvp in Roles)
