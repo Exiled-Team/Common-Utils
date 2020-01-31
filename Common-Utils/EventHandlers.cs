@@ -55,9 +55,6 @@ namespace Common_Utils
             EnableAutoNuke = autoNuke;
             Enable914 = enable914;
             EnableInventories = enableInventories;
-
-            // Auto nuke
-            Timing.RunCoroutine(AutoNuke());
         }
 
         IEnumerator<float> AutoNuke()
@@ -168,6 +165,19 @@ namespace Common_Utils
         internal void RoundStart()
         {
             Patches.AutoWarheadLockPatches.AutoLocked = false;
+            Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
+        }
+
+        public void OnRoundEnd()
+        {
+            foreach (CoroutineHandle handle in Coroutines)
+                Timing.KillCoroutines(handle);
+        }
+
+        public void OnWaitingForPlayers()
+        {
+            foreach (CoroutineHandle handle in Coroutines)
+                Timing.KillCoroutines(handle);
         }
     }
 }

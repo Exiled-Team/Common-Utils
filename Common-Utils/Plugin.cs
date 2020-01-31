@@ -100,6 +100,8 @@ namespace Common_Utils
         public EventHandlers EventHandler;
 
         public HarmonyInstance HarmonyInstance { private set; get; }
+        
+        public static List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
 
         public override void OnDisable()
         {
@@ -241,6 +243,8 @@ namespace Common_Utils
             Events.PlayerJoinEvent += EventHandler.PlayerJoin;
             Events.Scp914UpgradeEvent += EventHandler.SCP914Upgrade;
             Events.RoundStartEvent += EventHandler.RoundStart;
+            Events.RoundEndEvent += EventHandler.OnRoundEnd;
+            Events.WaitingForPlayersEvent += EventHandler.OnWaitingForPlayers;
 
             Info("Common-Utils Loaded! Created by the EXILED Team.");
 
