@@ -23,9 +23,6 @@ util_914_items: Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne # A custom dict
 # If you do want to make Custom Inventorys. You must set only the ones you want!
 # Example of a custom inventory: "util_classd_inventory: Coin" or "util_ntfcadet_inventory: Adrenaline,Ammo556,Flashlight,GrenadeFlash,KeycardGuard,GunMP7"
 util_enable_inventories: false
-util_classd_inventory: Coin
-util_scientist_inventory: Coin,KeycardScientist,Flashlight,Painkillers
-util_guard_inventory: KeycardGuard,GunMP7,Ammo762,GrenadeFrag,Painkillers,Flashlight,Radio,WeaponManagerTablet,Disarmer
 util_broadcast_enable: true # Do you want broadcasting to run?
 util_broadcast_message: <color=lime>This server is running <color=red>EXILED-CommonUtils</color>, enjoy playing!</color>
 util_broadcast_seconds: 300
