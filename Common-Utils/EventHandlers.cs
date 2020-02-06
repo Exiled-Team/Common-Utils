@@ -8,6 +8,7 @@ using MEC;
 using Scp914;
 using UnityEngine;
 using static Common_Utils.Plugin;
+using Object = System.Object;
 
 namespace Common_Utils
 {
@@ -37,8 +38,12 @@ namespace Common_Utils
 
         public bool LockAutoNuke;
 
+        public bool ClearRagdolls;
+        public float ClearRagInterval;
+        public bool ClearOnlyPocket;
+
         // T H I C K constructor
-        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories)
+        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories, bool clearRag, float clearInt, bool clearOnlyPocket = false)
         {
             Roles = roles;
             Items = items;
@@ -55,6 +60,9 @@ namespace Common_Utils
             EnableAutoNuke = autoNuke;
             Enable914 = enable914;
             EnableInventories = enableInventories;
+            ClearRagdolls = clearRag;
+            ClearRagInterval = clearInt;
+            ClearOnlyPocket = clearOnlyPocket;
         }
 
         IEnumerator<float> AutoNuke()
@@ -166,6 +174,25 @@ namespace Common_Utils
         {
             Patches.AutoWarheadLockPatches.AutoLocked = false;
             Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
+            Coroutines.Add(Timing.RunCoroutine(CleanupRagdolls()));
+        }
+
+        private IEnumerator<float> CleanupRagdolls()
+        {
+            for (;;)
+            {
+                yield return Timing.WaitForSeconds(ClearRagInterval);
+                foreach (Ragdoll ragdoll in UnityEngine.Object.FindObjectsOfType<Ragdoll>())
+                {
+                    if (ClearOnlyPocket)
+                    {
+                        if (ragdoll.gameObject.transform.position.y < -1000f)
+                            UnityEngine.Object.Destroy(ragdoll.gameObject);
+                    }
+                    else
+                        UnityEngine.Object.Destroy(ragdoll.gameObject);
+                }
+            }
         }
 
         public void OnRoundEnd()

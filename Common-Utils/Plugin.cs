@@ -235,8 +235,11 @@ namespace Common_Utils
             bool enableAutoNuke = Config.GetBool("util_enable_autonuke", false);
 
             int autoNukeTime = Config.GetInt("util_autonuke_time", 600); // 600 seconds is 10 minutes.
+            bool clearRagdolls = Config.GetBool("util_cleanup_ragdolls", true);
+            float clearRagdollTimer = Config.GetFloat("util_cleanup_interval", 250f);
+            bool clearOnlyPocket = Config.GetBool("util_cleanup_only_pocket", false);
 
-            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv)
+            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv, clearRagdolls, clearRagdollTimer, clearOnlyPocket)
             { 
                 LockAutoNuke = Config.GetBool("util_autonuke_lock", false)
             };
