@@ -41,9 +41,10 @@ namespace Common_Utils
         public bool ClearRagdolls;
         public float ClearRagInterval;
         public bool ClearOnlyPocket;
+        public bool ClearItems;
 
         // T H I C K constructor
-        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories, bool clearRag, float clearInt, bool clearOnlyPocket = false)
+        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories, bool clearRag, float clearInt, bool clearItems, bool clearOnlyPocket = false)
         {
             Roles = roles;
             Items = items;
@@ -63,6 +64,7 @@ namespace Common_Utils
             ClearRagdolls = clearRag;
             ClearRagInterval = clearInt;
             ClearOnlyPocket = clearOnlyPocket;
+            ClearItems = clearItems;
         }
 
         IEnumerator<float> AutoNuke()
@@ -174,7 +176,28 @@ namespace Common_Utils
         {
             Patches.AutoWarheadLockPatches.AutoLocked = false;
             Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
-            Coroutines.Add(Timing.RunCoroutine(CleanupRagdolls()));
+            if (ClearRagdolls)
+                Coroutines.Add(Timing.RunCoroutine(CleanupRagdolls()));
+            if (ClearItems)
+                Coroutines.Add(Timing.RunCoroutine(CleanupItems()));
+        }
+
+        private IEnumerator<float> CleanupItems()
+        {
+            for (;;)
+            {
+                yield return Timing.WaitForSeconds(ClearRagInterval);
+                foreach (Pickup item in UnityEngine.Object.FindObjectsOfType<Pickup>())
+                {
+                    if (ClearOnlyPocket)
+                    {
+                        if (item.model.transform.position.y < -1000f)
+                            UnityEngine.Object.Destroy(item.model);
+                    }
+                    else
+                        UnityEngine.Object.Destroy(item.model);
+                }
+            }
         }
 
         private IEnumerator<float> CleanupRagdolls()

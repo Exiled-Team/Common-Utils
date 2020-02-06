@@ -238,8 +238,9 @@ namespace Common_Utils
             bool clearRagdolls = Config.GetBool("util_cleanup_ragdolls", true);
             float clearRagdollTimer = Config.GetFloat("util_cleanup_interval", 250f);
             bool clearOnlyPocket = Config.GetBool("util_cleanup_only_pocket", false);
+            bool clearItems = Config.GetBool("util_cleanup_items", true);
 
-            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv, clearRagdolls, clearRagdollTimer, clearOnlyPocket)
+            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv, clearRagdolls, clearRagdollTimer, clearOnlyPocket, clearItems)
             { 
                 LockAutoNuke = Config.GetBool("util_autonuke_lock", false)
             };
