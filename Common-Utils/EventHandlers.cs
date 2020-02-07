@@ -187,15 +187,15 @@ namespace Common_Utils
             for (;;)
             {
                 yield return Timing.WaitForSeconds(ClearRagInterval);
-                foreach (Pickup item in UnityEngine.Object.FindObjectsOfType<Pickup>())
+                foreach (Searching item in Searching.FindObjectsOfType<Searching>())
                 {
                     if (ClearOnlyPocket)
                     {
-                        if (item.model.transform.position.y < -1000f)
-                            UnityEngine.Object.Destroy(item.model);
+                        if (item.pickup.transform.position.y < -1000f)
+                            UnityEngine.Object.Destroy(item.pickup);
                     }
                     else
-                        UnityEngine.Object.Destroy(item.model);
+                        UnityEngine.Object.Destroy(item.pickup);
                 }
             }
         }
