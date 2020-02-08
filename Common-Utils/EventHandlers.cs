@@ -31,6 +31,7 @@ namespace Common_Utils
         public CustomInventory Inventories;
 
         public bool EnableBroadcasting;
+        public bool EnableJoinmessage;
         public bool EnableAutoNuke;
         public bool Enable914;
         public bool EnableInventories;
@@ -44,7 +45,7 @@ namespace Common_Utils
         public bool ClearItems;
 
         // T H I C K constructor
-        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableBroadcasting, bool enableInventories, bool clearRag, float clearInt, bool clearItems, bool clearOnlyPocket = false)
+        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableJoinmessage, bool enableBroadcasting, bool enableInventories, bool clearRag, float clearInt, bool clearItems, bool clearOnlyPocket = false)
         {
             Roles = roles;
             Items = items;
@@ -57,6 +58,7 @@ namespace Common_Utils
             Inventories = inven;
             UpgradeHand = uh;
             ANTime = nukeTime;
+            EnableJoinmessage = enableJoinmessage;
             EnableBroadcasting = enableBroadcasting;
             EnableAutoNuke = autoNuke;
             Enable914 = enable914;
@@ -166,7 +168,7 @@ namespace Common_Utils
 
         internal void PlayerJoin(PlayerJoinEvent ev)
         {
-            if (!EnableBroadcasting)
+            if (!EnableJoinmessage)
                 return;
 
             Extenstions.Broadcast(ev.Player, (uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
