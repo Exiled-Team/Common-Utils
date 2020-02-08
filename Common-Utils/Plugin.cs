@@ -229,7 +229,7 @@ namespace Common_Utils
             int boradcastSeconds = Config.GetInt("util_broadcast_seconds", 300); // 300 is 5 minutes. :D
             int boradcastTime = Config.GetInt("util_broadcast_time", 4);
 
-            bool enableJoinmessage = Config.GetBool("util_broadcast_enable", true);
+            bool enableJoinmessage = Config.GetBool("util_joinmessage_enable", true);
             string joinMessage = Config.GetString("util_joinMessage", "<color=lime>Welcome <b>%player%</b>! <i>Please read our rules!</i></color>");
             int joinMessageTime = Config.GetInt("util_joinMessage_time", 6); // 6 seconds duhhhhh
 
