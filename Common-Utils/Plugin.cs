@@ -222,13 +222,14 @@ namespace Common_Utils
 
             bool upgradeHeldItems = Config.GetBool("util_914_upgrade_hand", true);
 
-            bool enableBroadcasting = Config.GetBool("util_broadcast_enable", true);
+            bool enableBroadcasting = Config.GetBool("util_broadcast_enable", false); //nobody wants this true on default -rin
 
             string broadcastMessage = Config.GetString("util_broadcast_message", "<color=lime>This server is running <b><color=red>EXILED-CommonUtils</color></b>, enjoy playing!</color>");
 
             int boradcastSeconds = Config.GetInt("util_broadcast_seconds", 300); // 300 is 5 minutes. :D
             int boradcastTime = Config.GetInt("util_broadcast_time", 4);
 
+            bool enableJoinmessage = Config.GetBool("util_joinmessage_enable", true);
             string joinMessage = Config.GetString("util_joinMessage", "<color=lime>Welcome <b>%player%</b>! <i>Please read our rules!</i></color>");
             int joinMessageTime = Config.GetInt("util_joinMessage_time", 6); // 6 seconds duhhhhh
 
@@ -240,7 +241,7 @@ namespace Common_Utils
             bool clearOnlyPocket = Config.GetBool("util_cleanup_only_pocket", false);
             bool clearItems = Config.GetBool("util_cleanup_items", true);
 
-            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableBroadcasting, enableCustomInv, clearRagdolls, clearRagdollTimer, clearOnlyPocket, clearItems)
+            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableJoinmessage, enableBroadcasting, enableCustomInv, clearRagdolls, clearRagdollTimer, clearOnlyPocket, clearItems)
             { 
                 LockAutoNuke = Config.GetBool("util_autonuke_lock", false)
             };
