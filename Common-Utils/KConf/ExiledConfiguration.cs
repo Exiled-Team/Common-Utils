@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EXILED;
 
 namespace Common_Utils.KConf
 {
@@ -42,6 +43,7 @@ namespace Common_Utils.KConf
             if (value == null)
                 return null;
             List<string> dict = new List<string>();
+            Dictionary<string, int> rDict = new Dictionary<string, int>();
             if (!value.Contains(","))
             {
                 dict.Add(value);
@@ -52,6 +54,26 @@ namespace Common_Utils.KConf
             {
                 dict.Add(t);
             }
+            return dict;
+        }
+
+        public static Dictionary<string, int> GetRandomListValue(string value)
+        {
+            if (value == null)
+                return null;
+            Dictionary<string, int> dict = new Dictionary<string, int>();
+            string[] items = value.Split(',');
+            foreach (string s in items)
+            {
+                string[] c = s.Split(':');
+                if (!int.TryParse(c[1], out int chance))
+                {
+                    Log.Error($"Unable to parse item chance for: {s}, invalid integer.");
+                    continue;
+                }
+                dict.Add(c[0], chance);
+            }
+
             return dict;
         }
     }

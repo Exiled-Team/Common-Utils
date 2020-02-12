@@ -23,7 +23,6 @@ namespace Common_Utils
         public int BSeconds;
         public int JTime;
         public int ANTime;
-
         public Dictionary<RoleType, int> RolesHealth;
         public Dictionary<Scp914PlayerUpgrade, Scp914Knob> Roles;
         public Dictionary<Scp914ItemUpgrade, Scp914Knob> Items;

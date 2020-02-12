@@ -19,6 +19,8 @@ namespace Common_Utils
     {
         public static Plugin Instance { private set; get; }
         public override string getName => "Common-Utils";
+        public bool EnableRandomInv;
+        public Random Gen = new Random();
 
         // classes be like mega stupid amirite ladies?
 
@@ -68,6 +70,15 @@ namespace Common_Utils
 
             public List<ItemType> Guard = null;
 
+            public Dictionary<ItemType, int> NtfCadetRan;
+            public Dictionary<ItemType, int> NtfLtRan;
+            public Dictionary<ItemType, int> NtfCmdRan;
+            public Dictionary<ItemType, int> ClassDRan;
+            public Dictionary<ItemType, int> ScientistRan;
+            public Dictionary<ItemType, int> NtfSciRan;
+            public Dictionary<ItemType, int> ChaosRan;
+            public Dictionary<ItemType, int> GuardRan;
+
             public static List<ItemType> ConvertToItemList(List<string> list)
             {
                 if (list == null)
@@ -79,6 +90,20 @@ namespace Common_Utils
                     listd.Add((ItemType)Enum.Parse(typeof(ItemType), s, true));
                 }
                 return listd;
+            }
+
+            public static Dictionary<ItemType, int> ConvertToRandomItemList(Dictionary<string, int> dict)
+            {
+                if (dict == null)
+                    return null;
+                Dictionary<ItemType, int> list = new Dictionary<ItemType, int>();
+                foreach (string s in dict.Keys)
+                {
+                    Log.Debug($"Adding item: {s}");
+                    list.Add((ItemType) Enum.Parse(typeof(ItemType), s, true), dict[s]);
+                }
+
+                return list;
             }
 
         }
@@ -196,6 +221,7 @@ namespace Common_Utils
             }
 
             bool enableCustomInv = Config.GetBool("util_enable_inventories", false);
+            EnableRandomInv = Config.GetBool("util_enable_random_chances", false);
 
             if (enableCustomInv)
             {
@@ -203,14 +229,71 @@ namespace Common_Utils
                 try
                 {
                     Inventories = new CustomInventory();
-                    Inventories.ClassD = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_classd_inventory", null)));
-                    Inventories.Chaos = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_chaos_inventory", null)));
-                    Inventories.NtfCadet = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcadet_inventory", null)));
-                    Inventories.NtfCommander = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcommander_inventory", null)));
-                    Inventories.NtfLieutenant = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntflieutenant_inventory", null)));
-                    Inventories.NtfScientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfscientist_inventory", null)));
-                    Inventories.Scientist = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_scientist_inventory", null)));
-                    Inventories.Guard = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_guard_inventory", null)));
+
+                    if (EnableRandomInv)
+                    {
+                        Dictionary<string, int> classD =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_classd_inventory", null));
+                        Dictionary<string, int> chaos =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_chaos_inventory", null));
+                        Dictionary<string, int> sci =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_scientist_inventory", null));
+                        Dictionary<string, int> cadet =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_ntfcadet_inventory", null));
+                        Dictionary<string, int> lt =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_ntflieutenant_inventory", null));
+                        Dictionary<string, int> cmd =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_ntfcommander_inventory", null));
+                        Dictionary<string, int> guard =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_guard_inventory", null));
+                        Dictionary<string, int> ntfSci =
+                            KConf.ExiledConfiguration.GetRandomListValue(
+                                Config.GetString("util_ntfscientist_inventory", null));
+
+                        Inventories.ClassDRan = CustomInventory.ConvertToRandomItemList(classD);
+                        Inventories.ChaosRan = CustomInventory.ConvertToRandomItemList(chaos);
+                        Inventories.ScientistRan = CustomInventory.ConvertToRandomItemList(sci);
+                        Inventories.NtfCadetRan = CustomInventory.ConvertToRandomItemList(cadet);
+                        Inventories.NtfLtRan = CustomInventory.ConvertToRandomItemList(lt);
+                        Inventories.NtfCmdRan = CustomInventory.ConvertToRandomItemList(cmd);
+                        Inventories.NtfSciRan = CustomInventory.ConvertToRandomItemList(ntfSci);
+                        Inventories.GuardRan = CustomInventory.ConvertToRandomItemList(guard);
+                    }
+                    else
+                    {
+                        Inventories.ClassD = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(
+                                Config.GetString("util_classd_inventory", null)));
+                        Inventories.Chaos = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_chaos_inventory",
+                                null)));
+                        Inventories.NtfCadet = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcadet_inventory",
+                                null)));
+                        Inventories.NtfCommander = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfcommander_inventory",
+                                null)));
+                        Inventories.NtfLieutenant = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(
+                                Config.GetString("util_ntflieutenant_inventory", null)));
+                        Inventories.NtfScientist = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_ntfscientist_inventory",
+                                null)));
+                        Inventories.Scientist = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_scientist_inventory",
+                                null)));
+                        Inventories.Guard = CustomInventory.ConvertToItemList(
+                            KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_guard_inventory",
+                                null)));
+                    }
+
                     Info("Loaded Inventories.");
                 }
                 catch (Exception e)
@@ -223,7 +306,6 @@ namespace Common_Utils
             bool upgradeHeldItems = Config.GetBool("util_914_upgrade_hand", true);
 
             bool enableBroadcasting = Config.GetBool("util_broadcast_enable", false); //nobody wants this true on default -rin
-
             string broadcastMessage = Config.GetString("util_broadcast_message", "<color=lime>This server is running <b><color=red>EXILED-CommonUtils</color></b>, enjoy playing!</color>");
 
             int boradcastSeconds = Config.GetInt("util_broadcast_seconds", 300); // 300 is 5 minutes. :D

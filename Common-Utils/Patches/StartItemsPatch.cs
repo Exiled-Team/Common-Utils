@@ -15,33 +15,105 @@ namespace Common_Utils
 		[HarmonyPriority(500)]
 		public static void Prefix(CharacterClassManager __instance, RoleType classid)
 		{
-			List<ItemType> Inventory;
+			List<ItemType> Inventory = new List<ItemType>();
 			
 			switch (classid)
 			{
 				case RoleType.ClassD:
-					Inventory = Instance.Inventories.ClassD;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.ClassDRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.ClassD;
 					break;
 				case RoleType.ChaosInsurgency:
-					Inventory = Instance.Inventories.Chaos;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.ChaosRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.Chaos;
 					break;
 				case RoleType.NtfCadet:
-					Inventory = Instance.Inventories.NtfCadet;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfCadetRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.NtfCadet;
 					break;
 				case RoleType.NtfCommander:
-					Inventory = Instance.Inventories.NtfCommander;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfCmdRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.NtfCommander;
 					break;
 				case RoleType.NtfLieutenant:
-					Inventory = Instance.Inventories.NtfLieutenant;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfLtRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.NtfLieutenant;
 					break;
 				case RoleType.NtfScientist:
-					Inventory = Instance.Inventories.NtfScientist;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfSciRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.NtfScientist;
 					break;
 				case RoleType.Scientist:
-					Inventory = Instance.Inventories.Scientist;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.ScientistRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.Scientist;
 					break;
 				case RoleType.FacilityGuard:
-					Inventory = Instance.Inventories.Guard;
+					if (Instance.EnableRandomInv)
+					{
+						foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.GuardRan)
+						{
+							if (Instance.Gen.Next(100) <= item.Value)
+								Inventory.Add(item.Key);
+						}
+					}
+					else
+						Inventory = Instance.Inventories.Guard;
 					break;
 				default:
 					Inventory = CustomInventory.ConvertToItemList(KConf.ExiledConfiguration.GetListStringValue(EXILED.Plugin.Config.GetString($"util_{classid.ToString().ToLowerInvariant()}_inventory", null)));
