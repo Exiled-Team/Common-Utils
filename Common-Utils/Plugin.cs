@@ -82,7 +82,7 @@ namespace Common_Utils
             public static List<ItemType> ConvertToItemList(List<string> list)
             {
                 if (list == null)
-                    return null;
+                    return new List<ItemType>();
                 List<ItemType> listd = new List<ItemType>();
                 foreach (string s in list)
                 {
@@ -96,6 +96,8 @@ namespace Common_Utils
             {
                 if (dict == null)
                     return null;
+                if (dict.ContainsKey("null"))
+                    return new Dictionary<ItemType, int>();
                 Dictionary<ItemType, int> list = new Dictionary<ItemType, int>();
                 foreach (string s in dict.Keys)
                 {
@@ -153,7 +155,7 @@ namespace Common_Utils
         public static void DebugBoi(string line)
         {
             if (Config.GetBool("util_debug", false))
-                Info("CU-DEBUG | " + line);
+                Log.Info("CU-DEBUG | " + line);
         }
 
         public override void OnEnable()
@@ -161,7 +163,7 @@ namespace Common_Utils
             if (!Config.GetBool("util_enable", true))
                 return;
 
-            Info("Loading Common-Utils, created by the EXILED Team!");
+            Log.Info("Loading Common-Utils, created by the EXILED Team!");
             
             Instance = this;
 
@@ -181,11 +183,11 @@ namespace Common_Utils
                         roleHealth.Add((RoleType)Enum.Parse(typeof(RoleType), kvp.Key), int.Parse(kvp.Value));
                         DebugBoi(kvp.Key + "'s default health is now: " + kvp.Value);
                     }
-                    Info("Loaded " + configHealth.Keys.Count() + "('s) default health classes.");
+                    Log.Info("Loaded " + configHealth.Keys.Count() + "('s) default health classes.");
                 }
                 catch (Exception e)
                 {
-                    Error("Failed to add custom health to roles. Check your 'util_role_health' config values for errors!\n" + e);
+                    Log.Error("Failed to add custom health to roles. Check your 'util_role_health' config values for errors!\n" + e);
                 }
 
                 Dictionary<string, string> configRoles =
@@ -196,11 +198,11 @@ namespace Common_Utils
                         scp914Roles.Add(Scp914PlayerUpgrade.ParseString(kvp.Key),
                             (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
 
-                    Info("Loaded " + configRoles.Count + "('s) custom 914 upgrade classes.");
+                    Log.Info("Loaded " + configRoles.Count + "('s) custom 914 upgrade classes.");
                 }
                 catch (Exception e)
                 {
-                    Error($"Failed to parse 914 role upgrade settings. {e}");
+                    Log.Error($"Failed to parse 914 role upgrade settings. {e}");
                 }
 
                 
@@ -212,11 +214,11 @@ namespace Common_Utils
                     foreach (KeyValuePair<string, string> kvp in configItems)
                         scp914Items.Add(Scp914ItemUpgrade.ParseString(kvp.Key), (Scp914Knob)Enum.Parse(typeof(Scp914Knob), kvp.Value));
 
-                    Info("Loaded " + configItems.Count + "('s) custom 914 recipes.");
+                    Log.Info("Loaded " + configItems.Count + "('s) custom 914 recipes.");
                 }
                 catch (Exception e)
                 {
-                    Error("Failed to add items to 914. Check your 'util_914_items' config values for errors!\n" + e);
+                    Log.Error("Failed to add items to 914. Check your 'util_914_items' config values for errors!\n" + e);
                 }
             }
 
@@ -294,11 +296,11 @@ namespace Common_Utils
                                 null)));
                     }
 
-                    Info("Loaded Inventories.");
+                    Log.Info("Loaded Inventories.");
                 }
                 catch (Exception e)
                 {
-                    Error("Failed to add items to custom inventories! Check your inventory config values for errors!\n[EXCEPTION] For Developers:\n" + e);
+                    Log.Error("Failed to add items to custom inventories! Check your inventory config values for errors!\n[EXCEPTION] For Developers:\n" + e);
                     return;
                 }
             }
@@ -333,7 +335,7 @@ namespace Common_Utils
             Events.RoundEndEvent += EventHandler.OnRoundEnd;
             Events.WaitingForPlayersEvent += EventHandler.OnWaitingForPlayers;
 
-            Info("Common-Utils Loaded! Created by the EXILED Team.");
+            Log.Info("Common-Utils Loaded! Created by the EXILED Team.");
 
             if (!enableBroadcasting)
                 return;

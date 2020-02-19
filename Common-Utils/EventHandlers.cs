@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EXILED;
+using EXILED.Extensions;
 using MEC;
 using Scp914;
 using UnityEngine;
 using static Common_Utils.Plugin;
-using Object = System.Object;
+using Object = UnityEngine.Object;
 
 namespace Common_Utils
 {
@@ -82,7 +83,7 @@ namespace Common_Utils
             {
                 if (!Enable914)
                     return;
-
+                
                 Vector3 tpPos = ev.Machine.output.position - ev.Machine.intake.position;
 
                 Dictionary<ItemType, ItemType> upgradeItems = new Dictionary<ItemType, ItemType>();
@@ -111,9 +112,8 @@ namespace Common_Utils
                         Vector3 pos = item.gameObject.transform.position + tpPos;
                         SpawnItem(upgradeItems[item.ItemId], pos, Vector3.zero);
                         item.Delete();
+                        ev.Items.Remove(item);
                     }
-                    else
-                        ev.Machine.UpgradeItem(item);
                 }
 
                 Dictionary<RoleType, RoleType> upgrades = new Dictionary<RoleType, RoleType>();
@@ -126,14 +126,15 @@ namespace Common_Utils
                 foreach (ReferenceHub player in ev.Players)
                     if (upgrades.ContainsKey(player.characterClassManager.CurClass))
                     {
+                        Inventory inv = player.inventory;
                         Vector3 oldPos = player.gameObject.transform.position;
                         player.characterClassManager.NetworkCurClass = upgrades[player.characterClassManager.CurClass];
-                        Timing.RunCoroutine(TeleportToOutput(player, oldPos, tpPos, player.inventory));
+                        Timing.RunCoroutine(TeleportToOutput(player, oldPos, tpPos, inv));
                     }
             }
             catch (Exception e)
             {
-                Plugin.Error(e.ToString());
+                Log.Error(e.ToString());
             }
         }
 
@@ -158,7 +159,7 @@ namespace Common_Utils
             while (true)
             {
                 yield return Timing.WaitForSeconds(BSeconds);
-                foreach (ReferenceHub hub in Plugin.GetHubs())
+                foreach (ReferenceHub hub in Player.GetHubs())
                 {
                     Extenstions.Broadcast(hub, (uint)BTime, BMessage);
                 }
@@ -188,11 +189,11 @@ namespace Common_Utils
             for (;;)
             {
                 yield return Timing.WaitForSeconds(ClearRagInterval);
-                foreach (Pickup item in Searching.FindObjectsOfType<Pickup>())
+                foreach (Pickup item in Object.FindObjectsOfType<Pickup>())
                 {
                     if (ClearOnlyPocket)
                     {
-                        if (item.gameObject.transform.position.y < -1000f)
+                        if (item.gameObject.transform.position.y < -1900f)
                             item.Delete();
                     }
                     else
