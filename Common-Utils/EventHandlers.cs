@@ -177,7 +177,8 @@ namespace Common_Utils
         internal void RoundStart()
         {
             Patches.AutoWarheadLockPatches.AutoLocked = false;
-            Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
+            if (EnableAutoNuke)
+                Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
             if (ClearRagdolls)
                 Coroutines.Add(Timing.RunCoroutine(CleanupRagdolls()));
             if (ClearItems)
