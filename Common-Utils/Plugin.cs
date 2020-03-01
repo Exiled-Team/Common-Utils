@@ -21,6 +21,8 @@ namespace Common_Utils
         public override string getName => "Common-Utils";
         public bool EnableRandomInv;
         public Random Gen = new Random();
+        public List<RoleType> TeslaIgnoredRoles = new List<RoleType>();
+        public int PatchCounter;
 
         // classes be like mega stupid amirite ladies?
 
@@ -146,10 +148,7 @@ namespace Common_Utils
             scp914Roles = null;
             EventHandler = null;
             Instance = null;
-            if (HarmonyInstance != null)
-            {
-                HarmonyInstance.UnpatchAll();
-            }
+            HarmonyInstance?.UnpatchAll();
         }
 
         public static void DebugBoi(string line)
@@ -167,10 +166,28 @@ namespace Common_Utils
             
             Instance = this;
 
-            HarmonyInstance = HarmonyInstance.Create("exiled.common.utils");
+            HarmonyInstance = HarmonyInstance.Create($"exiled.common.utils-{PatchCounter}");
+            PatchCounter++;
             HarmonyInstance.PatchAll();
 
             bool enable914Configs = Config.GetBool("util_914_enable", true);
+
+            try
+            {
+                List<string> teslaIgnoredStrings =
+                    KConf.ExiledConfiguration.GetListStringValue(Config.GetString("util_tesla_ignores", "Tutorial"));
+
+                foreach (string s in teslaIgnoredStrings)
+                {
+                    RoleType type = (RoleType) Enum.Parse(typeof(RoleType), s);
+                    if (!TeslaIgnoredRoles.Contains(type))
+                        TeslaIgnoredRoles.Add(type);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Tesla ignored roles error: {e}");
+            }
 
             if (enable914Configs)
             {
@@ -325,7 +342,7 @@ namespace Common_Utils
             bool clearOnlyPocket = Config.GetBool("util_cleanup_only_pocket", false);
             bool clearItems = Config.GetBool("util_cleanup_items", true);
 
-            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableJoinmessage, enableBroadcasting, enableCustomInv, clearRagdolls, clearRagdollTimer, clearOnlyPocket, clearItems)
+            EventHandler = new EventHandlers(upgradeHeldItems, scp914Roles, scp914Items, roleHealth, broadcastMessage, joinMessage, boradcastTime, boradcastSeconds, joinMessageTime, Inventories, autoNukeTime, enableAutoNuke, enable914Configs, enableJoinmessage, enableBroadcasting, enableCustomInv, clearRagdolls, clearRagdollTimer, clearOnlyPocket, TeslaIgnoredRoles, clearItems)
             { 
                 LockAutoNuke = Config.GetBool("util_autonuke_lock", false)
             };
@@ -334,6 +351,7 @@ namespace Common_Utils
             Events.RoundStartEvent += EventHandler.RoundStart;
             Events.RoundEndEvent += EventHandler.OnRoundEnd;
             Events.WaitingForPlayersEvent += EventHandler.OnWaitingForPlayers;
+            Events.TriggerTeslaEvent += EventHandler.OnTriggerTesla;
 
             Log.Info("Common-Utils Loaded! Created by the EXILED Team.");
 

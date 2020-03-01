@@ -43,9 +43,10 @@ namespace Common_Utils
         public float ClearRagInterval;
         public bool ClearOnlyPocket;
         public bool ClearItems;
+        public List<RoleType> TeslaIgnoredRoles = new List<RoleType>();
 
         // T H I C K constructor
-        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableJoinmessage, bool enableBroadcasting, bool enableInventories, bool clearRag, float clearInt, bool clearItems, bool clearOnlyPocket = false)
+        public EventHandlers(bool uh, Dictionary<Scp914PlayerUpgrade, Scp914Knob> roles, Dictionary<Scp914ItemUpgrade, Scp914Knob> items, Dictionary<RoleType, int> health, string bm, string jm, int bt, int bs, int jt, CustomInventory inven, int nukeTime, bool autoNuke, bool enable914, bool enableJoinmessage, bool enableBroadcasting, bool enableInventories, bool clearRag, float clearInt, bool clearItems, List<RoleType> TeslaIgnoredRoles, bool clearOnlyPocket = false)
         {
             Roles = roles;
             Items = items;
@@ -67,6 +68,7 @@ namespace Common_Utils
             ClearRagInterval = clearInt;
             ClearOnlyPocket = clearOnlyPocket;
             ClearItems = clearItems;
+            this.TeslaIgnoredRoles = TeslaIgnoredRoles;
         }
 
         IEnumerator<float> AutoNuke()
@@ -231,6 +233,12 @@ namespace Common_Utils
         {
             foreach (CoroutineHandle handle in Coroutines)
                 Timing.KillCoroutines(handle);
+        }
+
+        public void OnTriggerTesla(ref TriggerTeslaEvent ev)
+        {
+            if (TeslaIgnoredRoles.Contains(ev.Player.characterClassManager.CurClass))
+                ev.Triggerable = false;
         }
     }
 }
