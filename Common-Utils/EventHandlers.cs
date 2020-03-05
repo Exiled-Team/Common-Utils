@@ -107,7 +107,7 @@ namespace Common_Utils
                             ev.Machine.UpgradeHeldItem(hub.inventory, hub.characterClassManager, ev.Machine.players);
                     }
 
-                foreach (Pickup item in ev.Items)
+                foreach (Pickup item in ev.Items.ToList())
                 {
                     if (upgradeItems.ContainsKey(item.ItemId))
                     {
@@ -210,15 +210,15 @@ namespace Common_Utils
             for (;;)
             {
                 yield return Timing.WaitForSeconds(ClearRagInterval);
-                foreach (Ragdoll ragdoll in UnityEngine.Object.FindObjectsOfType<Ragdoll>())
+                foreach (Ragdoll ragdoll in Object.FindObjectsOfType<Ragdoll>())
                 {
                     if (ClearOnlyPocket)
                     {
                         if (ragdoll.gameObject.transform.position.y < -1000f)
-                            UnityEngine.Object.Destroy(ragdoll.gameObject);
+                            Object.Destroy(ragdoll.gameObject);
                     }
                     else
-                        UnityEngine.Object.Destroy(ragdoll.gameObject);
+                        Object.Destroy(ragdoll.gameObject);
                 }
             }
         }
@@ -239,6 +239,16 @@ namespace Common_Utils
         {
             if (TeslaIgnoredRoles.Contains(ev.Player.characterClassManager.CurClass))
                 ev.Triggerable = false;
+        }
+
+        public void OnPlayerSpawn(PlayerSpawnEvent ev)
+        {
+            if (RolesHealth.ContainsKey(ev.Role))
+                Timing.CallDelayed(0.5f, () =>
+                {
+                    ev.Player.playerStats.maxHP = RolesHealth[ev.Role];
+                    ev.Player.playerStats.health = RolesHealth[ev.Role];
+                });
         }
     }
 }

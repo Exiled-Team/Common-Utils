@@ -134,8 +134,13 @@ namespace Common_Utils
 
         public override void OnDisable()
         {
-            Events.Scp914UpgradeEvent -= EventHandler.SCP914Upgrade;
             Events.PlayerJoinEvent -= EventHandler.PlayerJoin;
+            Events.Scp914UpgradeEvent -= EventHandler.SCP914Upgrade;
+            Events.RoundStartEvent -= EventHandler.RoundStart;
+            Events.PlayerSpawnEvent -= EventHandler.OnPlayerSpawn;
+            Events.RoundEndEvent -= EventHandler.OnRoundEnd;
+            Events.WaitingForPlayersEvent -= EventHandler.OnWaitingForPlayers;
+            Events.TriggerTeslaEvent -= EventHandler.OnTriggerTesla;
 
             Timing.KillCoroutines(cor);
 
@@ -349,6 +354,7 @@ namespace Common_Utils
             Events.PlayerJoinEvent += EventHandler.PlayerJoin;
             Events.Scp914UpgradeEvent += EventHandler.SCP914Upgrade;
             Events.RoundStartEvent += EventHandler.RoundStart;
+            Events.PlayerSpawnEvent += EventHandler.OnPlayerSpawn;
             Events.RoundEndEvent += EventHandler.OnRoundEnd;
             Events.WaitingForPlayersEvent += EventHandler.OnWaitingForPlayers;
             Events.TriggerTeslaEvent += EventHandler.OnTriggerTesla;

@@ -24,7 +24,7 @@ namespace Common_Utils
 				switch (classid)
 				{
 					case RoleType.ClassD:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.ClassDRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.ClassDRan)
 							{
@@ -37,7 +37,7 @@ namespace Common_Utils
 
 						break;
 					case RoleType.ChaosInsurgency:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.ChaosRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.ChaosRan)
 							{
@@ -50,7 +50,7 @@ namespace Common_Utils
 
 						break;
 					case RoleType.NtfCadet:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.NtfCadetRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfCadetRan)
 							{
@@ -63,7 +63,7 @@ namespace Common_Utils
 
 						break;
 					case RoleType.NtfCommander:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.NtfCmdRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfCmdRan)
 							{
@@ -76,7 +76,7 @@ namespace Common_Utils
 
 						break;
 					case RoleType.NtfLieutenant:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.NtfLtRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfLtRan)
 							{
@@ -89,7 +89,7 @@ namespace Common_Utils
 
 						break;
 					case RoleType.NtfScientist:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.NtfSciRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.NtfSciRan)
 							{
@@ -102,7 +102,7 @@ namespace Common_Utils
 
 						break;
 					case RoleType.Scientist:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.ScientistRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.ScientistRan)
 							{
@@ -115,7 +115,7 @@ namespace Common_Utils
 
 						break;
 					case RoleType.FacilityGuard:
-						if (Instance.EnableRandomInv)
+						if (Instance.EnableRandomInv && Instance.Inventories.GuardRan.Any())
 						{
 							foreach (KeyValuePair<ItemType, int> item in Instance.Inventories.GuardRan)
 							{
