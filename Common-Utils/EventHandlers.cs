@@ -163,7 +163,7 @@ namespace Common_Utils
                 yield return Timing.WaitForSeconds(BSeconds);
                 foreach (ReferenceHub hub in Player.GetHubs())
                 {
-                    Extenstions.Broadcast(hub, (uint)BTime, BMessage);
+                    hub.Broadcast((uint)BTime, BMessage);
                 }
             }
         }
@@ -173,7 +173,7 @@ namespace Common_Utils
             if (!EnableJoinmessage)
                 return;
 
-            Extenstions.Broadcast(ev.Player, (uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
+            ev.Player.Broadcast((uint)JTime, JMessage.Replace("%player%", ev.Player.nicknameSync.MyNick));
         }
 
         internal void RoundStart()
@@ -185,6 +185,33 @@ namespace Common_Utils
                 Coroutines.Add(Timing.RunCoroutine(CleanupRagdolls()));
             if (ClearItems)
                 Coroutines.Add(Timing.RunCoroutine(CleanupItems()));
+            if (Instance.Scp049Healing || Instance.Scp0492Healing)
+                Coroutines.Add(Timing.RunCoroutine(DoScp049Heal()));
+        }
+
+        private IEnumerator<float> DoScp049Heal()
+        {
+            for (;;)
+            {
+                foreach (ReferenceHub hub in Player.GetHubs())
+                    if (hub.GetRole() == RoleType.Scp049)
+                    {
+                        int counter = 0;
+                        foreach (ReferenceHub rh in Player.GetHubs())
+                        {
+                            if (rh.GetRole() != RoleType.Scp0492)
+                                continue;
+                            if (Vector3.Distance(rh.GetPosition(), hub.GetPosition()) < 10f)
+                                counter++;
+                            if (Instance.Scp0492Healing)
+                                rh.SetHealth(rh.GetHealth() + Instance.Scp0492HealAmount);
+                        }
+                        if (Instance.Scp049Healing)
+                            hub.SetHealth(hub.GetHealth() + (Mathf.Pow(counter, Instance.Scp049HealPow) * Instance.Scp049HealAmount));
+                    }
+
+                yield return Timing.WaitForSeconds(5f);
+            }
         }
 
         private IEnumerator<float> CleanupItems()
@@ -249,6 +276,55 @@ namespace Common_Utils
                     ev.Player.playerStats.maxHP = RolesHealth[ev.Role];
                     ev.Player.playerStats.health = RolesHealth[ev.Role];
                 });
+        }
+
+        public void OnPlayerDeath(ref PlayerDeathEvent ev)
+        {
+            if (ev.Killer.GetRole() == RoleType.Scp096)
+                Scp096KillCount++;
+
+            if (ev.Killer.GetRole().Is939() && Instance.Scp939Healing && Instance.Gen.Next(1, 100) > 50)
+                Coroutines.Add(Timing.RunCoroutine(HealOverTime(ev.Killer, Instance.Scp939Heal), ev.Killer.GetUserId()));
+            
+            if (ev.Killer.GetRole() == RoleType.Scp173 && Instance.Scp173Healing)
+                Coroutines.Add(Timing.RunCoroutine(HealOverTime(ev.Killer, Instance.Scp173HealAmount, 5f), ev.Killer.GetUserId()));
+        }
+
+        public void OnPocketDeath(PocketDimDeathEvent ev)
+        {
+            if (Instance.Scp106Healing)
+            {
+                ReferenceHub scp = Player.GetHubs().FirstOrDefault(r => r.GetRole() == RoleType.Scp106);
+                Coroutines.Add(Timing.RunCoroutine(HealOverTime(scp, Instance.Scp106HealAmount), scp.GetUserId()));
+            }
+        }
+
+        public int Scp096KillCount;
+        public void OnEnrage(ref Scp096EnrageEvent ev)
+        {
+            Scp096KillCount = 0;
+        }
+
+        public void OnCalm(ref Scp096CalmEvent ev)
+        {
+            if (Instance.Scp096Healing)
+                Coroutines.Add(Timing.RunCoroutine(HealOverTime(ev.Player, Instance.Scp096Heal * Scp096KillCount), ev.Player.GetUserId()));
+        }
+
+        public IEnumerator<float> HealOverTime(ReferenceHub hub, int amount, float duration = 10f)
+        {
+            float amountPerTick = amount / duration;
+
+            for (int i = 0; i < duration; i++)
+            {
+                hub.SetHealth(hub.GetHealth() + amountPerTick);
+                yield return Timing.WaitForSeconds(1f);
+            }
+        }
+
+        public void OnPlayerHurt(ref PlayerHurtEvent ev)
+        {
+            Timing.KillCoroutines(ev.Player.GetUserId());
         }
     }
 }
