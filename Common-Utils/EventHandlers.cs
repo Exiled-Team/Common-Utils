@@ -203,11 +203,13 @@ namespace Common_Utils
                                 continue;
                             if (Vector3.Distance(rh.GetPosition(), hub.GetPosition()) < 10f)
                                 counter++;
-                            if (Instance.Scp0492Healing)
+                            if (Instance.Scp0492Healing && (rh.GetHealth() + Instance.Scp0492HealAmount) <= rh.playerStats.maxHP)
                                 rh.SetHealth(rh.GetHealth() + Instance.Scp0492HealAmount);
                         }
-                        if (Instance.Scp049Healing)
-                            hub.SetHealth(hub.GetHealth() + (Mathf.Pow(counter, Instance.Scp049HealPow) * Instance.Scp049HealAmount));
+
+                        float healing = (float)Math.Pow(counter, Instance.Scp049HealPow) * Instance.Scp0492HealAmount;
+                        if (Instance.Scp049Healing && (hub.GetHealth() + healing) <= hub.playerStats.maxHP)
+                            hub.SetHealth(hub.GetHealth() + healing);
                     }
 
                 yield return Timing.WaitForSeconds(5f);
@@ -317,6 +319,8 @@ namespace Common_Utils
 
             for (int i = 0; i < duration; i++)
             {
+                if ((hub.GetHealth() + amountPerTick) > hub.playerStats.maxHP)
+                    break;
                 hub.SetHealth(hub.GetHealth() + amountPerTick);
                 yield return Timing.WaitForSeconds(1f);
             }
