@@ -128,10 +128,11 @@ namespace Common_Utils
                 foreach (ReferenceHub player in ev.Players)
                     if (upgrades.ContainsKey(player.characterClassManager.CurClass))
                     {
+                        float healthPerc = player.GetHealth() / player.GetMaxHealth();
                         Inventory inv = player.inventory;
                         Vector3 oldPos = player.gameObject.transform.position;
                         player.characterClassManager.NetworkCurClass = upgrades[player.characterClassManager.CurClass];
-                        Timing.RunCoroutine(TeleportToOutput(player, oldPos, tpPos, inv));
+                        Timing.RunCoroutine(TeleportToOutput(player, oldPos, tpPos, inv, healthPerc));
                     }
             }
             catch (Exception e)
@@ -140,15 +141,20 @@ namespace Common_Utils
             }
         }
 
-        private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 oldPos, Vector3 tpPos, Inventory inv)
+        private IEnumerator<float> TeleportToOutput(ReferenceHub hub, Vector3 oldPos, Vector3 tpPos, Inventory inv, float healthPerc)
         {
-            yield return Timing.WaitForSeconds(1.1f);
+            yield return Timing.WaitForSeconds(1.5f);
 
             DebugBoi("Teleporting " + hub.nicknameSync.MyNick + " to the output of 914.");
 
+            hub.playerStats.SetHPAmount(hub.characterClassManager.Classes.SafeGet(hub.GetRole()).maxHP);
             hub.plyMovementSync.OverridePosition(oldPos + tpPos, hub.gameObject.transform.rotation.y);
+
+            yield return Timing.WaitForSeconds(0.5f);
             hub.inventory.Clear();
-            hub.inventory = inv;
+            foreach (var item in inv.items)
+                hub.AddItem(item);
+            hub.SetHealth(hub.characterClassManager.Classes.SafeGet(hub.GetRole()).maxHP * healthPerc);
         }
 
         public void SpawnItem(ItemType type, Vector3 pos, Vector3 rot)
