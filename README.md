@@ -16,7 +16,7 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 util_enable: true
 util_debug: false
 util_914_enable: true
-util_role_health: NtfCommand:400,NtfScientist:350 
+util_role_health: NtfCommander:400,NtfScientist:350 
 util_914_upgrade_hand: true
 util_914_roles: Scientist-ClassD:Coarse, ClassD-Spectator:Rough 
 util_914_items: Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne 
