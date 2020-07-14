@@ -11,6 +11,8 @@
 /Common-Utils/bin/Debug/Common-Utils.pdb
 /Common-Utils/obj/Debug/Common-Utils.pdb
 /Common-Utils.sln.DotSettings.user
+/packages
+/.idea
 /.idea/.idea.Common-Utils/.idea/contentModel.xml
 /.idea/.idea.Common-Utils/.idea/discord.xml
 /Common-Utils/bin/Debug/DissonanceVoip.dll
