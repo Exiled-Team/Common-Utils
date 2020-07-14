@@ -10,20 +10,30 @@ namespace Common_Utilities
 {
     public class Config : IConfig
     {
+        [Description("Wether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
+        [Description("Wether or not SCP-049 should be able to talk to humans.")]
         public bool Scp049Speech { get; set; } = true;
         
+        [Description("The text displayed at the timed interval specified below.")]
         public string TimedBroadcast { get; set; } = "<color=lime>This server is running <color=red>EXILED Common-Utilities</color>, enjoy your stay!";
+        [Description("The time each timed broadcast will be displayed.")]
         public ushort TimedBroadcastDuration { get; set; } = 5;
+        [Description("The delay between each timed broadcast. To disable timed broadcasts, set this to 0")]
         public float TimedBroadcastDelay { get; set; } = 300f;
 
+        [Description("The message displayed to the player when they first join the server. Setting this to empty will disable these broadcasts.")]
         public string JoinMessage { get; set; } = "<color=lime>Welcome %player%! Please read our rules!</color>";
+        [Description("The amount of time (in seconds) the join message is displayed.")]
         public ushort JoinMessageDuration { get; set; } = 5;
 
+        [Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.")]
         public float AutonukeTime { get; set; } = 600f;
+        [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
         
+        [Description("The list of items Class-D should have. Valid formatting should be ItemType:Chance where ItemType is the item to give them, and Chance is the percent chance of them spawning with it. You can specify the same item multiple times. This is true for all Inventory configs.")]
         public List<string> ClassDInventory { get; set; } = new List<string>();
         public List<string> ChaosInventory { get; set; } = new List<string>();
         public List<string> ScientistInventory { get; set; } = new List<string>();
@@ -33,13 +43,16 @@ namespace Common_Utilities
         public List<string> CommanderInventory { get; set; } = new List<string>();
         public List<string> NtfSciInventory { get; set; } = new List<string>();
         
+        [Description("The list of custom 914 recipies for the Rough setting. Valid formatting should be OriginalItemType:NewItemType:Chance where OriginalItem is the item being upgraded, NewItem is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item. This is true for all 914 configs.")]
         public List<string> Scp914RoughChances { get; set; } = new List<string>();
         public List<string> Scp914CoarseChances { get; set; } = new List<string>();
         public List<string> Scp914OnetoOneChances { get; set; } = new List<string>();
         public List<string> Scp914FineChances { get; set; } = new List<string>();
         public List<string> Scp914VeryFineChances { get; set; } = new List<string>();
 
+        [Description("The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.")]
         public float RagdollCleanupDelay { get; set; } = 300f;
+        [Description("The frequency (in seconds) between item cleanups. Set to 0 to disable.")]
         public float ItemCleanupDelay { get; set; } = 300f;
 
         public Dictionary<string, float> HealthOnKill { get; set; } = new Dictionary<string, float>();
