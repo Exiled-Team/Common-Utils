@@ -11,6 +11,7 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 ## Custom Inventories
 - Ability to add custom inventories to all the main classes.
 
+(These are depricated, if you are using the Exiled 2.0 version of the plugin)
 # Default config:
 ```yaml
 util_enable: true
