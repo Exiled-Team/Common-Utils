@@ -66,7 +66,7 @@ namespace Common_Utilities
 
 
         [Description("If the plugin is enabled or not.")]
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = true;
         
         internal void ParseHealthOnKill()
         {
@@ -126,12 +126,12 @@ namespace Common_Utilities
         {
             foreach (PropertyInfo configSetting in GetType().GetProperties())
             {
-                if (configSetting.Name.Contains("Scp914"))
+                if (!configSetting.Name.Contains("Scp914"))
                     continue;
 
                 string configName = configSetting.Name;
 
-                List<string> list = (List<string>) GetType().GetMethod($"get_{configName}", BindingFlags.Public)?.Invoke(this, null);
+                List<string> list = (List<string>) configSetting.GetValue(this);
                 Scp914Knob knobSetting = Scp914Knob.Rough;
 
                 switch (configName)
@@ -213,7 +213,7 @@ namespace Common_Utilities
                 
                 string configName = configSetting.Name;
                 
-                List<string> list = (List<string>) GetType().GetMethod($"get_{configName}", BindingFlags.Public)?.Invoke(this, null);
+                List<string> list = (List<string>) configSetting.GetValue(this);
                 RoleType role = RoleType.None;
                 switch (configName)
                 {
