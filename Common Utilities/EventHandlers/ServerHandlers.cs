@@ -50,9 +50,10 @@ namespace Common_Utilities.EventHandlers
             for (;;)
             {
                 yield return Timing.WaitForSeconds(plugin.Config.ItemCleanupDelay);
-                
+
                 foreach (Pickup item in Object.FindObjectsOfType<Pickup>())
-                    item.Delete();
+                    if (!plugin.Config.ItemCleanupOnlyPocket || item.position.y < -1500f)
+                        item.Delete();
             }
         }
 
@@ -63,7 +64,8 @@ namespace Common_Utilities.EventHandlers
                 yield return Timing.WaitForSeconds(plugin.Config.RagdollCleanupDelay);
                 
                 foreach (Ragdoll ragdoll in Object.FindObjectsOfType<Ragdoll>())
-                    Object.Destroy(ragdoll);
+                    if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.transform.position.y < -1500f)
+                        Object.Destroy(ragdoll);
             }
         }
 

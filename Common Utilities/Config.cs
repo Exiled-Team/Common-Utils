@@ -52,8 +52,15 @@ namespace Common_Utilities
 
         [Description("The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.")]
         public float RagdollCleanupDelay { get; set; } = 300f;
+
+        [Description("If ragdoll cleanup should only happen in the Pocket Dimension or not.")]
+        public bool RagdollCleanupOnlyPocket { get; set; } = false;
+        
         [Description("The frequency (in seconds) between item cleanups. Set to 0 to disable.")]
         public float ItemCleanupDelay { get; set; } = 300f;
+
+        [Description("If item cleanup should only happen in the Pocket Dimension or not.")]
+        public bool ItemCleanupOnlyPocket { get; set; } = false;
 
         public Dictionary<string, float> HealthOnKill { get; set; } = new Dictionary<string, float>();
         
