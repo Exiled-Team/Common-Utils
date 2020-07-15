@@ -1,3 +1,5 @@
+using HarmonyLib;
+
 namespace Common_Utilities
 {
     using System;
@@ -25,6 +27,7 @@ namespace Common_Utilities
         public List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
         public Random Gen = new Random();
         public static Plugin Singleton;
+        public Harmony Instance;
 
         public override void OnEnabled()
         {
@@ -64,6 +67,9 @@ namespace Common_Utilities
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
 
             Scp914.UpgradingItems += MapHandlers.OnScp914UpgradingItems;
+            
+            Instance = new Harmony("com.galaxy.cu");
+            Instance.PatchAll();
 
             base.OnEnabled();
         }
@@ -79,6 +85,7 @@ namespace Common_Utilities
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
             
             Scp914.UpgradingItems -= MapHandlers.OnScp914UpgradingItems;
+            Instance.UnpatchAll();
 
             base.OnDisabled();
         }
