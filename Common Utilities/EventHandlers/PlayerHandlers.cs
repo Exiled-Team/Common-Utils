@@ -35,7 +35,12 @@ namespace Common_Utilities.EventHandlers
         public void OnPlayerDied(DiedEventArgs ev)
         {
             if (plugin.Config.HealOnKill.ContainsKey(ev.Killer.Role))
-                ev.Killer.Health += plugin.Config.HealOnKill[ev.Killer.Role];
+            {
+                if (ev.Killer.Health + plugin.Config.HealOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)
+                    ev.Killer.Health += plugin.Config.HealOnKill[ev.Killer.Role];
+                else
+                    ev.Killer.Health = ev.Killer.MaxHealth;
+            }
         }
 
         public List<ItemType> StartItems(RoleType role)

@@ -62,9 +62,27 @@ namespace Common_Utilities
         [Description("If item cleanup should only happen in the Pocket Dimension or not.")]
         public bool ItemCleanupOnlyPocket { get; set; } = false;
 
-        public Dictionary<string, float> HealthOnKill { get; set; } = new Dictionary<string, float>();
+        [Description("A list of roles and how much health they should be given when they kill someone.")]
+        public Dictionary<string, float> HealthOnKill { get; set; } = new Dictionary<string, float>
+        {
+            {
+                "Scp173", 125
+            },
+            {
+                "Scp096", 70
+            }
+        };
         
-        public Dictionary<string, int> HealthValues { get; set; } = new Dictionary<string, int>();
+        [Description("A list of roles and what their default starting health should be.")]
+        public Dictionary<string, int> HealthValues { get; set; } = new Dictionary<string, int>
+        {
+            {
+                "Scp173", 3000
+            },
+            {
+                "NtfCommander", 200
+            }
+        };
 
         internal Dictionary<RoleType, List<Tuple<ItemType, int>>> Inventories = new Dictionary<RoleType, List<Tuple<ItemType, int>>>();
         internal Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>>();
