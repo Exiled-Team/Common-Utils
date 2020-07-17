@@ -27,6 +27,8 @@ namespace Common_Utilities.EventHandlers
         {
             if (plugin.Config.TimedBroadcastDelay > 0)
                 Timing.RunCoroutine(ServerBroadcast());
+            
+            Warhead.IsWarheadLocked = false;
         }
         
         public void OnRoundEnded(RoundEndedEventArgs ev)
