@@ -17,7 +17,7 @@ namespace Common_Utilities
         public bool Scp049Speech { get; set; } = true;
         
         [Description("The text displayed at the timed interval specified below.")]
-        public string TimedBroadcast { get; set; } = "<color=lime>This server is running <color=red>EXILED Common-Utilities</color>, enjoy your stay!";
+        public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
         [Description("The time each timed broadcast will be displayed.")]
         public ushort TimedBroadcastDuration { get; set; } = 5;
         [Description("The delay between each timed broadcast. To disable timed broadcasts, set this to 0")]
