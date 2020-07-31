@@ -187,7 +187,7 @@ namespace Common_Utilities
                 {
                     role = (RoleType) Enum.Parse(typeof(RoleType), healOnKillSetting.Key, true);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Log.Error($"Unable to parse Health on Kill Role: {healOnKillSetting.Key}.");
                     continue;
@@ -213,7 +213,7 @@ namespace Common_Utilities
                 {
                     role = (RoleType) Enum.Parse(typeof(RoleType), healthSetting.Key, true);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Log.Error($"Unable to parse Role: {healthSetting.Key}");
                     continue;
@@ -282,7 +282,7 @@ namespace Common_Utilities
                     {
                         sourceItem = (ItemType) Enum.Parse(typeof(ItemType), rawChances[0]);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Log.Error($"Unable to parse source item: {rawChances[0]}.");
                         continue;
@@ -292,7 +292,7 @@ namespace Common_Utilities
                     {
                         destinationItem = (ItemType) Enum.Parse(typeof(ItemType), rawChances[1]);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Log.Error($"Unable to parse destination item: {rawChances[1]}");
                         continue;
@@ -384,7 +384,7 @@ namespace Common_Utilities
                     {
                         item = (ItemType) Enum.Parse(typeof(ItemType), rawChance[0], true);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Log.Error($"Unable to parse item: {rawChance[0]} in {configName} inventory settings.");
                         continue;

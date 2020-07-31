@@ -22,7 +22,10 @@ namespace Common_Utilities.EventHandlers
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
             if (plugin.Config.Inventories.ContainsKey(ev.NewRole))
-                ev.Items = StartItems(ev.NewRole);
+            {
+                ev.Items.Clear();
+                ev.Items.AddRange(StartItems(ev.NewRole));
+            }
 
             if (plugin.Config.Health.ContainsKey(ev.NewRole))
                 Timing.CallDelayed(1.5f, () =>

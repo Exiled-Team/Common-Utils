@@ -28,7 +28,7 @@ namespace Common_Utilities.EventHandlers
             if (plugin.Config.TimedBroadcastDelay > 0)
                 plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
             
-            Warhead.IsWarheadLocked = false;
+            Warhead.IsLocked = false;
         }
         
         public void OnRoundEnded(RoundEndedEventArgs ev)
@@ -78,7 +78,7 @@ namespace Common_Utilities.EventHandlers
             Warhead.Start();
 
             if (plugin.Config.AutonukeLock)
-                Warhead.IsWarheadLocked = true;
+                Warhead.IsLocked = true;
         }
 
         public void OnRestartingRound()
