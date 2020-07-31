@@ -67,6 +67,7 @@ namespace Common_Utilities
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
+            Server.RestartingRound += ServerHandlers.OnRestartingRound;
 
             Scp914.UpgradingItems += MapHandlers.OnScp914UpgradingItems;
 

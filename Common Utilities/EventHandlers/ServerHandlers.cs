@@ -80,5 +80,11 @@ namespace Common_Utilities.EventHandlers
             if (plugin.Config.AutonukeLock)
                 Warhead.IsWarheadLocked = true;
         }
+
+        public void OnRestartingRound()
+        {
+            foreach (CoroutineHandle coroutine in plugin.Coroutines)
+                Timing.KillCoroutines(coroutine);
+        }
     }
 }
