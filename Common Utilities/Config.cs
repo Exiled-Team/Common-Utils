@@ -50,7 +50,25 @@ namespace Common_Utilities
         public List<string> Scp914FineChances { get; set; } = new List<string>();
         public List<string> Scp914VeryFineChances { get; set; } = new List<string>();
         
-        public Dictionary<string, List<string>> Scp914ClassChanges { get; set; } = new Dictionary<string, List<string>>();
+        [Description("The list of custom 914 recipies for 914. Valid formatting is OriginalRole:NewRole:Chance - IE: ClassD:Spectator:100 - for each knob setting defined.")]
+        public Dictionary<string, List<string>> Scp914ClassChanges { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "Rough", new List<string>()
+            },
+            {
+                "Coarse", new List<string>()
+            },
+            {
+                "OneToOne", new List<string>()
+            },
+            {
+                "Fine", new List<string>()
+            },
+            {
+                "VeryFine", new List<string>()
+            }
+        };
 
         [Description("The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.")]
         public float RagdollCleanupDelay { get; set; } = 300f;
@@ -106,6 +124,9 @@ namespace Common_Utilities
 
                     foreach (string chances in setting.Value)
                     {
+                        if (string.IsNullOrEmpty(chances))
+                            continue;
+                        
                         string[] split = chances.Split(':');
 
                         if (split.Length < 3)
@@ -214,7 +235,7 @@ namespace Common_Utilities
         {
             foreach (PropertyInfo configSetting in GetType().GetProperties())
             {
-                if (!configSetting.Name.Contains("Scp914"))
+                if (!configSetting.Name.Contains("Scp914") || configSetting.Name == nameof(Scp914ClassChanges))
                     continue;
 
                 string configName = configSetting.Name;
