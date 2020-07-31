@@ -26,7 +26,7 @@ namespace Common_Utilities.EventHandlers
         public void OnWaitingForPlayers()
         {
             if (plugin.Config.TimedBroadcastDelay > 0)
-                Timing.RunCoroutine(ServerBroadcast());
+                plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
             
             Warhead.IsWarheadLocked = false;
         }

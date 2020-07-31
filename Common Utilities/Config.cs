@@ -49,6 +49,8 @@ namespace Common_Utilities
         public List<string> Scp914OnetoOneChances { get; set; } = new List<string>();
         public List<string> Scp914FineChances { get; set; } = new List<string>();
         public List<string> Scp914VeryFineChances { get; set; } = new List<string>();
+        
+        public Dictionary<string, List<string>> Scp914ClassChanges { get; set; } = new Dictionary<string, List<string>>();
 
         [Description("The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.")]
         public float RagdollCleanupDelay { get; set; } = 300f;
@@ -88,10 +90,71 @@ namespace Common_Utilities
         internal Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>>();
         internal Dictionary<RoleType, int> Health = new Dictionary<RoleType, int>();
         internal Dictionary<RoleType, float> HealOnKill = new Dictionary<RoleType, float>();
+        internal Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>> Scp914RoleChanges = new Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>>();
 
 
         [Description("If the plugin is enabled or not.")]
         public bool IsEnabled { get; set; } = true;
+
+        internal void Parse914ClassChanges()
+        {
+            foreach (KeyValuePair<string, List<string>> setting in Scp914ClassChanges)
+            {
+                try
+                {
+                    Scp914Knob knob = (Scp914Knob) Enum.Parse(typeof(Scp914Knob), setting.Key);
+
+                    foreach (string chances in setting.Value)
+                    {
+                        string[] split = chances.Split(':');
+
+                        if (split.Length < 3)
+                        {
+                            Log.Error($"Unable to parse SCP-914 class chance: {chances}. Invalid number of splits.");
+                            continue;
+                        }
+
+                        RoleType originalRole;
+                        RoleType newRole;
+                        try
+                        {
+                            originalRole = (RoleType) Enum.Parse(typeof(RoleType), split[0]);
+                        }
+                        catch (Exception)
+                        {
+                            Log.Warn($"Unable to parse role: {split[0]} for {chances}.");
+                            continue;
+                        }
+
+                        try
+                        {
+                            newRole = (RoleType) Enum.Parse(typeof(RoleType), split[1]);
+                        }
+                        catch (Exception)
+                        {
+                            Log.Warn($"Unable to parse role: {split[1]} for {chances}.");
+                            continue;
+                        }
+
+                        if (!int.TryParse(split[2], out int chance))
+                        {
+                            Log.Warn($"Unable to parse chance {split[2]} for {chance}. Invalid integer.");
+                            continue;
+                        }
+                        
+                        if (!Scp914RoleChanges.ContainsKey(knob))
+                            Scp914RoleChanges.Add(knob, new List<Tuple<RoleType,RoleType, int>>());
+                        
+                        Scp914RoleChanges[knob].Add(new Tuple<RoleType, RoleType, int>(originalRole, newRole, chance));
+                    }
+                }
+                catch (Exception)
+                {
+                    Log.Warn($"Unable to parse {setting.Key} as a SCP-914 knob setting.");
+                    continue;
+                }
+            }
+        }
         
         internal void ParseHealthOnKill()
         {
