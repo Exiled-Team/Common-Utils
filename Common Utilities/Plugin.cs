@@ -17,7 +17,7 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Galaxy119";
-        public override Version Version { get; } = new Version(1, 0, 5);
+        public override Version Version { get; } = new Version(1, 0, 6);
         public override Version RequiredExiledVersion { get; } = new Version(2, 0, 9);
         public override string Prefix { get; } = "CommonUtilities";
         

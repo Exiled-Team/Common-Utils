@@ -79,9 +79,12 @@ namespace Common_Utilities.EventHandlers
                     {
                         if (player.Role != originalRole)
                             continue;
-                        
+
                         if (plugin.Gen.Next(100) <= chance)
+                        {
                             player.SetRole(newRole, true);
+                            break;
+                        }
                     }
                 }
             }
