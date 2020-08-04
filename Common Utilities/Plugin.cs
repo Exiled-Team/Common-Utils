@@ -10,14 +10,12 @@ namespace Common_Utilities
     using Server = Exiled.Events.Handlers.Server;
     using Player = Exiled.Events.Handlers.Player;
     using Scp914 = Exiled.Events.Handlers.Scp914;
-    using Map = Exiled.Events.Handlers.Map;
-    using Warhead = Exiled.Events.Handlers.Warhead;
 
     public class Plugin : Exiled.API.Features.Plugin<Config>
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Galaxy119";
-        public override Version Version { get; } = new Version(1, 0, 7);
+        public override Version Version { get; } = new Version(1, 0, 8);
         public override Version RequiredExiledVersion { get; } = new Version(2, 0, 10);
         public override string Prefix { get; } = "CommonUtilities";
         

@@ -26,7 +26,10 @@ namespace Common_Utilities.EventHandlers
                             continue;
 
                         if (plugin.Gen.Next(100) <= chance)
+                        {
                             UpgradeItem(item, destinationItem);
+                            break;
+                        }
                     }
                 }
 
@@ -47,6 +50,7 @@ namespace Common_Utilities.EventHandlers
                                 {
                                     player.RemoveItem(player.CurrentItem);
                                     player.AddItem(destinationItem);
+                                    break;
                                 }
                             }
                         }
@@ -63,6 +67,7 @@ namespace Common_Utilities.EventHandlers
                                     {
                                         player.RemoveItem(item);
                                         player.AddItem(destinationItem);
+                                        break;
                                     }
                                 }
                             }
