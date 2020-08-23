@@ -10,12 +10,24 @@ namespace Common_Utilities
 {
     public class Config : IConfig
     {
-        [Description("Wether or not debug messages should be shown.")]
+        [Description("Whether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("Wether or not SCP-049 should be able to talk to humans.")]
+        [Description("Whether or not SCP-049 should be able to talk to humans.")]
         public bool Scp049Speech { get; set; } = true;
-        
+
+        [Description("Whether or not SCP-049-2 should be able to talk to humans.")]
+        public bool Scp0492Speech { get; set; } = true;
+
+        [Description("Whether or not SCP-096 should be able to talk to humans.")]
+        public bool Scp096Speech { get; set; } = true;
+
+        [Description("Whether or not SCP-106 should be able to talk to humans.")]
+        public bool Scp106Speech { get; set; } = true;
+
+        [Description("Whether or not SCP-173 should be able to talk to humans.")]
+        public bool Scp173Speech { get; set; } = true;
+
         [Description("The text displayed at the timed interval specified below.")]
         public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
         [Description("The time each timed broadcast will be displayed.")]
