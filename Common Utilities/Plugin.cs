@@ -60,13 +60,13 @@ namespace Common_Utilities
             Player.Joined += PlayerHandlers.OnPlayerJoined;
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
             Player.Died += PlayerHandlers.OnPlayerDied;
-            
+            Player.Hurting += PlayerHandlers.OnPlayerHurt;
 
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
-
+			
             Scp914.UpgradingItems += MapHandlers.OnScp914UpgradingItems;
 
             Instance = new Harmony("com.galaxy.cu");
@@ -75,16 +75,17 @@ namespace Common_Utilities
             base.OnEnabled();
         }
 
-        public override void OnDisabled()
+        public override void OnDisabled()   
         {
             Player.Joined -= PlayerHandlers.OnPlayerJoined;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
             Player.Died -= PlayerHandlers.OnPlayerDied;
+            Player.Hurting -= PlayerHandlers.OnPlayerHurt;
 
             Server.RoundStarted -= ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers -= ServerHandlers.OnWaitingForPlayers;
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
-            
+			
             Scp914.UpgradingItems -= MapHandlers.OnScp914UpgradingItems;
             Instance.UnpatchAll();
 
