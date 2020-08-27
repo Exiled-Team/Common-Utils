@@ -10,22 +10,22 @@ namespace Common_Utilities
 {
     public class Config : IConfig
     {
-        [Description("Whether or not debug messages should be shown.")]
+        [Description("Wether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("Whether or not SCP-049 should be able to talk to humans.")]
+        [Description("Wether or not SCP-049 should be able to talk to humans.")]
         public bool Scp049Speech { get; set; } = true;
 
-        [Description("Whether or not SCP-049-2 should be able to talk to humans.")]
+        [Description("Wether or not SCP-049-2 should be able to talk to humans.")]
         public bool Scp0492Speech { get; set; } = true;
 
-        [Description("Whether or not SCP-096 should be able to talk to humans.")]
+        [Description("Wether or not SCP-096 should be able to talk to humans.")]
         public bool Scp096Speech { get; set; } = true;
 
-        [Description("Whether or not SCP-106 should be able to talk to humans.")]
+        [Description("Wether or not SCP-106 should be able to talk to humans.")]
         public bool Scp106Speech { get; set; } = true;
 
-        [Description("Whether or not SCP-173 should be able to talk to humans.")]
+        [Description("Wether or not SCP-173 should be able to talk to humans.")]
         public bool Scp173Speech { get; set; } = true;
 
         [Description("The text displayed at the timed interval specified below.")]
@@ -87,12 +87,18 @@ namespace Common_Utilities
 
         [Description("If ragdoll cleanup should only happen in the Pocket Dimension or not.")]
         public bool RagdollCleanupOnlyPocket { get; set; } = false;
+		
+        [Description("If ragdoll cleanup should happen everywhere except the Pocket Dimension or not.")]
+        public bool RagdollCleanupNotPocket { get; set; } = false;
         
         [Description("The frequency (in seconds) between item cleanups. Set to 0 to disable.")]
         public float ItemCleanupDelay { get; set; } = 300f;
 
         [Description("If item cleanup should only happen in the Pocket Dimension or not.")]
         public bool ItemCleanupOnlyPocket { get; set; } = false;
+		
+        [Description("If item cleanup should happen everywhere except the Pocket Dimension or not.")]
+        public bool ItemCleanupNotPocket { get; set; } = false;
 
         [Description("A list of roles and how much health they should be given when they kill someone.")]
         public Dictionary<string, float> HealthOnKill { get; set; } = new Dictionary<string, float>
