@@ -46,6 +46,11 @@ namespace Common_Utilities.EventHandlers
             }
         }
 
+        public void OnPlayerHurt(HurtingEventArgs ev)
+        {
+            if (ev.Attacker.Role.Is939()) ev.Target.ReferenceHub.playerEffectsController.EnableEffect<CustomPlayerEffects.Amnesia>(plugin.Config.ExtraAmnesia);
+        }
+
         public List<ItemType> StartItems(RoleType role)
         {
             List<ItemType> items = new List<ItemType>();
