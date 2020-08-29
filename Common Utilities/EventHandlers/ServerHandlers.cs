@@ -11,7 +11,44 @@ namespace Common_Utilities.EventHandlers
     {
         private readonly Plugin plugin;
         public ServerHandlers(Plugin plugin) => this.plugin = plugin;
-        
+
+        public void OnConsoleCommand(SendingConsoleCommandEventArgs ev)
+        {
+            if (ev.Name.ToLower().Contains("nukelockdown"))
+            {
+                ev.Allow = false;
+                if (ev.Player.Role == RoleType.Scp079 && Warhead.IsInProgress && plugin.Config.NukeLockdown)
+                {
+                    if (ev.Player.Energy < plugin.Config.NukeLockdownCost)
+                    {
+                        ev.ReturnMessage = $"Energy too low. You need {plugin.Config.NukeLockdownCost} energy for this command.";
+                        ev.Color = "Red";
+                        return;
+                    }
+                    Generator079.Generators[0].ServerOvercharge(plugin.Config.NukeLockdownDuration, false);
+                    foreach (Door door in UnityEngine.Object.FindObjectsOfType<Door>())
+                    {
+                        door.SetStateWithSound(false);
+                        door.Networklocked = true;
+                    }
+                    Timing.CallDelayed(plugin.Config.NukeLockdownDuration, () =>
+                    {
+                        foreach (Door door in UnityEngine.Object.FindObjectsOfType<Door>())
+                        {
+                            door.Networklocked = false;
+                        }
+                    });
+                    return;
+                }
+                else
+                {
+                    ev.ReturnMessage = "You can't use this command!";
+                    ev.Color = "Red";
+                    return;
+                }
+            }
+		}
+		
         public void OnRoundStarted()
         {
             if (plugin.Config.AutonukeTime > -1)
