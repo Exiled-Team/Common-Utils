@@ -26,14 +26,14 @@ namespace Common_Utilities.EventHandlers
                         return;
                     }
                     Generator079.Generators[0].ServerOvercharge(plugin.Config.NukeLockdownDuration, false);
-                    foreach (Door door in UnityEngine.Object.FindObjectsOfType<Door>())
+                    foreach (Door door in Map.Doors)
                     {
                         door.SetStateWithSound(false);
                         door.Networklocked = true;
                     }
                     Timing.CallDelayed(plugin.Config.NukeLockdownDuration, () =>
                     {
-                        foreach (Door door in UnityEngine.Object.FindObjectsOfType<Door>())
+                        foreach (Door door in Map.Doors)
                         {
                             door.Networklocked = false;
                         }
