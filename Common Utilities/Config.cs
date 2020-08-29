@@ -31,6 +31,9 @@ namespace Common_Utilities
         [Description("Extra SCP-939 amnesia duration.")]
         public ushort ExtraAmnesia { get; set; } = 0;
 
+        [Description("SCP-106 damage.")]
+        public ushort Scp106Damage { get; set; } = 40;
+
         [Description("The text displayed at the timed interval specified below.")]
         public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
         [Description("The time each timed broadcast will be displayed.")]
@@ -45,9 +48,12 @@ namespace Common_Utilities
 
         [Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.")]
         public float AutonukeTime { get; set; } = 600f;
-        [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
+        [Description("Whether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
-        
+
+        [Description("Message said by Cassie after auto-nuke activation.")]
+        public string AutonukeCassieMessage { get; set; } = "automatic alpha warhead will be activated in tminus 30 seconds . it can't be disabled. please evacuate the facility";
+
         [Description("The list of items Class-D should have. Valid formatting should be ItemType:Chance where ItemType is the item to give them, and Chance is the percent chance of them spawning with it. You can specify the same item multiple times. This is true for all Inventory configs.")]
         public List<string> ClassDInventory { get; set; } = new List<string>();
         public List<string> ChaosInventory { get; set; } = new List<string>();
