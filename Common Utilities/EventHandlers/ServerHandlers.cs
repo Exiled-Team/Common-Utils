@@ -3,6 +3,7 @@ namespace Common_Utilities.EventHandlers
     using System.Collections.Generic;
     using Exiled.API.Features;
     using Exiled.Events.EventArgs;
+    using Respawning;
     using MEC;
     using UnityEngine;
     
@@ -74,8 +75,10 @@ namespace Common_Utilities.EventHandlers
         private IEnumerator<float> AutoNuke()
         {
             yield return Timing.WaitForSeconds(plugin.Config.AutonukeTime);
-            
+            RespawnEffectsController.PlayCassieAnnouncement(plugin.Config.AutonukeCassieMessage, false, true);
+            yield return Timing.WaitForSeconds(30);
             Warhead.Start();
+            
 
             if (plugin.Config.AutonukeLock)
                 Warhead.IsLocked = true;
