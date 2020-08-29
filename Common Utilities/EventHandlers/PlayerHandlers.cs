@@ -6,7 +6,7 @@ namespace Common_Utilities.EventHandlers
     using Exiled.Events.EventArgs;
     using MEC;
     using Player = Exiled.API.Features.Player;
-    
+
     public class PlayerHandlers
     {
         private readonly Plugin plugin;
@@ -18,7 +18,7 @@ namespace Common_Utilities.EventHandlers
             if (!string.IsNullOrEmpty(message))
                 ev.Player.Broadcast(plugin.Config.JoinMessageDuration, message);
         }
-        
+
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
             if (plugin.Config.Inventories.ContainsKey(ev.NewRole))
@@ -34,7 +34,7 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
                 });
         }
-        
+
         public void OnPlayerDied(DiedEventArgs ev)
         {
             if (plugin.Config.HealOnKill.ContainsKey(ev.Killer.Role))
@@ -48,7 +48,11 @@ namespace Common_Utilities.EventHandlers
 
         public void OnPlayerHurt(HurtingEventArgs ev)
         {
-            if (plugin.Config.ExtraAmnesia > 0 & ev.Attacker.Role.Is939() & !ev.Target.Role.Is939()) ev.Target.ReferenceHub.playerEffectsController.EnableEffect<CustomPlayerEffects.Amnesia>(plugin.Config.ExtraAmnesia);
+            if (ev.Target != ev.Attacker)
+            {
+                if (plugin.Config.ExtraAmnesia > 0 && ev.Attacker.Role.Is939()) ev.Target.ReferenceHub.playerEffectsController.EnableEffect<CustomPlayerEffects.Amnesia>(plugin.Config.ExtraAmnesia);
+                if (plugin.Config.Scp106Damage != 40 && ev.Attacker.Role == RoleType.Scp106) ev.Amount = plugin.Config.Scp106Damage;
+            }
         }
 
         public List<ItemType> StartItems(RoleType role)
@@ -57,7 +61,7 @@ namespace Common_Utilities.EventHandlers
 
             if (plugin.Config.Inventories[role] == default)
                 return items;
-            
+
             foreach (Tuple<ItemType, int> itemChance in plugin.Config.Inventories[role])
             {
                 if (plugin.Gen.Next(100) <= itemChance.Item2)
@@ -67,7 +71,7 @@ namespace Common_Utilities.EventHandlers
             return items;
         }
 
-        private string FormatJoinMessage(Player player) => 
+        private string FormatJoinMessage(Player player) =>
             string.IsNullOrEmpty(plugin.Config.JoinMessage) ? string.Empty : plugin.Config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
     }
 }
