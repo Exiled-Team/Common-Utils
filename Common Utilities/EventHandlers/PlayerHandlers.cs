@@ -33,6 +33,12 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.Health = plugin.Config.Health[ev.NewRole];
                     ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
                 });
+
+            if (plugin.Config.ChaosvsmtfTeamDeathmatch)
+                Timing.CallDelayed(1.5f, () =>
+                {
+                    if (ev.NewRole == RoleType.FacilityGuard) ev.NewRole = RoleType.NtfCadet;
+                });
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
