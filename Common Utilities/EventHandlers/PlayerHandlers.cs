@@ -34,7 +34,7 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.Health = plugin.Config.Health[ev.NewRole];
                     ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
                 });
-			
+
 			if (plugin.Config.AnnounceDclassScientistsElimination)
 			{
 				if (ev.Player.Role == RoleType.ClassD && Player.Get(RoleType.ClassD) != null) 
