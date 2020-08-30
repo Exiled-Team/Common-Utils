@@ -42,10 +42,22 @@
 
 			[Description("Extra SCP-939 amnesia duration.")]
 			public ushort ExtraAmnesia { get; set; } = 0;
+			
+			[Description("SCP-049-2 damage.")]
+			public ushort Scp0492Damage { get; set; } = 40;
 
 			[Description("SCP-106 damage.")]
 			public ushort Scp106Damage { get; set; } = 40;
+			
+			[Description("SCP-939 damage.")]
+			public ushort Scp939Damage { get; set; } = 65;
 
+			[Description("Whether to destroy specific doors at the beginning of the round.")]
+			public bool DestroyDoors { get; set; } = false;
+
+			[Description("Destroyed doors at the beginning of the round. You can see all door names inside the Remote Admin Panel in-game.")]
+			public List<string> DestroyedDoors { get; set; } = new List<string> {"NUKE_SURFACE"};
+			
 			[Description("The text displayed at the timed interval specified below.")]
 			public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
 			[Description("The time each timed broadcast will be displayed.")]
@@ -142,14 +154,13 @@
 					"NtfCommander", 200
 				}
 			};
-
+			
 			internal Dictionary<RoleType, List<Tuple<ItemType, int>>> Inventories = new Dictionary<RoleType, List<Tuple<ItemType, int>>>();
 			internal Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>>();
 			internal Dictionary<RoleType, int> Health = new Dictionary<RoleType, int>();
 			internal Dictionary<RoleType, float> HealOnKill = new Dictionary<RoleType, float>();
 			internal Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>> Scp914RoleChanges = new Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>>();
-
-
+			
 			[Description("If the plugin is enabled or not.")]
 			public bool IsEnabled { get; set; } = true;
 
@@ -250,7 +261,7 @@
 					RoleType role;
 					try
 					{
-						role = (RoleType) Enum.Parse(typeof(RoleType), healthSetting.Key, true);
+						role = (RoleType)Enum.Parse(typeof(RoleType), healthSetting.Key, true);
 					}
 					catch (Exception)
 					{
@@ -263,7 +274,7 @@
 						Log.Error($"Role type is null: {healthSetting.Key}, {healthSetting.Value}. This shouldn't happen.");
 						continue;
 					}
-					
+
 					Log.Debug($"Added {role} to dictionary with {healthSetting.Value} value.", Debug);
 					if (!Health.ContainsKey(role) && healthSetting.Value > 0)
 						Health.Add(role, healthSetting.Value);
