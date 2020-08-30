@@ -35,14 +35,14 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
                 });
 
-			if (plugin.Config.AnnounceDclassScientistsElimination)
-			{
-				if (ev.Player.Role == RoleType.ClassD && Player.Get(RoleType.ClassD) != null) 
-					RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
-				
-				if (ev.Player.Role == RoleType.Scientist && Player.Get(RoleType.Scientist) != null) 
-					RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
-			}
+            if (plugin.Config.AnnounceDclassScientistsElimination)
+            {
+                if (ev.Player.Role == RoleType.ClassD && Player.Get(RoleType.ClassD) != null) 
+                    RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+                
+                if (ev.Player.Role == RoleType.Scientist && Player.Get(RoleType.Scientist) != null) 
+                    RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+            }
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
