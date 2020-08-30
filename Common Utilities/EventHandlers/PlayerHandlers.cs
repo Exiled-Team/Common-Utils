@@ -34,8 +34,6 @@ namespace Common_Utilities.EventHandlers
 					ev.Player.Health = plugin.Config.Health[ev.NewRole];
 					ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
 				});
-
-			if (plugin.Config.ChaosvsmtfTeamDeathmatch && ev.NewRole == RoleType.FacilityGuard) ev.NewRole = RoleType.NtfCadet;
 			
 			if (plugin.Config.AnnounceDclassScientistsElimination)
 			{
