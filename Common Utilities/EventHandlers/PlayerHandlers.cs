@@ -5,6 +5,7 @@ namespace Common_Utilities.EventHandlers
     using Exiled.API.Features;
     using Exiled.Events.EventArgs;
     using MEC;
+    using Respawning;
     using Player = Exiled.API.Features.Player;
 
     public class PlayerHandlers
@@ -34,11 +35,16 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
                 });
 
-            if (plugin.Config.ChaosvsmtfTeamDeathmatch)
-                Timing.CallDelayed(1.5f, () =>
-                {
-                    if (ev.NewRole == RoleType.FacilityGuard) ev.NewRole = RoleType.NtfCadet;
-                });
+            if (plugin.Config.ChaosvsmtfTeamDeathmatch && ev.NewRole == RoleType.FacilityGuard) ev.NewRole = RoleType.NtfCadet;
+			
+			if (plugin.Config.AnnounceDclassScientistsElimination)
+			{
+				if (ev.Player.Role == RoleType.ClassD && Player.Get(RoleType.ClassD) != null) 
+					RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+				
+				if (ev.Player.Role == RoleType.Scientist && Player.Get(RoleType.Scientist) != null) 
+					RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+			}
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
