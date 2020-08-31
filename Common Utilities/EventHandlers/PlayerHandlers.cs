@@ -35,13 +35,14 @@ namespace Common_Utilities.EventHandlers
 					ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
 				});
 
-			if (plugin.Config.AnnounceDclassScientistsElimination)
+			if (plugin.Config.AnnounceClassdScientistsElimination)
 			{
-				if (ev.Player.Role == RoleType.ClassD && Player.Get(RoleType.ClassD).IsEmpty()) 
-					RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
-				
-				if (ev.Player.Role == RoleType.Scientist && Player.Get(RoleType.Scientist).IsEmpty()) 
-					RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+				var oldrole = ev.Player.Role;
+				Timing.CallDelayed(1.5f, () =>
+				{
+					if (oldrole == RoleType.ClassD && Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+					if (oldrole == RoleType.Scientist && Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+				});
 			}
 		}
 
@@ -51,6 +52,13 @@ namespace Common_Utilities.EventHandlers
 			{
 				if (ev.Killer.Health + plugin.Config.HealOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)  ev.Killer.Health += plugin.Config.HealOnKill[ev.Killer.Role];
 				else ev.Killer.Health = ev.Killer.MaxHealth;
+			}
+
+			if (plugin.Config.AnnounceClassdScientistsElimination)
+			{
+				var oldrole = ev.Target.Role;
+				if (oldrole == RoleType.ClassD && Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+				if (oldrole == RoleType.Scientist && Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
 			}
 		}
 
