@@ -64,8 +64,10 @@ namespace Common_Utilities.EventHandlers
 				else if (plugin.Config.Scp106Damage != 40 && ev.Attacker.Role == RoleType.Scp106) ev.Amount = plugin.Config.Scp106Damage;
 				else if (plugin.Config.Scp173Damage != 999990 && ev.Attacker.Role == RoleType.Scp173) ev.Amount = plugin.Config.Scp173Damage;
 				else if (ev.Attacker.Role.Is939())
+				{
 					if (plugin.Config.Scp939Damage != 65) ev.Amount = plugin.Config.Scp939Damage;
 					if (plugin.Config.ExtraAmnesia > 0) ev.Target.ReferenceHub.playerEffectsController.EnableEffect<CustomPlayerEffects.Amnesia>(plugin.Config.ExtraAmnesia);
+				}
 			}
 		}
 
