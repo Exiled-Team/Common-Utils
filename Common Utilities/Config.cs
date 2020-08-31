@@ -43,11 +43,20 @@
 			[Description("Extra SCP-939 amnesia duration.")]
 			public ushort ExtraAmnesia { get; set; } = 0;
 			
+			[Description("SCP-049 damage.")]
+			public ushort Scp049Damage { get; set; } = 4949;
+
 			[Description("SCP-049-2 damage.")]
 			public ushort Scp0492Damage { get; set; } = 40;
+			
+			[Description("SCP-096 damage.")]
+			public ushort Scp096Damage { get; set; } = 9696;
 
 			[Description("SCP-106 damage.")]
 			public ushort Scp106Damage { get; set; } = 40;
+			
+			[Description("SCP-173 damage.")]
+			public int Scp173Damage { get; set; } = 999990;
 			
 			[Description("SCP-939 damage.")]
 			public ushort Scp939Damage { get; set; } = 65;
@@ -70,7 +79,7 @@
 			[Description("The amount of time (in seconds) the join message is displayed.")]
 			public ushort JoinMessageDuration { get; set; } = 5;
 
-			[Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.")]
+			[Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start. Put 0 to disable.")]
 			public float AutonukeTime { get; set; } = 600f;
 			[Description("Whether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
 			public bool AutonukeLock { get; set; } = true;
