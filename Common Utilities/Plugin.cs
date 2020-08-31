@@ -66,7 +66,8 @@ namespace Common_Utilities
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
-
+			Server.SendingConsoleCommand += ServerHandlers.OnConsoleCommand;
+			
             Scp914.UpgradingItems += MapHandlers.OnScp914UpgradingItems;
 
             Instance = new Harmony("com.galaxy.cu");
@@ -85,7 +86,8 @@ namespace Common_Utilities
             Server.RoundStarted -= ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers -= ServerHandlers.OnWaitingForPlayers;
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
-            
+			Server.SendingConsoleCommand -= ServerHandlers.OnConsoleCommand;
+			
             Scp914.UpgradingItems -= MapHandlers.OnScp914UpgradingItems;
             Instance.UnpatchAll();
 
