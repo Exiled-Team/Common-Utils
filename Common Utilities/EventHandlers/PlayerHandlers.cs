@@ -57,8 +57,11 @@ namespace Common_Utilities.EventHandlers
 			if (plugin.Config.AnnounceClassdScientistsElimination)
 			{
 				var oldrole = ev.Target.Role;
-				if (oldrole == RoleType.ClassD && Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
-				if (oldrole == RoleType.Scientist && Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+				Timing.CallDelayed(1.5f, () =>
+				{
+					if (oldrole == RoleType.ClassD && Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+					if (oldrole == RoleType.Scientist && Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+				});
 			}
 		}
 
