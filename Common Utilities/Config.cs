@@ -13,8 +13,14 @@
 			[Description("Whether or not debug messages should be shown.")]
 			public bool Debug { get; set; } = false;
 			
-			[Description("Whether or not CASSIE makes an announcement when all class-d/scientists are dead/escaped.")]
-			public bool AnnounceDclassScientistsElimination { get; set; } = false;
+			[Description("Whether or not CASSIE makes an announcement when all Class-D Personnel are dead or have escaped.")]
+			public bool AnnounceClassdElimination { get; set; } = false;
+
+			[Description("Whether or not CASSIE makes an announcement when all Scientists are dead or have escaped.")]
+			public bool AnnounceScientistsElimination { get; set; } = false;
+
+			[Description("Whether or not CASSIE makes an announcement when all Facility Guards are dead.")]
+			public bool AnnounceGuardsElimination { get; set; } = false;
 
 			[Description("Whether or not SCP-079 can use .nukelockdown in the console to lock down all doors and turn off the lights during the nuke countdown.")]
 			public bool NukeLockdown { get; set; } = true;
