@@ -35,13 +35,27 @@ namespace Common_Utilities.EventHandlers
 					ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
 				});
 
-			if (plugin.Config.AnnounceClassdScientistsElimination)
+			if (plugin.Config.AnnounceClassdElimination && ev.Player.Role == RoleType.ClassD)
 			{
-				var oldrole = ev.Player.Role;
-				Timing.CallDelayed(1.5f, () =>
+				Timing.CallDelayed(0.5f, () =>
 				{
-					if (oldrole == RoleType.ClassD && Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
-					if (oldrole == RoleType.Scientist && Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+				});
+			}
+			
+			else if (plugin.Config.AnnounceScientistsElimination && ev.Player.Role == RoleType.Scientist)
+			{
+				Timing.CallDelayed(0.5f, () =>
+				{
+					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+				});
+			}
+			
+			else if (plugin.Config.AnnounceGuardsElimination && ev.Player.Role == RoleType.FacilityGuard)
+			{
+				Timing.CallDelayed(0.5f, () =>
+				{
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all facility guards are dead", false, true);
 				});
 			}
 		}
@@ -54,16 +68,29 @@ namespace Common_Utilities.EventHandlers
 				else ev.Killer.Health = ev.Killer.MaxHealth;
 			}
 
-			if (plugin.Config.AnnounceClassdScientistsElimination)
+			if (plugin.Config.AnnounceScientistsElimination && ev.Target.Role == RoleType.Scientist)
 			{
-				var oldrole = ev.Target.Role;
-				Timing.CallDelayed(1.5f, () =>
+				Timing.CallDelayed(0.5f, () =>
 				{
-					if (oldrole == RoleType.ClassD && Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
-					if (oldrole == RoleType.Scientist && Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
 				});
 			}
-		}
+
+			else if (plugin.Config.AnnounceGuardsElimination && ev.Target.Role == RoleType.FacilityGuard)
+			{
+				Timing.CallDelayed(0.5f, () =>
+				{
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all facility guards are dead", false, true);
+				});
+			}
+
+			else if (plugin.Config.AnnounceClassdElimination && ev.Target.Role == RoleType.ClassD)
+			{
+				Timing.CallDelayed(0.5f, () =>
+				{
+					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+				});
+			}
 
 		public void OnPlayerHurt(HurtingEventArgs ev)
 		{
