@@ -62,11 +62,11 @@ namespace Common_Utilities
             Player.Died += PlayerHandlers.OnPlayerDied;
 			Player.Hurting += PlayerHandlers.OnPlayerHurt;
 			
+			Server.SendingConsoleCommand += ServerHandlers.OnConsoleCommand;
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
-			Server.SendingConsoleCommand += ServerHandlers.OnConsoleCommand;
 			
             Scp914.UpgradingItems += MapHandlers.OnScp914UpgradingItems;
 
