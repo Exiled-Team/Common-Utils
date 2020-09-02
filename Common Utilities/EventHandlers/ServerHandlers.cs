@@ -5,6 +5,7 @@ namespace Common_Utilities.EventHandlers
 	using Exiled.Events.EventArgs;
 	using MEC;
 	using UnityEngine;
+	using Respawning;
 	
 	public class ServerHandlers
 	{
@@ -134,13 +135,11 @@ namespace Common_Utilities.EventHandlers
 
 		private IEnumerator<float> AutoNuke()
 		{
-			yield return Timing.WaitForSeconds(plugin.Config.AutonukeTime);
+			yield return Timing.WaitForSeconds(plugin.Config.AutonukeTime-30);
 			RespawnEffectsController.PlayCassieAnnouncement(plugin.Config.AutonukeCassieMessage, false, true);
 			yield return Timing.WaitForSeconds(30);
 			Warhead.Start();
-
-			if (plugin.Config.AutonukeLock)
-				Warhead.IsLocked = true;
+			if (plugin.Config.AutonukeLock) Warhead.IsLocked = true;
 		}
 
 		public void OnRestartingRound()
