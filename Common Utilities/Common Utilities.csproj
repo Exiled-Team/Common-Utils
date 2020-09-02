@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\</OutputPath>
+    <OutputPath>C:\Users\Aevann\Desktop\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -85,9 +85,10 @@
     <Compile Include="EventHandlers\ServerHandlers.cs" />
     <Compile Include="Patches\Scp049SpeechPatch.cs" />
     <Compile Include="Patches\Scp0492SpeechPatch.cs" />
-	<Compile Include="Patches\Scp096SpeechPatch.cs" />
-	<Compile Include="Patches\Scp106SpeechPatch.cs" />
+    <Compile Include="Patches\Scp096SpeechPatch.cs" />
+    <Compile Include="Patches\Scp106SpeechPatch.cs" />
     <Compile Include="Patches\Scp173SpeechPatch.cs" />
+    <Compile Include="Patches\Scp049SpeechPatch.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
