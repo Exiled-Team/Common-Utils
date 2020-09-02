@@ -12,6 +12,9 @@
 		{
 			[Description("Whether or not debug messages should be shown.")]
 			public bool Debug { get; set; } = false;
+
+			[Description("Chaos vs MTF teamdeathmatch mode.")]
+			public bool ChaosvsmtfTeamDeathmatch { get; set; } = false;
 			
 			[Description("Whether or not CASSIE makes an announcement when all Class-D Personnel are dead or have escaped.")]
 			public bool AnnounceClassdElimination { get; set; } = false;
