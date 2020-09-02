@@ -32,10 +32,14 @@ namespace Common_Utilities.EventHandlers
                     }
                     Timing.CallDelayed(plugin.Config.NukeLockdownDuration, () =>
                     {
-                        foreach (Door door in Map.Doors)
-                        {
-                            door.Networklocked = false;
-                        }
+						foreach (Door door in Map.Doors)
+						{
+							if (door.DoorName != "NUKE_SURFACE")
+							{
+								door.SetStateWithSound(false);
+								door.Networklocked = false;
+							}
+						}
                     });
                     return;
                 }
@@ -58,6 +62,14 @@ namespace Common_Utilities.EventHandlers
 			
 			if (plugin.Config.ItemCleanupDelay > 0)
 				plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
+
+			if (plugin.Config.ChaosvsmtfTeamDeathmatch)
+				foreach (Door door in Map.Doors)
+					if (door.DoorName != "SURFACE_GATE" && door.DoorName != "ESCAPE" && door.DoorName != "ESCAPE_INNER")
+					{
+						door.SetStateWithSound(false);
+						door.Networklocked = true;
+					}
 				
 			if (plugin.Config.DestroyDoors)
 			{
@@ -98,24 +110,24 @@ namespace Common_Utilities.EventHandlers
 
 		private IEnumerator<float> ItemCleanup()
 		{
-			for (;;)
+			for (; ; )
 			{
 				yield return Timing.WaitForSeconds(plugin.Config.ItemCleanupDelay);
 
 				foreach (Pickup item in Object.FindObjectsOfType<Pickup>())
-					if (!plugin.Config.ItemCleanupOnlyPocket || item.position.y < -1500f)
+					if ((plugin.Config.ItemCleanupOnlyPocket && item.position.y < -1500f) || (plugin.Config.ItemCleanupNotPocket && item.position.y > -1500f))
 						item.Delete();
 			}
 		}
 
 		private IEnumerator<float> RagdollCleanup()
 		{
-			for (;;)
+			for (; ; )
 			{
 				yield return Timing.WaitForSeconds(plugin.Config.RagdollCleanupDelay);
-				
+
 				foreach (Ragdoll ragdoll in Object.FindObjectsOfType<Ragdoll>())
-					if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.transform.position.y < -1500f)
+					if ((plugin.Config.RagdollCleanupOnlyPocket && ragdoll.transform.position.y < -1500f) || (plugin.Config.RagdollCleanupNotPocket && ragdoll.transform.position.y > -1500f))
 						Object.Destroy(ragdoll);
 			}
 		}
@@ -123,7 +135,8 @@ namespace Common_Utilities.EventHandlers
 		private IEnumerator<float> AutoNuke()
 		{
 			yield return Timing.WaitForSeconds(plugin.Config.AutonukeTime);
-			
+			RespawnEffectsController.PlayCassieAnnouncement(plugin.Config.AutonukeCassieMessage, false, true);
+			yield return Timing.WaitForSeconds(30);
 			Warhead.Start();
 
 			if (plugin.Config.AutonukeLock)
