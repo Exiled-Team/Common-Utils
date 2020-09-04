@@ -347,9 +347,11 @@ namespace Common_Utilities.EventHandlers
 		{
 			yield return Timing.WaitForSeconds(plugin.Config.AutonukeTime-30);
 			RespawnEffectsController.PlayCassieAnnouncement(plugin.Config.AutonukeCassieMessage, false, true);
-			yield return Timing.WaitForSeconds(30);
-			Warhead.Start();
-			if (plugin.Config.AutonukeLock) Warhead.IsLocked = true;
+			Timing.CallDelayed(30f, () =>
+			{
+				Warhead.Start();
+				if (plugin.Config.AutonukeLock) Warhead.IsLocked = true;
+			});
 		}
 
 		public void OnRestartingRound()
