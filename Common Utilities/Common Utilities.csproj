@@ -80,9 +80,7 @@
   <ItemGroup>
     <Compile Include="API.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="EventHandlers\MapHandlers.cs" />
-    <Compile Include="EventHandlers\PlayerHandlers.cs" />
-    <Compile Include="EventHandlers\ServerHandlers.cs" />
+    <Compile Include="EventHandlers.cs" />
     <Compile Include="Patches\Scp049SpeechPatch.cs" />
     <Compile Include="Patches\Scp0492SpeechPatch.cs" />
     <Compile Include="Patches\Scp096SpeechPatch.cs" />
