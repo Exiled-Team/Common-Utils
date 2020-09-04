@@ -56,6 +56,7 @@ namespace Common_Utilities
 			Scp914.UpgradingItems += Handlers.OnScp914UpgradingItems;
 			Player.Joined += Handlers.OnPlayerJoined;
 			Player.ChangingRole += Handlers.OnChangingRole;
+			Player.Escaping += Handlers.OnEscaping;
 			Player.Died += Handlers.OnPlayerDied;
 			Player.Hurting += Handlers.OnPlayerHurt;
 			Server.SendingConsoleCommand += Handlers.OnConsoleCommand;
@@ -75,6 +76,7 @@ namespace Common_Utilities
 			Scp914.UpgradingItems -= Handlers.OnScp914UpgradingItems;
 			Player.Joined -= Handlers.OnPlayerJoined;
 			Player.ChangingRole -= Handlers.OnChangingRole;
+			Player.Escaping -= Handlers.OnEscaping;
 			Player.Died -= Handlers.OnPlayerDied;
 			Player.Hurting-= Handlers.OnPlayerHurt;
 			Server.RoundStarted -= Handlers.OnRoundStarted;

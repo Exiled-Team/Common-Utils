@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Exiled.Updater</name>
+    </assembly>
+    <members>
+        <member name="T:Exiled.Updater.Config">
+            <inheritdoc cref="T:Exiled.API.Interfaces.IConfig"/>
+        </member>
+        <member name="P:Exiled.Updater.Config.IsEnabled">
+            <inheritdoc/>
+        </member>
+        <member name="P:Exiled.Updater.Config.ShouldDownloadTestingReleases">
+            <summary>
+            Gets a value indicating whether testing releases have to be downloaded or not.
+            </summary>
+        </member>
+        <member name="P:Exiled.Updater.Config.ExcludeAssemblies">
+            <summary>
+            Gets a value that indicates which assemblies should be excluded from the update.
+            </summary>
+        </member>
+        <member name="T:Exiled.Updater.Updater">
+            <summary>
+            Automatically updates Exiled to the latest version.
+            </summary>
+        </member>
+        <member name="P:Exiled.Updater.Updater.Author">
+            <inheritdoc />
+        </member>
+        <member name="M:Exiled.Updater.Updater.OnEnabled">
+            <inheritdoc/>
+        </member>
+        <member name="M:Exiled.Updater.Updater.FindUpdate(Exiled.Updater.Models.Release@,Exiled.Updater.Models.ReleaseAsset@)">
+            <summary>
+            Check if there is an update available.
+            </summary>
+            <param name="targetRelease">
+            Release with installer.
+            </param>
+            <param name="asset">
+            Installer itself.
+            </param>
+            <returns>Returns whether a new version of Exiled is available or not.</returns>
+        </member>
+        <member name="M:Exiled.Updater.Updater.Update(Exiled.Updater.Models.Release,Exiled.Updater.Models.ReleaseAsset)">
+            <summary>
+            Starts the updater.
+            </summary>
+            <param name="release">
+            Release with installer.
+            </param>
+            <param name="asset">
+            Installer asset.
+            </param>
+        </member>
+        <member name="T:Exiled.Updater.VersionComparer">
+            <summary>
+            Default version comparer using <see cref="M:System.Version.CompareTo(System.Version)"/>.
+            </summary>
+        </member>
+        <member name="F:Exiled.Updater.VersionComparer.Instance">
+            <summary>
+            Readonly instance of <see cref="T:Exiled.Updater.VersionComparer"/>.
+            </summary>
+        </member>
+        <member name="M:Exiled.Updater.VersionComparer.Compare(System.Version,System.Version)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

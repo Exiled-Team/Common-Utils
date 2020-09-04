@@ -110,7 +110,7 @@ namespace Common_Utilities.EventHandlers
 			if (!string.IsNullOrEmpty(message))
 				ev.Player.Broadcast(plugin.Config.JoinMessageDuration, message);
 		}
-		
+
 		public void OnChangingRole(ChangingRoleEventArgs ev)
 		{
 			if (plugin.Config.Inventories.ContainsKey(ev.NewRole))
@@ -125,7 +125,10 @@ namespace Common_Utilities.EventHandlers
 					ev.Player.Health = plugin.Config.Health[ev.NewRole];
 					ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
 				});
+		}
 
+		public void OnEscaping(EscapingEventArgs ev)
+		{
 			var escapestring = "";
 			if (plugin.Config.AnnounceClassdElimination && ev.Player.Role == RoleType.ClassD)
 			{
@@ -133,27 +136,27 @@ namespace Common_Utilities.EventHandlers
 				else escapestring = "Attention . a classd personnel has escaped the facility";
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.ClassD).IsEmpty()) escapestring += " . no classd personnel remain";
+					if (Player.Get(RoleType.ClassD).IsEmpty()) escapestring += " . no classd personnel remaining";
 					RespawnEffectsController.PlayCassieAnnouncement(escapestring, false, true);
 				});
 			}
-			
+				
 			else if (plugin.Config.AnnounceScientistsElimination && ev.Player.Role == RoleType.Scientist)
 			{
 				if (ev.Player.IsCuffed) escapestring = "Attention . a scientist has been escorted outside the facility";
 				else escapestring = "Attention . a scientist has escaped the facility";
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.Scientist).IsEmpty()) escapestring += " . no science personnel remain";
+					if (Player.Get(RoleType.Scientist).IsEmpty()) escapestring += " . no science personnel remaining";
 					RespawnEffectsController.PlayCassieAnnouncement(escapestring, false, true);
 				});
 			}
-			
+				
 			else if (plugin.Config.AnnounceGuardsElimination && ev.Player.Role == RoleType.FacilityGuard)
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain in the facility", false, true);
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remaining", false, true);
 				});
 			}
 		}
@@ -170,7 +173,7 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no classd personnel remain in the facility", false, true);
+					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no classd personnel remaining", false, true);
 				});
 			}
 			
@@ -178,7 +181,7 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no science personnel remain in the facility", false, true);
+					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no science personnel remaining", false, true);
 				});
 			}
 
@@ -186,7 +189,7 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain in the facility", false, true);
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remaining", false, true);
 				});
 			}
 		}

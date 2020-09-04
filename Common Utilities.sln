@@ -1,5 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common Utilities", "Common Utilities\Common Utilities.csproj", "{23AB2900-9C8B-4F23-A3B6-D92EAEE2F88C}"
 EndProject
 Global
@@ -12,5 +14,11 @@ Global
 		{23AB2900-9C8B-4F23-A3B6-D92EAEE2F88C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23AB2900-9C8B-4F23-A3B6-D92EAEE2F88C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23AB2900-9C8B-4F23-A3B6-D92EAEE2F88C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8526CCF3-CE6A-448E-9739-1A04134ACAD0}
 	EndGlobalSection
 EndGlobal

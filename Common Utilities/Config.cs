@@ -13,13 +13,10 @@
 			[Description("Whether or not debug messages should be shown.")]
 			public bool Debug { get; set; } = false;
 
-			[Description("Chaos vs MTF teamdeathmatch mode.")]
-			public bool ChaosvsmtfTeamDeathmatch { get; set; } = false;
-			
-			[Description("Whether or not CASSIE makes an announcement when all Class-D Personnel are dead or have escaped.")]
+			[Description("Whether or not CASSIE makes an announcement when a Class-D Personnel escapes and when all Class-D Personnel are dead or have escaped.")]
 			public bool AnnounceClassdElimination { get; set; } = false;
 
-			[Description("Whether or not CASSIE makes an announcement when all Scientists are dead or have escaped.")]
+			[Description("Whether or not CASSIE makes an announcement when a Scientist escapes and when all Scientists are dead or have escaped.")]
 			public bool AnnounceScientistsElimination { get; set; } = false;
 
 			[Description("Whether or not CASSIE makes an announcement when all Facility Guards are dead.")]
