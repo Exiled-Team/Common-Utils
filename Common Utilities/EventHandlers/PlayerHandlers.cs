@@ -35,19 +35,26 @@ namespace Common_Utilities.EventHandlers
 					ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
 				});
 
+			var escapestring = "";
 			if (plugin.Config.AnnounceClassdElimination && ev.Player.Role == RoleType.ClassD)
 			{
+				if (ev.Player.IsCuffed) escapestring = "Attention . a member of classd personnel has been escorted outside the site";
+				else escapestring = "Attention . a member of classd personnel has escaped the site";
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
+					if (Player.Get(RoleType.ClassD).IsEmpty()) escapestring += " . no classd personnel remain within";
+					RespawnEffectsController.PlayCassieAnnouncement(escapestring, false, true);
 				});
 			}
 			
 			else if (plugin.Config.AnnounceScientistsElimination && ev.Player.Role == RoleType.Scientist)
 			{
+				if (ev.Player.IsCuffed) escapestring = "Attention . a member of science personnel has been escorted outside the site";
+				else escapestring = "Attention . a member of science personnel has escaped the site";
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+					if (Player.Get(RoleType.Scientist).IsEmpty()) escapestring += " . no science personnel remain within";
+					RespawnEffectsController.PlayCassieAnnouncement(escapestring, false, true);
 				});
 			}
 			
@@ -55,11 +62,11 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all facility guards are dead", false, true);
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain within the site", false, true);
 				});
 			}
 		}
-
+		
 		public void OnPlayerDied(DiedEventArgs ev)
 		{
 			if (plugin.Config.HealOnKill.ContainsKey(ev.Killer.Role))
@@ -68,11 +75,19 @@ namespace Common_Utilities.EventHandlers
 				else ev.Killer.Health = ev.Killer.MaxHealth;
 			}
 
-			if (plugin.Config.AnnounceScientistsElimination && ev.Target.Role == RoleType.Scientist)
+			if (plugin.Config.AnnounceClassdElimination && ev.Target.Role == RoleType.ClassD)
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all science personnel are either dead or have escaped the facility", false, true);
+					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no classd personnel remain within the site", false, true);
+				});
+			}
+			
+			else if (plugin.Config.AnnounceScientistsElimination && ev.Target.Role == RoleType.Scientist)
+			{
+				Timing.CallDelayed(0.5f, () =>
+				{
+					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no science personnel remain within the site", false, true);
 				});
 			}
 
@@ -80,18 +95,11 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all facility guards are dead", false, true);
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain within the site", false, true);
 				});
 			}
-
-			else if (plugin.Config.AnnounceClassdElimination && ev.Target.Role == RoleType.ClassD)
-			{
-				Timing.CallDelayed(0.5f, () =>
-				{
-					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . all classd personnel are either dead or have escaped the facility", false, true);
-				});
-			}
-
+		}
+		
 		public void OnPlayerHurt(HurtingEventArgs ev)
 		{
 			if (ev.Target != ev.Attacker)
