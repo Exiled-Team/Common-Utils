@@ -12,7 +12,7 @@
 
 Download [Common_Utilities.dll](https://github.com/Aevann1/Common-Utils/releases) and place it in in %appdata%\EXILED\Plugins
 
-# Default config:
+# Default configs:
 ```yaml
   # Whether or not debug messages should be shown.
   debug: false
