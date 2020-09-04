@@ -279,14 +279,6 @@ namespace Common_Utilities.EventHandlers
 			if (plugin.Config.ItemCleanupDelay > 0)
 				plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
 
-			if (plugin.Config.ChaosvsmtfTeamDeathmatch)
-				foreach (Door door in Map.Doors)
-					if (door.DoorName != "SURFACE_GATE" && door.DoorName != "ESCAPE" && door.DoorName != "ESCAPE_INNER")
-					{
-						door.SetStateWithSound(false);
-						door.Networklocked = true;
-					}
-				
 			if (plugin.Config.DestroyDoors)
 			{
 				foreach (Door door in Map.Doors)
