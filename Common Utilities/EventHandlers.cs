@@ -1,12 +1,12 @@
-using System.Collections.Generic;
-using Exiled.API.Features;
-using Scp914;
 
 namespace Common_Utilities.EventHandlers
 {
 	using System;
+	using System.Collections.Generic;
+	using Exiled.API.Features;
 	using Exiled.API.Extensions;
 	using Exiled.Events.EventArgs;
+	using Scp914;
 	using System.Linq;
 	using MEC;
 	using Respawning;
@@ -129,22 +129,22 @@ namespace Common_Utilities.EventHandlers
 			var escapestring = "";
 			if (plugin.Config.AnnounceClassdElimination && ev.Player.Role == RoleType.ClassD)
 			{
-				if (ev.Player.IsCuffed) escapestring = "Attention . a member of classd personnel has been escorted outside the site";
-				else escapestring = "Attention . a member of classd personnel has escaped the site";
+				if (ev.Player.IsCuffed) escapestring = "Attention . a classd personnel has been escorted outside the facility";
+				else escapestring = "Attention . a classd personnel has escaped the facility";
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.ClassD).IsEmpty()) escapestring += " . no classd personnel remain within";
+					if (Player.Get(RoleType.ClassD).IsEmpty()) escapestring += " . no classd personnel remain";
 					RespawnEffectsController.PlayCassieAnnouncement(escapestring, false, true);
 				});
 			}
 			
 			else if (plugin.Config.AnnounceScientistsElimination && ev.Player.Role == RoleType.Scientist)
 			{
-				if (ev.Player.IsCuffed) escapestring = "Attention . a member of science personnel has been escorted outside the site";
-				else escapestring = "Attention . a member of science personnel has escaped the site";
+				if (ev.Player.IsCuffed) escapestring = "Attention . a scientist has been escorted outside the facility";
+				else escapestring = "Attention . a scientist has escaped the facility";
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.Scientist).IsEmpty()) escapestring += " . no science personnel remain within";
+					if (Player.Get(RoleType.Scientist).IsEmpty()) escapestring += " . no science personnel remain";
 					RespawnEffectsController.PlayCassieAnnouncement(escapestring, false, true);
 				});
 			}
@@ -153,7 +153,7 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain within the site", false, true);
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain in the facility", false, true);
 				});
 			}
 		}
@@ -170,7 +170,7 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no classd personnel remain within the site", false, true);
+					if (Player.Get(RoleType.ClassD).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no classd personnel remain in the facility", false, true);
 				});
 			}
 			
@@ -178,7 +178,7 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no science personnel remain within the site", false, true);
+					if (Player.Get(RoleType.Scientist).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no science personnel remain in the facility", false, true);
 				});
 			}
 
@@ -186,7 +186,7 @@ namespace Common_Utilities.EventHandlers
 			{
 				Timing.CallDelayed(0.5f, () =>
 				{
-					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain within the site", false, true);
+					if (Player.Get(RoleType.FacilityGuard).IsEmpty()) RespawnEffectsController.PlayCassieAnnouncement("Attention . no security personnel remain in the facility", false, true);
 				});
 			}
 		}
@@ -278,7 +278,7 @@ namespace Common_Utilities.EventHandlers
 			
 			if (plugin.Config.ItemCleanupDelay > 0)
 				plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
-
+			
 			if (plugin.Config.DestroyDoors)
 			{
 				foreach (Door door in Map.Doors)
