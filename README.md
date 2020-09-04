@@ -1,4 +1,4 @@
-# Improved version of [KadeDev/Common-Utils](https://github.com/KadeDev/Common-Utils) with these added options:
+# An improved version of [KadeDev/Common-Utils](https://github.com/KadeDev/Common-Utils) with these added options:
 - options to make SCP-049-2, SCP-096, SCP-106, SCP-173 able to speak to humans
 - an option to clean items/ragdolls everywhere except in Pocket Dimension
 - an option to modify the amnesia duration of SCP-939
