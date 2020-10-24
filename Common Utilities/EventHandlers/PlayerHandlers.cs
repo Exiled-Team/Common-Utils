@@ -49,14 +49,20 @@ namespace Common_Utilities.EventHandlers
         public List<ItemType> StartItems(RoleType role)
         {
             List<ItemType> items = new List<ItemType>();
-
+            
             if (plugin.Config.Inventories[role] == default)
                 return items;
             
-            foreach (Tuple<ItemType, int> itemChance in plugin.Config.Inventories[role])
+            foreach (KeyValuePair<string, List<Tuple<ItemType, int>>> itemChanceBig in plugin.Config.Inventories[role])
             {
-                if (plugin.Gen.Next(100) <= itemChance.Item2)
-                    items.Add(itemChance.Item1);
+                foreach (Tuple<ItemType, int> itemChance in itemChanceBig.Value)
+                {
+                    if (plugin.Gen.Next(100) <= itemChance.Item2)
+                    {
+                        items.Add(itemChance.Item1);
+                        break;
+                    }
+                }
             }
 
             return items;

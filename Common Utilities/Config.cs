@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using Exiled.API.Features;
 using Exiled.API.Interfaces;
@@ -32,16 +33,225 @@ namespace Common_Utilities
         public float AutonukeTime { get; set; } = 600f;
         [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
-        
-        [Description("The list of items Class-D should have. Valid formatting should be ItemType:Chance where ItemType is the item to give them, and Chance is the percent chance of them spawning with it. You can specify the same item multiple times. This is true for all Inventory configs.")]
-        public List<string> ClassDInventory { get; set; } = new List<string>();
-        public List<string> ChaosInventory { get; set; } = new List<string>();
-        public List<string> ScientistInventory { get; set; } = new List<string>();
-        public List<string> GuardInventory { get; set; } = new List<string>();
-        public List<string> CadetInventory { get; set; } = new List<string>();
-        public List<string> LieutenantInventory { get; set; } = new List<string>();
-        public List<string> CommanderInventory { get; set; } = new List<string>();
-        public List<string> NtfSciInventory { get; set; } = new List<string>();
+
+        [Description(
+            "The list of items Class-D should have. Valid formatting should be ItemType:Chance where ItemType is the item to give them, and Chance is the percent chance of them spawning with it. You can specify the same item multiple times. This is true for all Inventory configs.")]
+        public Dictionary<string, List<string>> ClassDInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
+        public Dictionary<string, List<string>> ChaosInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
+        public Dictionary<string, List<string>> ScientistInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
+        public Dictionary<string, List<string>> GuardInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
+        public Dictionary<string, List<string>> CadetInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
+        public Dictionary<string, List<string>> LieutenantInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
+        public Dictionary<string, List<string>> CommanderInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
+        public Dictionary<string, List<string>> NtfSciInventory { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "slot1", new List<string>()
+            },
+            {
+                "slot2", new List<string>()
+            },
+            {
+                "slot3", new List<string>()
+            },
+            {
+                "slot4", new List<string>()
+            },
+            {
+                "slot5", new List<string>()
+            },
+            {
+                "slot6", new List<string>()
+            },
+            {
+                "slot7", new List<string>()
+            },
+            {
+                "slot8", new List<string>()
+            },
+        };
         
         [Description("The list of custom 914 recipies for the Rough setting. Valid formatting should be OriginalItemType:NewItemType:Chance where OriginalItem is the item being upgraded, NewItem is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item. This is true for all 914 configs.")]
         public List<string> Scp914RoughChances { get; set; } = new List<string>();
@@ -104,7 +314,7 @@ namespace Common_Utilities
             }
         };
 
-        internal Dictionary<RoleType, List<Tuple<ItemType, int>>> Inventories = new Dictionary<RoleType, List<Tuple<ItemType, int>>>();
+        internal Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>> Inventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>>();
         internal Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>>();
         internal Dictionary<RoleType, int> Health = new Dictionary<RoleType, int>();
         internal Dictionary<RoleType, float> HealOnKill = new Dictionary<RoleType, float>();
@@ -319,10 +529,10 @@ namespace Common_Utilities
                 Log.Debug($"Name: {configSetting.Name}");
                 if (!configSetting.Name.Contains("Inventory"))
                     continue;
-                
+
                 string configName = configSetting.Name;
-                
-                List<string> list = (List<string>) configSetting.GetValue(this);
+
+                Dictionary<string, List<string>> dict = (Dictionary<string, List<string>>) configSetting.GetValue(this);
                 RoleType role = RoleType.None;
                 switch (configName)
                 {
@@ -351,55 +561,70 @@ namespace Common_Utilities
                         role = RoleType.NtfScientist;
                         break;
                 }
-                
+
                 if (role == RoleType.None)
                 {
                     Log.Error("Role is none - This should never happen.");
                     continue;
                 }
 
-                if (list == null)
+                if (dict == null || dict.All(l => l.Value == null))
                 {
-                    Log.Warn($"The list for {configName} is empty, they will have default inventory.");
-
+                    Log.Warn($"The dictionary for {configName} is empty, they will have default inventory.");
                     if (Inventories.ContainsKey(role))
                         Inventories.Remove(role);
                     
                     continue;
                 }
 
-                foreach (string unparsedRaw in list)
+                foreach (KeyValuePair<string, List<string>> unparsedDict in dict)
                 {
-                    ItemType item;
-                    if (unparsedRaw == "empty")
+                    string slotName = unparsedDict.Key;
+                    List<string> list = unparsedDict.Value;
+                    if (list == null)
                     {
+                        Log.Debug($"The list for {configName}:{slotName} is empty.");
+
+                        continue;
+                    }
+
+                    foreach (string unparsedRaw in list)
+                    {
+                        ItemType item;
+                        if (unparsedRaw == "empty")
+                        {
+                            if (!Inventories.ContainsKey(role))
+                                Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int>>>{{slotName, new List<Tuple<ItemType, int>>()}});
+                            continue;
+                        }
+
+                        string[] rawChance = unparsedRaw.Split(':');
+
+                        try
+                        {
+                            item = (ItemType) Enum.Parse(typeof(ItemType), rawChance[0], true);
+                        }
+                        catch (Exception)
+                        {
+                            Log.Error($"Unable to parse item: {rawChance[0]} in {configName} inventory settings.");
+                            continue;
+                        }
+
+                        if (!int.TryParse(rawChance[1], out int chance))
+                        {
+                            Log.Error(
+                                $"Unable to parse item chance {rawChance[0]} for {rawChance[0]} in {configName} inventory settings.");
+                            continue;
+                        }
+
+                        Log.Debug($"{item} was added to {configName} inventory with {chance} chance.", Debug);
                         if (!Inventories.ContainsKey(role))
-                            Inventories.Add(role, new List<Tuple<ItemType, int>>());
-                        continue;
+                            Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int>>>
+                            {
+                                {"slot1", new List<Tuple<ItemType, int>>()}, {"slot2", new List<Tuple<ItemType, int>>()}, {"slot3", new List<Tuple<ItemType, int>>()}, {"slot4", new List<Tuple<ItemType, int>>()}, {"slot5", new List<Tuple<ItemType, int>>()}, {"slot6", new List<Tuple<ItemType, int>>()}, {"slot7", new List<Tuple<ItemType, int>>()}, {"slot8", new List<Tuple<ItemType, int>>()}
+                            });
+                        Inventories[role][slotName].Add(new Tuple<ItemType, int>(item, chance));
                     }
-                    
-                    string[] rawChance = unparsedRaw.Split(':');
-
-                    try
-                    {
-                        item = (ItemType) Enum.Parse(typeof(ItemType), rawChance[0], true);
-                    }
-                    catch (Exception)
-                    {
-                        Log.Error($"Unable to parse item: {rawChance[0]} in {configName} inventory settings.");
-                        continue;
-                    }
-
-                    if (!int.TryParse(rawChance[1], out int chance))
-                    {
-                        Log.Error($"Unable to parse item chance {rawChance[0]} for {rawChance[0]} in {configName} inventory settings.");
-                        continue;
-                    }
-                    
-                    Log.Debug($"{item} was added to {configName} inventory with {chance} chance.", Debug);
-                    if (!Inventories.ContainsKey(role))
-                        Inventories.Add(role, new List<Tuple<ItemType, int>>());
-                    Inventories[role].Add(new Tuple<ItemType, int>(item, chance));
                 }
             }
         }
