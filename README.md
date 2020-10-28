@@ -14,40 +14,137 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 (These are depricated, if you are using the Exiled 2.0 version of the plugin)
 # Default config:
 ```yaml
-util_enable: true
-util_debug: false
-util_914_enable: true
-util_role_health: NtfCommander:400,NtfScientist:350 
-util_914_upgrade_hand: true
-util_914_roles: Scientist-ClassD:Coarse, ClassD-Spectator:Rough 
-util_914_items: Painkillers-Medkit:Fine,Coin-Flashlight:OneToOne 
-# If you do want to make Custom Inventorys. You must set only the ones you want!
-# Example of a custom inventory: "util_classd_inventory: Coin" or "util_ntfcadet_inventory: Adrenaline,Ammo556,Flashlight,GrenadeFlash,KeycardGuard,GunMP7"
-util_enable_inventories: false
-util_broadcast_enable: true
-util_broadcast_message: <color=lime>This server is running <color=red>EXILED-CommonUtils</color>, enjoy playing!</color>
-util_broadcast_seconds: 300
-util_broadcast_time: 4
-util_joinMessage: <color=lime>Welcome %player%! Please read our rules!</color>
-util_joinMessage_time: 6
-util_enable_autonuke: false
-util_autonuke_time: 600
-util_autonuke_lock: false
-```
-# Default inventories:
-These are the default inventories as of 26/01/2020:
-```yaml
-util_ntfscientist_inventory: KeycardNTFLieutenant, GunE11SR, WeaponManagerTablet, GrenadeFrag, Radio, Medkit
-util_scientist_inventory: KeycardScientist, Medkit
-util_chaos_inventory: KeycardChaosInsurgency, GunLogicer, Medkit, Painkillers
-util_ntflieutenant_inventory: KeycardNTFLieutenant, GunE11SR, WeaponManagerTablet, GrenadeFrag, Radio, Disarmer, Medkit
-util_ntfcommander_inventory: KeycardNTFCommander, GunE11SR, WeaponManagerTablet, GrenadeFrag, Radio, Disarmer, Adrenaline
-util_ntfcadet_inventory: KeycardSeniorGuard, GunProject90, WeaponManagerTablet, Radio, Disarmer, Medkit
-util_guard_inventory: KeycardGuard, GunMP7, Medkit, WeaponManagerTablet, Disarmer, GrenadeFlash, Radio
+CommonUtilities:
+# Wether or not debug messages should be shown.
+  debug: false
+  # Wether or not SCP-049 should be able to talk to humans.
+  scp049_speech: true
+  # The text displayed at the timed interval specified below.
+  timed_broadcast: <color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>
+  # The time each timed broadcast will be displayed.
+  timed_broadcast_duration: 5
+  # The delay between each timed broadcast. To disable timed broadcasts, set this to 0
+  timed_broadcast_delay: 300
+  # The message displayed to the player when they first join the server. Setting this to empty will disable these broadcasts.
+  join_message: <color=lime>Welcome %player%! Please read our rules!</color>
+  # The amount of time (in seconds) the join message is displayed.
+  join_message_duration: 5
+  # The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.
+  autonuke_time: 1200
+  # Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.
+  autonuke_lock: true
+  # The list of items Class-D should have. Valid formatting should be ItemType:Chance where ItemType is the item to give them, and Chance is the percent chance of them spawning with it. You can speci$
+  class_d_inventory:
+    slot1:
+    - Coin:100
+    slot2:
+    - Flashlight:100
+    slot3:
+    - KeycardJanitor:5
+    slot4:
+    - Medkit:1
+    - Painkillers:10
+    slot5:
+    slot6: []
+    slot7: []
+    slot8: []
+  chaos_inventory:
+    slot1: []
+    slot2: []
+    slot3: []
+    slot4: []
+    slot5: []
+    slot6: []
+    slot7: []
+    slot8: []
+  scientist_inventory:
+    slot1: []
+    slot2: []
+    slot3: []
+    slot4: []
+    slot5: []
+    slot6: []
+    slot7: []
+    slot8: []
+  guard_inventory:
+    slot1: []
+    slot2: []
+    slot3: []
+    slot4: []
+    slot5: []
+    slot6: []
+    slot7: []
+    slot8: []
+  cadet_inventory:
+    slot1: []
+    slot2: []
+    slot3: []
+    slot4: []
+    slot5: []
+    slot6: []
+    slot7: []
+    slot8: []
+  lieutenant_inventory:
+    slot1: []
+    slot2: []
+    slot3: []
+    slot4: []
+    slot5: []
+    slot6: []
+    slot7: []
+    slot8: []
+  commander_inventory:
+    slot1: []
+    slot2: []
+    slot3: []
+    slot4: []
+    slot5: []
+    slot6: []
+    slot7: []
+    slot8: []
+  ntf_sci_inventory:
+    slot1: []
+    slot2: []
+    slot3: []
+    slot4: []
+    slot5: []
+    slot6: []
+    slot7: []
+    slot8: []
+  # The list of custom 914 recipies for the Rough setting. Valid formatting should be OriginalItemType:NewItemType:Chance where OriginalItem is the item being upgraded, NewItem is the item to upgrade$
+  scp914_rough_chances:
+  - KeycardO5:KeycardJanitor:50
+  - KeycardO5:Coin:100
+  scp914_coarse_chances: []
+  scp914_oneto_one_chances: []
+  scp914_fine_chances: []
+  scp914_very_fine_chances: []
+  # The list of custom 914 recipies for 914. Valid formatting is OriginalRole:NewRole:Chance - IE: ClassD:Spectator:100 - for each knob setting defined.
+  scp914_class_changes:
+    Rough:
+    - ClassD:Scientist:10
+    - ClassD:Spectator:50
+    Coarse: []
+    OneToOne: []
+    Fine: []
+    VeryFine: []
+  # The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.
+  ragdoll_cleanup_delay: 300
+  # If ragdoll cleanup should only happen in the Pocket Dimension or not.
+  ragdoll_cleanup_only_pocket: false
+  # The frequency (in seconds) between item cleanups. Set to 0 to disable.
+  item_cleanup_delay: 900
+  # If item cleanup should only happen in the Pocket Dimension or not.
+  item_cleanup_only_pocket: true
+  # A list of roles and how much health they should be given when they kill someone.
+  health_on_kill:
+    Scp173: 125
+    Scp096: 70
+  # A list of roles and what their default starting health should be.
+ health_values:
+    Scp173: 3000
+    NtfCommander: 200
+  # If the plugin is enabled or not.
+  is_enabled: true
 
-# Other inventories that are completely clean (as in they don't have any single item):
-util_classd_inventory, util_tutorial_inventory, util_scp173_inventory,
-util_spectator_inventory, util_scp106_inventory, util_scp049_inventory,
-util_scp079_inventory, util_scp096_inventory, util_scp0492_inventory,
-util_scp93953_inventory, util_scp93989_inventory
 ```
