@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Exiled.Bootstrap</name>
+    </assembly>
+    <members>
+        <member name="T:Exiled.Boostrap.Bootstrap">
+            <summary>
+            The assembly loader class for Exiled.
+            </summary>
+        </member>
+        <member name="P:Exiled.Boostrap.Bootstrap.IsLoaded">
+            <summary>
+            Gets a value indicating whether exiled has already been loaded or not.
+            </summary>
+        </member>
+        <member name="M:Exiled.Boostrap.Bootstrap.Load">
+            <summary>
+            Internally called loading method.
+            </summary>
+        </member>
+    </members>
+</doc>
