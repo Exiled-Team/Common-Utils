@@ -70,5 +70,16 @@ namespace Common_Utilities.EventHandlers
 
         private string FormatJoinMessage(Player player) => 
             string.IsNullOrEmpty(plugin.Config.JoinMessage) ? string.Empty : plugin.Config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
+
+        public void OnPlayerHurting(HurtingEventArgs ev)
+        {
+            if (ev.Attacker.Team == Team.SCP)
+            {
+                if (plugin.Config.ScpDmgMult.ContainsKey(ev.Attacker.Role))
+                    ev.Amount *= plugin.Config.ScpDmgMult[ev.Attacker.Role];
+            }
+            else if (plugin.Config.WepDmgMult.ContainsKey((ItemType) ev.Tool))
+                ev.Amount *= plugin.Config.WepDmgMult[(ItemType) ev.Tool];
+        }
     }
 }

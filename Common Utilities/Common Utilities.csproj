@@ -37,37 +37,37 @@
           <Private>True</Private>
         </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp.dll</HintPath>
+          <HintPath>..\..\References\Assembly-CSharp-Publicized.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+          <HintPath>..\..\References\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>
-        <Reference Include="Exiled.API, Version=2.1.13.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\EXILED.2.1.13\lib\net472\Exiled.API.dll</HintPath>
+        <Reference Include="Exiled.API, Version=2.1.17.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\EXILED.2.1.17\lib\net472\Exiled.API.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="Exiled.Bootstrap, Version=2.1.13.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\EXILED.2.1.13\lib\net472\Exiled.Bootstrap.dll</HintPath>
+        <Reference Include="Exiled.Bootstrap, Version=2.1.17.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\EXILED.2.1.17\lib\net472\Exiled.Bootstrap.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="Exiled.Events, Version=2.1.13.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\EXILED.2.1.13\lib\net472\Exiled.Events.dll</HintPath>
+        <Reference Include="Exiled.Events, Version=2.1.17.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\EXILED.2.1.17\lib\net472\Exiled.Events.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="Exiled.Loader, Version=2.1.13.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\EXILED.2.1.13\lib\net472\Exiled.Loader.dll</HintPath>
+        <Reference Include="Exiled.Loader, Version=2.1.17.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\EXILED.2.1.17\lib\net472\Exiled.Loader.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="Exiled.Permissions, Version=2.1.13.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\EXILED.2.1.13\lib\net472\Exiled.Permissions.dll</HintPath>
+        <Reference Include="Exiled.Permissions, Version=2.1.17.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\EXILED.2.1.17\lib\net472\Exiled.Permissions.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Exiled.Updater, Version=3.0.3.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\EXILED.2.1.13\lib\net472\Exiled.Updater.dll</HintPath>
+          <HintPath>..\packages\EXILED.2.1.17\lib\net472\Exiled.Updater.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Mirror, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mirror.dll</HintPath>
+          <HintPath>..\..\References\Mirror.dll</HintPath>
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
@@ -75,10 +75,10 @@
         <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
         <Reference Include="System.Xml" />
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.dll</HintPath>
+          <HintPath>..\..\References\UnityEngine.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>D:\SteamLibrary\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+          <HintPath>..\..\References\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>

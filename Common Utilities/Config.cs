@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.API.Interfaces;
 using Scp914;
@@ -253,12 +254,25 @@ namespace Common_Utilities
             },
         };
         
-        [Description("The list of custom 914 recipies for the Rough setting. Valid formatting should be OriginalItemType:NewItemType:Chance where OriginalItem is the item being upgraded, NewItem is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item. This is true for all 914 configs.")]
-        public List<string> Scp914RoughChances { get; set; } = new List<string>();
-        public List<string> Scp914CoarseChances { get; set; } = new List<string>();
-        public List<string> Scp914OnetoOneChances { get; set; } = new List<string>();
-        public List<string> Scp914FineChances { get; set; } = new List<string>();
-        public List<string> Scp914VeryFineChances { get; set; } = new List<string>();
+        [Description("The list of custom 914 recipies for the Rough setting. Valid formatting should be OriginalItemType:NewItemType:Chance where OriginalItem is the item being upgraded, NewItem is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
+        public Dictionary<string, List<string>> Scp914ItemChanges { get; set; } = new Dictionary<string, List<string>>
+        {
+            {
+                "Rough", new List<string>()
+            },
+            {
+                "Coarse", new List<string>()
+            },
+            {
+                "OneToOne", new List<string>()
+            },
+            {
+                "Fine", new List<string>()
+            },
+            {
+                "VeryFine", new List<string>()
+            }
+        };
         
         [Description("The list of custom 914 recipies for 914. Valid formatting is OriginalRole:NewRole:Chance - IE: ClassD:Spectator:100 - for each knob setting defined.")]
         public Dictionary<string, List<string>> Scp914ClassChanges { get; set; } = new Dictionary<string, List<string>>
@@ -291,6 +305,23 @@ namespace Common_Utilities
 
         [Description("If item cleanup should only happen in the Pocket Dimension or not.")]
         public bool ItemCleanupOnlyPocket { get; set; } = false;
+        
+        [Description("A list of all SCP roles and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
+        public Dictionary<string, float> ScpDamageMultipliers { get; set; } = new Dictionary<string, float>
+        {
+            {
+                "Scp173", 1.0f
+            },
+        };
+        
+        [Description("A list of all Weapons and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
+        public Dictionary<string, float> WeaponDamageMultipliers { get; set; } = new Dictionary<string, float>
+        {
+            {
+                "GunE11SR", 1.0f
+                
+            }
+        };
 
         [Description("A list of roles and how much health they should be given when they kill someone.")]
         public Dictionary<string, float> HealthOnKill { get; set; } = new Dictionary<string, float>
@@ -319,10 +350,60 @@ namespace Common_Utilities
         internal Dictionary<RoleType, int> Health = new Dictionary<RoleType, int>();
         internal Dictionary<RoleType, float> HealOnKill = new Dictionary<RoleType, float>();
         internal Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>> Scp914RoleChanges = new Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>>();
+        internal Dictionary<RoleType, float> ScpDmgMult = new Dictionary<RoleType, float>();
+        internal Dictionary<ItemType, float> WepDmgMult = new Dictionary<ItemType, float>();
 
 
         [Description("If the plugin is enabled or not.")]
         public bool IsEnabled { get; set; } = true;
+
+
+        internal void ParseWeaponDamageMultipliers()
+        {
+            foreach (KeyValuePair<string, float> setting in WeaponDamageMultipliers)
+            {
+                try
+                {
+                    ItemType type = (ItemType) Enum.Parse(typeof(ItemType), setting.Key);
+
+                    if (!type.IsWeapon())
+                    {
+                        Log.Warn($"{type} is not a valid weapon!");
+                        continue;
+                    }
+
+                    WepDmgMult.Add(type, setting.Value);
+                }
+                catch (Exception)
+                {
+                    Log.Error($"Failed to parse Weapon Damage Multiplier: {setting.Key} is not a valid item type.");
+                }
+            }
+        }
+        internal void ParseScpDamageMultipliers()
+        {
+            foreach (KeyValuePair<string, float> setting in ScpDamageMultipliers)
+            {
+                try
+                {
+                    RoleType type = (RoleType) Enum.Parse(typeof(RoleType), setting.Key, true);
+
+                    if (!IsScp(type))
+                    {
+                        Log.Warn($"{type} is not a valid SCP role.");
+                        continue;
+                    }
+                    
+                    ScpDmgMult.Add(type, setting.Value);
+                }
+                catch (Exception)
+                {
+                    Log.Error($"Failed to parse SCP Damage Multiplier: {setting.Key} is not a valid role type.");
+                }
+            }
+        }
+
+        bool IsScp(RoleType type) => type == RoleType.Scp049 || type == RoleType.Scp079 || type == RoleType.Scp096 || type == RoleType.Scp106 || type == RoleType.Scp173 || type == RoleType.Scp0492 || type.Is939();
 
         internal void Parse914ClassChanges()
         {
@@ -443,81 +524,62 @@ namespace Common_Utilities
         
         internal void Parse914Settings()
         {
-            foreach (PropertyInfo configSetting in GetType().GetProperties())
+            foreach (KeyValuePair<string, List<string>> setting in Scp914ItemChanges)
             {
-                if (!configSetting.Name.Contains("Scp914") || configSetting.Name == nameof(Scp914ClassChanges))
-                    continue;
-
-                string configName = configSetting.Name;
-
-                List<string> list = (List<string>) configSetting.GetValue(this);
-                Scp914Knob knobSetting = Scp914Knob.Rough;
-
-                switch (configName)
+                try
                 {
-                    case nameof(Scp914RoughChances):
-                        knobSetting = Scp914Knob.Rough;
-                        break;
-                    case nameof(Scp914CoarseChances):
-                        knobSetting = Scp914Knob.Coarse;
-                        break;
-                    case nameof(Scp914OnetoOneChances):
-                        knobSetting = Scp914Knob.OneToOne;
-                        break;
-                    case nameof(Scp914FineChances):
-                        knobSetting = Scp914Knob.Fine;
-                        break;
-                    case nameof(Scp914VeryFineChances):
-                        knobSetting = Scp914Knob.VeryFine;
-                        break;
+                    Scp914Knob knob = (Scp914Knob) Enum.Parse(typeof(Scp914Knob), setting.Key);
+
+                    foreach (string chances in setting.Value)
+                    {
+                        if (string.IsNullOrEmpty(chances))
+                            continue;
+                        
+                        string[] split = chances.Split(':');
+
+                        if (split.Length < 3)
+                        {
+                            Log.Error($"Unable to parse SCP-914 class chance: {chances}. Invalid number of splits.");
+                            continue;
+                        }
+
+                        ItemType originalRole;
+                        ItemType newRole;
+                        try
+                        {
+                            originalRole = (ItemType) Enum.Parse(typeof(ItemType), split[0]);
+                        }
+                        catch (Exception)
+                        {
+                            Log.Warn($"Unable to parse role: {split[0]} for {chances}.");
+                            continue;
+                        }
+
+                        try
+                        {
+                            newRole = (ItemType) Enum.Parse(typeof(ItemType), split[1]);
+                        }
+                        catch (Exception)
+                        {
+                            Log.Warn($"Unable to parse role: {split[1]} for {chances}.");
+                            continue;
+                        }
+
+                        if (!int.TryParse(split[2], out int chance))
+                        {
+                            Log.Warn($"Unable to parse chance {split[2]} for {chance}. Invalid integer.");
+                            continue;
+                        }
+                        
+                        if (!Scp914Configs.ContainsKey(knob))
+                            Scp914Configs.Add(knob, new List<Tuple<ItemType,ItemType, int>>());
+                        
+                        Scp914Configs[knob].Add(new Tuple<ItemType, ItemType, int>(originalRole, newRole, chance));
+                    }
                 }
-
-                if (list == null)
+                catch (Exception)
                 {
-                    Log.Warn($"This list for {configName} is empty. Only base-game recipies will be used for this setting.");
-
-                    if (Scp914Configs.ContainsKey(knobSetting))
-                        Scp914Configs.Remove(knobSetting);
-
-                    continue;
-                }
-                
-                foreach (string unparsedRaw in list)
-                {
-                    ItemType sourceItem;
-                    ItemType destinationItem;
-                    string[] rawChances = unparsedRaw.Split(':');
-
-                    try
-                    {
-                        sourceItem = (ItemType) Enum.Parse(typeof(ItemType), rawChances[0]);
-                    }
-                    catch (Exception)
-                    {
-                        Log.Error($"Unable to parse source item: {rawChances[0]}.");
-                        continue;
-                    }
-
-                    try
-                    {
-                        destinationItem = (ItemType) Enum.Parse(typeof(ItemType), rawChances[1]);
-                    }
-                    catch (Exception)
-                    {
-                        Log.Error($"Unable to parse destination item: {rawChances[1]}");
-                        continue;
-                    }
-
-                    if (!int.TryParse(rawChances[2], out int chance))
-                    {
-                        Log.Error($"Unable to parse conversion chance: {rawChances[2]} for {rawChances[0]} -> {rawChances[1]}.");
-                        continue;
-                    }
-                    
-                    Log.Debug($"Scp914 recipe added: {rawChances[0]} -> {rawChances[1]}, {rawChances[2]}%.", Debug);
-                    if (!Scp914Configs.ContainsKey(knobSetting))
-                        Scp914Configs.Add(knobSetting, new List<Tuple<ItemType, ItemType, int>>());
-                    Scp914Configs[knobSetting].Add(new Tuple<ItemType, ItemType, int>(sourceItem, destinationItem, chance));
+                    Log.Warn($"Unable to parse {setting.Key} as a SCP-914 knob setting.");
                 }
             }
         }

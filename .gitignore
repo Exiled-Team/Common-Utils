@@ -70,3 +70,8 @@
 /Common-Utils/bin/Debug/UnityEngine.XRModule.dll
 /.idea/.idea.Common-Utils/.idea/vcs.xml
 /Common-Utils/bin/Debug/zxing.unity.dll
+/Common Utilities/obj/Debug/.NETFramework,Version=v4.7.2.AssemblyAttributes.cs
+/Common Utilities/obj/Debug/Common Utilities.csprojAssemblyReference.cache
+/.idea/*
+/bin/*
+/obj/*

@@ -15,8 +15,8 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Galaxy119";
-        public override Version Version { get; } = new Version(2, 1, 0);
-        public override Version RequiredExiledVersion { get; } = new Version(2, 1, 13);
+        public override Version Version { get; } = new Version(2, 2, 0);
+        public override Version RequiredExiledVersion { get; } = new Version(2, 1, 17);
         public override string Prefix { get; } = "CommonUtilities";
         
         public PlayerHandlers PlayerHandlers;
@@ -44,6 +44,10 @@ namespace Common_Utilities
                 Config.Parse914Settings();
                 Log.Debug($"Parsing 914 role config..", Config.Debug);
                 Config.Parse914ClassChanges();
+                Log.Debug($"Parsing SCP Damage Multipliers..", Config.Debug);
+                Config.ParseScpDamageMultipliers();
+                Log.Debug($"Parsing Weapon Damage Multipliers..", Config.Debug);
+                Config.ParseWeaponDamageMultipliers();
             }
             catch (Exception e)
             {
@@ -60,6 +64,7 @@ namespace Common_Utilities
             Player.Joined += PlayerHandlers.OnPlayerJoined;
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
             Player.Died += PlayerHandlers.OnPlayerDied;
+            Player.Hurting += PlayerHandlers.OnPlayerHurting;
             
 
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
