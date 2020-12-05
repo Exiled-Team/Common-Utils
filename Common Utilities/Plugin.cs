@@ -15,8 +15,8 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Galaxy119";
-        public override Version Version { get; } = new Version(2, 2, 0);
-        public override Version RequiredExiledVersion { get; } = new Version(2, 1, 17);
+        public override Version Version { get; } = new Version(2, 3, 0);
+        public override Version RequiredExiledVersion { get; } = new Version(2, 1, 18);
         public override string Prefix { get; } = "CommonUtilities";
         
         public PlayerHandlers PlayerHandlers;
@@ -65,6 +65,8 @@ namespace Common_Utilities
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
             Player.Died += PlayerHandlers.OnPlayerDied;
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
+            Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
+            Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
             
 
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
@@ -74,7 +76,7 @@ namespace Common_Utilities
 
             Scp914.UpgradingItems += MapHandlers.OnScp914UpgradingItems;
 
-            Instance = new Harmony("com.galaxy.cu");
+            Instance = new Harmony($"com.galaxy.cu-{DateTime.UtcNow.Ticks}");
             Instance.PatchAll();
 
             base.OnEnabled();
@@ -85,12 +87,18 @@ namespace Common_Utilities
             Player.Joined -= PlayerHandlers.OnPlayerJoined;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
             Player.Died -= PlayerHandlers.OnPlayerDied;
+            Player.Hurting -= PlayerHandlers.OnPlayerHurting;
+            Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
+            Player.InteractingElevator -= PlayerHandlers.OnInteractingElevator;
+            
 
             Server.RoundStarted -= ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers -= ServerHandlers.OnWaitingForPlayers;
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
-            
+            Server.RestartingRound -= ServerHandlers.OnRestartingRound;
+
             Scp914.UpgradingItems -= MapHandlers.OnScp914UpgradingItems;
+            
             Instance.UnpatchAll();
 
             base.OnDisabled();

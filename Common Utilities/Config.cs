@@ -17,6 +17,12 @@ namespace Common_Utilities
 
         [Description("Wether or not SCP-049 should be able to talk to humans.")]
         public bool Scp049Speech { get; set; } = true;
+
+        [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
+        public bool DisarmSwitchTeams { get; set; } = true;
+
+        [Description("Whether or not disarmed people will be prevented from interacting with doors/elevators.")]
+        public bool RestrictiveDisarming { get; set; } = true;
         
         [Description("The text displayed at the timed interval specified below.")]
         public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";

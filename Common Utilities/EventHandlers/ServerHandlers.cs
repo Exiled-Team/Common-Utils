@@ -1,3 +1,5 @@
+using Exiled.API.Extensions;
+
 namespace Common_Utilities.EventHandlers
 {
     using System.Collections.Generic;
@@ -10,6 +12,8 @@ namespace Common_Utilities.EventHandlers
     {
         private readonly Plugin plugin;
         public ServerHandlers(Plugin plugin) => this.plugin = plugin;
+
+        public Vector3 EscapeZone = new Vector3();
         
         public void OnRoundStarted()
         {
@@ -21,6 +25,47 @@ namespace Common_Utilities.EventHandlers
             
             if (plugin.Config.ItemCleanupDelay > 0)
                 plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
+            
+            if (plugin.Config.DisarmSwitchTeams)
+                plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
+        }
+
+        private IEnumerator<float> BetterDisarm()
+        {
+            for (;;)
+            {
+                Timing.WaitForSeconds(1.5f);
+
+                foreach (Player player in Player.List)
+                {
+                    if (!player.IsCuffed || player.Team != Team.CDP || player.Team != Team.MTF || Vector3.Distance(player.Position, EscapeZone) > 20f)
+                        continue;
+
+                    switch (player.Role)
+                    {
+                        case RoleType.FacilityGuard:
+                        case RoleType.NtfCadet:
+                        case RoleType.NtfLieutenant:
+                        case RoleType.NtfCommander:
+                        case RoleType.NtfScientist:
+                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Inventory.items)));
+                            player.Role = RoleType.ChaosInsurgency;
+                            break;
+                        case RoleType.ChaosInsurgency:
+                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Inventory.items)));
+                            player.Role = RoleType.NtfCadet;
+                            break;
+                    }
+                }
+            }
+        }
+
+        public IEnumerator<float> DropItems(Player player, Inventory.SyncListItemInfo items)
+        {
+            yield return Timing.WaitForSeconds(1f);
+
+            foreach (Inventory.SyncItemInfo item in items)
+                item.Spawn(player.Position);
         }
 
         public void OnWaitingForPlayers()
