@@ -81,17 +81,5 @@ namespace Common_Utilities.EventHandlers
             else if (plugin.Config.WepDmgMult.ContainsKey((ItemType) ev.Tool))
                 ev.Amount *= plugin.Config.WepDmgMult[(ItemType) ev.Tool];
         }
-
-        public void OnInteractingDoor(InteractingDoorEventArgs ev)
-        {
-            if (ev.Player.IsCuffed && plugin.Config.RestrictiveDisarming)
-                ev.IsAllowed = false;
-        }
-
-        public void OnInteractingElevator(InteractingElevatorEventArgs ev)
-        {
-            if (ev.Player.IsCuffed && plugin.Config.RestrictiveDisarming)
-                ev.IsAllowed = false;
-        }
     }
 }
