@@ -21,6 +21,9 @@ namespace Common_Utilities
         [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
         public bool DisarmSwitchTeams { get; set; } = true;
 
+        [Description("Whether or not disarmed people will be prevented from interacting with doors/elevators.")]
+        public bool RestrictiveDisarming { get; set; } = true;
+        
         [Description("The text displayed at the timed interval specified below.")]
         public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
         [Description("The time each timed broadcast will be displayed.")]

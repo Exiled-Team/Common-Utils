@@ -65,7 +65,9 @@ namespace Common_Utilities
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
             Player.Died += PlayerHandlers.OnPlayerDied;
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
-
+            Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
+            Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
+            
 
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
@@ -86,7 +88,9 @@ namespace Common_Utilities
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
             Player.Died -= PlayerHandlers.OnPlayerDied;
             Player.Hurting -= PlayerHandlers.OnPlayerHurting;
-
+            Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
+            Player.InteractingElevator -= PlayerHandlers.OnInteractingElevator;
+            
 
             Server.RoundStarted -= ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers -= ServerHandlers.OnWaitingForPlayers;
