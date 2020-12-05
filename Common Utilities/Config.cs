@@ -333,10 +333,10 @@ namespace Common_Utilities
         public Dictionary<string, float> HealthOnKill { get; set; } = new Dictionary<string, float>
         {
             {
-                "Scp173", 125
+                "Scp173", 0
             },
             {
-                "Scp096", 70
+                "Scp096", 0
             }
         };
         
@@ -344,10 +344,10 @@ namespace Common_Utilities
         public Dictionary<string, int> HealthValues { get; set; } = new Dictionary<string, int>
         {
             {
-                "Scp173", 3000
+                "Scp173", 3200
             },
             {
-                "NtfCommander", 200
+                "NtfCommander", 150
             }
         };
 
