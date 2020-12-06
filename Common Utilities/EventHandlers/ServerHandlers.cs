@@ -34,7 +34,7 @@ namespace Common_Utilities.EventHandlers
         {
             for (;;)
             {
-                Timing.WaitForSeconds(1.5f);
+                yield return Timing.WaitForSeconds(1.5f);
 
                 foreach (Player player in Player.List)
                 {
