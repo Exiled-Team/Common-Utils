@@ -12,7 +12,7 @@ namespace Common_Utilities.EventHandlers
         private readonly Plugin plugin;
         public PlayerHandlers(Plugin plugin) => this.plugin = plugin;
 
-        public void OnPlayerJoined(JoinedEventArgs ev)
+        public void OnPlayerVerified(VerifiedEventArgs ev)
         {
             string message = FormatJoinMessage(ev.Player);
             if (!string.IsNullOrEmpty(message))

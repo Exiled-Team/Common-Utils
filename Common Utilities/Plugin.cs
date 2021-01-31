@@ -61,7 +61,7 @@ namespace Common_Utilities
             MapHandlers = new MapHandlers(this);
             
             Log.Info($"Registering EventHandlers..");
-            Player.Joined += PlayerHandlers.OnPlayerJoined;
+            Player.Verified += PlayerHandlers.OnPlayerVerified;
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
             Player.Died += PlayerHandlers.OnPlayerDied;
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
@@ -84,7 +84,7 @@ namespace Common_Utilities
 
         public override void OnDisabled()
         {
-            Player.Joined -= PlayerHandlers.OnPlayerJoined;
+            Player.Verified -= PlayerHandlers.OnPlayerVerified;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
             Player.Died -= PlayerHandlers.OnPlayerDied;
             Player.Hurting -= PlayerHandlers.OnPlayerHurting;
