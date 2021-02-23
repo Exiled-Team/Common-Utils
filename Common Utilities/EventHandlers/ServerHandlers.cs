@@ -80,6 +80,7 @@ namespace Common_Utilities.EventHandlers
         {
             foreach (CoroutineHandle coroutine in plugin.Coroutines)
                 Timing.KillCoroutines(coroutine);
+            plugin.Coroutines.Clear();
         }
 
         private IEnumerator<float> ServerBroadcast()
@@ -130,6 +131,7 @@ namespace Common_Utilities.EventHandlers
         {
             foreach (CoroutineHandle coroutine in plugin.Coroutines)
                 Timing.KillCoroutines(coroutine);
+            plugin.Coroutines.Clear();
         }
     }
 }
