@@ -678,8 +678,7 @@ namespace Common_Utilities
                             continue;
                         }
                         
-                        CustomItem customItem = CustomItem.Get(rawChance[0]);
-                        if (customItem != null)
+                        if (CustomItem.TryGet(rawChance[0], out CustomItem customItem))
                         {
                             Log.Debug($"{nameof(ParseInventorySettings)}: {rawChance[0]} is a custom item, adding to dictionary..", Debug);
                             if (!CustomInventories.ContainsKey(role))
