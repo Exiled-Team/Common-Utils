@@ -34,7 +34,7 @@ namespace Common_Utilities
             Log.Info($"Parsing config..");
             try
             {
-                Timing.CallDelayed(5f, () =>
+                Timing.CallDelayed(10f, () =>
                 {
                     try
                     {
