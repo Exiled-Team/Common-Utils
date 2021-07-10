@@ -34,8 +34,19 @@ namespace Common_Utilities
             Log.Info($"Parsing config..");
             try
             {
-                Log.Debug($"Parsing inventory config..", Config.Debug);
-                Config.ParseInventorySettings();
+                Timing.CallDelayed(5f, () =>
+                {
+                    try
+                    {
+                        Log.Debug($"Parsing inventory config..", Config.Debug);
+                        Config.ParseInventorySettings();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Ya fucked up the parsing.");
+                        Log.Error($"{e.Message}\n{e.StackTrace}");
+                    }
+                });
                 Log.Debug($"Parsing health config..", Config.Debug);
                 Config.ParseHealthSettings();
                 Log.Debug($"Parsing health on kill config..", Config.Debug);
