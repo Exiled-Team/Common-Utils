@@ -1,3 +1,5 @@
+using Exiled.CustomItems.API.Features;
+
 namespace Common_Utilities.EventHandlers
 {
     using System;
@@ -33,17 +35,35 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.Health = plugin.Config.Health[ev.NewRole];
                     ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
                 });
+
+            if (plugin.Config.CustomInventories.ContainsKey(ev.NewRole))
+                Timing.CallDelayed(1.5f, () => HandleCustomItems(ev.Player));
         }
-        
+
+        private void HandleCustomItems(Player player)
+        {
+            foreach (KeyValuePair<string, List<Tuple<CustomItem, int>>> itemChanceBig in plugin.Config.CustomInventories[player.Role])
+            {
+                foreach ((CustomItem item, int chance) in itemChanceBig.Value)
+                {
+                    if (plugin.Gen.Next(100) > chance) 
+                        continue;
+                    item.Give(player);
+
+                    break;
+                }
+            }
+        }
+
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (plugin.Config.HealOnKill.ContainsKey(ev.Killer.Role))
-            {
-                if (ev.Killer.Health + plugin.Config.HealOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)
-                    ev.Killer.Health += plugin.Config.HealOnKill[ev.Killer.Role];
-                else
-                    ev.Killer.Health = ev.Killer.MaxHealth;
-            }
+            if (!plugin.Config.HealOnKill.ContainsKey(ev.Killer.Role)) 
+                return;
+            
+            if (ev.Killer.Health + plugin.Config.HealOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)
+                ev.Killer.Health += plugin.Config.HealOnKill[ev.Killer.Role];
+            else
+                ev.Killer.Health = ev.Killer.MaxHealth;
         }
 
         public List<ItemType> StartItems(RoleType role)
@@ -55,13 +75,13 @@ namespace Common_Utilities.EventHandlers
             
             foreach (KeyValuePair<string, List<Tuple<ItemType, int>>> itemChanceBig in plugin.Config.Inventories[role])
             {
-                foreach (Tuple<ItemType, int> itemChance in itemChanceBig.Value)
+                foreach ((ItemType item, int chance) in itemChanceBig.Value)
                 {
-                    if (plugin.Gen.Next(100) <= itemChance.Item2)
-                    {
-                        items.Add(itemChance.Item1);
-                        break;
-                    }
+                    if (plugin.Gen.Next(100) > chance) 
+                        continue;
+                    
+                    items.Add(item);
+                    break;
                 }
             }
 

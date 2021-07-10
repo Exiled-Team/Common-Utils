@@ -6,6 +6,7 @@ using System.Reflection;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.API.Interfaces;
+using Exiled.CustomItems.API.Features;
 using Scp914;
 
 namespace Common_Utilities
@@ -352,6 +353,7 @@ namespace Common_Utilities
         };
 
         internal Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>> Inventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>>();
+        internal Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int>>>> CustomInventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int>>>>();
         internal Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>>();
         internal Dictionary<RoleType, int> Health = new Dictionary<RoleType, int>();
         internal Dictionary<RoleType, float> HealOnKill = new Dictionary<RoleType, float>();
@@ -638,7 +640,7 @@ namespace Common_Utilities
 
                 if (dict == null || dict.All(l => l.Value == null))
                 {
-                    Log.Warn($"The dictionary for {configName} is empty, they will have default inventory.");
+                    Log.Warn($"{nameof(ParseInventorySettings)}: The dictionary for {configName} is empty, they will have default inventory.");
                     if (Inventories.ContainsKey(role))
                         Inventories.Remove(role);
                     
@@ -651,7 +653,7 @@ namespace Common_Utilities
                     List<string> list = unparsedDict.Value;
                     if (list == null)
                     {
-                        Log.Debug($"The list for {configName}:{slotName} is empty.");
+                        Log.Debug($"{nameof(ParseInventorySettings)}: The list for {configName}:{slotName} is empty.");
 
                         continue;
                     }
@@ -661,12 +663,34 @@ namespace Common_Utilities
                         ItemType item;
                         if (unparsedRaw == "empty")
                         {
+                            Log.Debug($"{nameof(ParseInventorySettings)}: {role} inventory has been set to \"empty\", they will spawn with no items.", Debug);
                             if (!Inventories.ContainsKey(role))
                                 Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int>>>{{slotName, new List<Tuple<ItemType, int>>()}});
                             continue;
                         }
 
                         string[] rawChance = unparsedRaw.Split(':');
+                        
+                        if (!int.TryParse(rawChance[1], out int chance))
+                        {
+                            Log.Error(
+                                $"{nameof(ParseInventorySettings)}: Unable to parse item chance {rawChance[0]} for {rawChance[0]} in {configName} inventory settings.");
+                            continue;
+                        }
+                        
+                        CustomItem customItem = CustomItem.Get(rawChance[0]);
+                        if (customItem != null)
+                        {
+                            Log.Debug($"{nameof(ParseInventorySettings)}: {rawChance[0]} is a custom item, adding to dictionary..", Debug);
+                            if (!CustomInventories.ContainsKey(role))
+                                CustomInventories.Add(role, new Dictionary<string, List<Tuple<CustomItem, int>>>
+                                {
+                                    {"slot1", new List<Tuple<CustomItem, int>>()},{"slot2", new List<Tuple<CustomItem, int>>()},{"slot3", new List<Tuple<CustomItem, int>>()},{"slot4", new List<Tuple<CustomItem, int>>()},{"slot5", new List<Tuple<CustomItem, int>>()},{"slot6", new List<Tuple<CustomItem, int>>()},{"slot7", new List<Tuple<CustomItem, int>>()},{"slot8", new List<Tuple<CustomItem, int>>()},
+                                });
+                            CustomInventories[role][slotName].Add(new Tuple<CustomItem, int>(customItem, chance));
+
+                            continue;
+                        }
 
                         try
                         {
@@ -674,18 +698,11 @@ namespace Common_Utilities
                         }
                         catch (Exception)
                         {
-                            Log.Error($"Unable to parse item: {rawChance[0]} in {configName} inventory settings.");
+                            Log.Error($"{nameof(ParseInventorySettings)}: Unable to parse item: {rawChance[0]} in {configName} inventory settings.");
                             continue;
                         }
 
-                        if (!int.TryParse(rawChance[1], out int chance))
-                        {
-                            Log.Error(
-                                $"Unable to parse item chance {rawChance[0]} for {rawChance[0]} in {configName} inventory settings.");
-                            continue;
-                        }
-
-                        Log.Debug($"{item} was added to {configName} inventory with {chance} chance.", Debug);
+                        Log.Debug($"{nameof(ParseInventorySettings)}: {item} was added to {configName} inventory with {chance} chance.", Debug);
                         if (!Inventories.ContainsKey(role))
                             Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int>>>
                             {
