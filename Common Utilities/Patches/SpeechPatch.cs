@@ -22,15 +22,15 @@ namespace Common_Utilities.Patches
             switch(role)
             {
                 case RoleType.Scp096:
-                    return Plugin.Singleton.Config.CanShyGuySpeak;
+                    return Plugin.Singleton.Config.CanScp096Speak;
                 case RoleType.Scp173:
-                    return Plugin.Singleton.Config.CanPeanutSpeak;
+                    return Plugin.Singleton.Config.CanScp173Speak;
                 case RoleType.Scp106:
-                    return Plugin.Singleton.Config.CanLarrySpeak;
+                    return Plugin.Singleton.Config.CanScp106Speak;
                 case RoleType.Scp0492:
                     return Plugin.Singleton.Config.CanZombieSpeak;
                 case RoleType.Scp049:
-                    return Plugin.Singleton.Config.CanDoctorSpeak;
+                    return Plugin.Singleton.Config.CanScp0492Speak;
                 default:
                     return true;
             }
