@@ -16,19 +16,19 @@ namespace Common_Utilities
         [Description("Wether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("Can 106 speak?")]
+        [Description("Can 106 speak to humans?")]
         public bool CanLarrySpeak { get; set; } = true;
 
-        [Description("Can 049 speak?")]
+        [Description("Can 049 speak to humans?")]
         public bool CanDoctorSpeak { get; set; } = true;
 
-        [Description("Can 173 speak?")]
+        [Description("Can 173 speak to humans?")]
         public bool CanPeanutSpeak { get; set; } = true;
 
-        [Description("Can 096 speak?")]
+        [Description("Can 096 speak to humans?")]
         public bool CanShyGuySpeak { get; set; } = true;
 
-        [Description("Can 049-2 speak?")]
+        [Description("Can 049-2 speak to humans?")]
         public bool CanZombieSpeak { get; set; } = true;
 
         [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
