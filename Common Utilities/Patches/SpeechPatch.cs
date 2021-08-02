@@ -1,7 +1,7 @@
 using Assets._Scripts.Dissonance;
 using HarmonyLib;
 
-namespace VoiceChatSCP
+namespace Common_Utilities.Patches
 {
     [HarmonyPatch(typeof(DissonanceUserSetup), nameof(DissonanceUserSetup.CallCmdAltIsActive))]
     public static class SpeechPatch
