@@ -16,8 +16,20 @@ namespace Common_Utilities
         [Description("Wether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("Wether or not SCP-049 should be able to talk to humans.")]
-        public bool Scp049Speech { get; set; } = true;
+        [Description("Can 106 speak?")]
+        public bool CanLarrySpeak { get; set; } = true;
+
+        [Description("Can 049 speak?")]
+        public bool CanDoctorSpeak { get; set; } = true;
+
+        [Description("Can 173 speak?")]
+        public bool CanPeanutSpeak { get; set; } = true;
+
+        [Description("Can 096 speak?")]
+        public bool CanShyGuySpeak { get; set; } = true;
+
+        [Description("Can 049-2 speak?")]
+        public bool CanZombieSpeak { get; set; } = true;
 
         [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
         public bool DisarmSwitchTeams { get; set; } = true;
