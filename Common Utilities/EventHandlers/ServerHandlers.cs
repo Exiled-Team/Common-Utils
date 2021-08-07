@@ -4,7 +4,9 @@ namespace Common_Utilities.EventHandlers
 {
     using System.Collections.Generic;
     using Exiled.API.Features;
+    using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
+    using InventorySystem.Items.Pickups;
     using MEC;
     using UnityEngine;
     
@@ -44,28 +46,31 @@ namespace Common_Utilities.EventHandlers
                     switch (player.Role)
                     {
                         case RoleType.FacilityGuard:
-                        case RoleType.NtfCadet:
-                        case RoleType.NtfLieutenant:
-                        case RoleType.NtfCommander:
-                        case RoleType.NtfScientist:
-                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Inventory.items)));
-                            player.Role = RoleType.ChaosInsurgency;
+                        case RoleType.NtfPrivate:
+                        case RoleType.NtfSergeant:
+                        case RoleType.NtfCaptain:
+                        case RoleType.NtfSpecialist:
+                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items)));
+                            player.Role = RoleType.ChaosConscript;
                             break;
-                        case RoleType.ChaosInsurgency:
-                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Inventory.items)));
-                            player.Role = RoleType.NtfCadet;
+                        case RoleType.ChaosConscript:
+                        case RoleType.ChaosMarauder:
+                        case RoleType.ChaosRepressor:
+                        case RoleType.ChaosRifleman:
+                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items)));
+                            player.Role = RoleType.NtfPrivate;
                             break;
                     }
                 }
             }
         }
 
-        public IEnumerator<float> DropItems(Player player, Inventory.SyncListItemInfo items)
+        public IEnumerator<float> DropItems(Player player, IEnumerable<Item> items)
         {
             yield return Timing.WaitForSeconds(1f);
 
-            foreach (Inventory.SyncItemInfo item in items)
-                item.Spawn(player.Position);
+            foreach (Item item in items)
+                item.Spawn(player.Position, default);
         }
 
         public void OnWaitingForPlayers()
@@ -99,9 +104,9 @@ namespace Common_Utilities.EventHandlers
             {
                 yield return Timing.WaitForSeconds(plugin.Config.ItemCleanupDelay);
 
-                foreach (Pickup item in Object.FindObjectsOfType<Pickup>())
-                    if (!plugin.Config.ItemCleanupOnlyPocket || item.position.y < -1500f)
-                        item.Delete();
+                foreach (ItemPickupBase item in Object.FindObjectsOfType<ItemPickupBase>())
+                    if (!plugin.Config.ItemCleanupOnlyPocket || item.NetworkInfo.Position.y < -1500f)
+                        item.DestroySelf();
             }
         }
 

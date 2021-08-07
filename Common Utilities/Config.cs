@@ -71,7 +71,7 @@ namespace Common_Utilities
                 "slot8", new List<string>()
             },
         };
-        public Dictionary<string, List<string>> ChaosInventory { get; set; } = new Dictionary<string, List<string>>
+        public Dictionary<string, List<string>> ChaosConscriptInventory { get; set; } = new Dictionary<string, List<string>>
         {
             {
                 "slot1", new List<string>()
@@ -152,7 +152,7 @@ namespace Common_Utilities
                 "slot8", new List<string>()
             },
         };
-        public Dictionary<string, List<string>> CadetInventory { get; set; } = new Dictionary<string, List<string>>
+        public Dictionary<string, List<string>> NtfPrivateInventory { get; set; } = new Dictionary<string, List<string>>
         {
             {
                 "slot1", new List<string>()
@@ -179,7 +179,7 @@ namespace Common_Utilities
                 "slot8", new List<string>()
             },
         };
-        public Dictionary<string, List<string>> LieutenantInventory { get; set; } = new Dictionary<string, List<string>>
+        public Dictionary<string, List<string>> NtfSergeantInventory { get; set; } = new Dictionary<string, List<string>>
         {
             {
                 "slot1", new List<string>()
@@ -206,7 +206,7 @@ namespace Common_Utilities
                 "slot8", new List<string>()
             },
         };
-        public Dictionary<string, List<string>> CommanderInventory { get; set; } = new Dictionary<string, List<string>>
+        public Dictionary<string, List<string>> NtfCaptainInventory { get; set; } = new Dictionary<string, List<string>>
         {
             {
                 "slot1", new List<string>()
@@ -233,7 +233,7 @@ namespace Common_Utilities
                 "slot8", new List<string>()
             },
         };
-        public Dictionary<string, List<string>> NtfSciInventory { get; set; } = new Dictionary<string, List<string>>
+        public Dictionary<string, List<string>> NtfSpecialistInventory { get; set; } = new Dictionary<string, List<string>>
         {
             {
                 "slot1", new List<string>()
@@ -354,10 +354,10 @@ namespace Common_Utilities
 
         internal Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>> Inventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>>();
         internal Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int>>>> CustomInventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int>>>>();
-        internal Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914Knob, List<Tuple<ItemType, ItemType, int>>>();
+        internal Dictionary<Scp914KnobSetting, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914KnobSetting, List<Tuple<ItemType, ItemType, int>>>();
         internal Dictionary<RoleType, int> Health = new Dictionary<RoleType, int>();
         internal Dictionary<RoleType, float> HealOnKill = new Dictionary<RoleType, float>();
-        internal Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>> Scp914RoleChanges = new Dictionary<Scp914Knob, List<Tuple<RoleType, RoleType, int>>>();
+        internal Dictionary<Scp914KnobSetting, List<Tuple<RoleType, RoleType, int>>> Scp914RoleChanges = new Dictionary<Scp914KnobSetting, List<Tuple<RoleType, RoleType, int>>>();
         internal Dictionary<RoleType, float> ScpDmgMult = new Dictionary<RoleType, float>();
         internal Dictionary<ItemType, float> WepDmgMult = new Dictionary<ItemType, float>();
 
@@ -419,7 +419,7 @@ namespace Common_Utilities
             {
                 try
                 {
-                    Scp914Knob knob = (Scp914Knob) Enum.Parse(typeof(Scp914Knob), setting.Key);
+                    Scp914KnobSetting knob = (Scp914KnobSetting) Enum.Parse(typeof(Scp914KnobSetting), setting.Key);
 
                     foreach (string chances in setting.Value)
                     {
@@ -536,7 +536,7 @@ namespace Common_Utilities
             {
                 try
                 {
-                    Scp914Knob knob = (Scp914Knob) Enum.Parse(typeof(Scp914Knob), setting.Key);
+                    Scp914KnobSetting knob = (Scp914KnobSetting) Enum.Parse(typeof(Scp914KnobSetting), setting.Key);
 
                     foreach (string chances in setting.Value)
                     {
@@ -609,8 +609,8 @@ namespace Common_Utilities
                     case nameof(ClassDInventory):
                         role = RoleType.ClassD;
                         break;
-                    case nameof(ChaosInventory):
-                        role = RoleType.ChaosInsurgency;
+                    case nameof(ChaosConscriptInventory):
+                        role = RoleType.ChaosConscript;
                         break;
                     case nameof(ScientistInventory):
                         role = RoleType.Scientist;
@@ -618,17 +618,17 @@ namespace Common_Utilities
                     case nameof(GuardInventory):
                         role = RoleType.FacilityGuard;
                         break;
-                    case nameof(CadetInventory):
-                        role = RoleType.NtfCadet;
+                    case nameof(NtfPrivateInventory):
+                        role = RoleType.NtfPrivate;
                         break;
-                    case nameof(LieutenantInventory):
-                        role = RoleType.NtfLieutenant;
+                    case nameof(NtfSergeantInventory):
+                        role = RoleType.NtfSergeant;
                         break;
-                    case nameof(CommanderInventory):
-                        role = RoleType.NtfCommander;
+                    case nameof(NtfCaptainInventory):
+                        role = RoleType.NtfCaptain;
                         break;
-                    case nameof(NtfSciInventory):
-                        role = RoleType.NtfScientist;
+                    case nameof(NtfSpecialistInventory):
+                        role = RoleType.NtfSpecialist;
                         break;
                 }
 
