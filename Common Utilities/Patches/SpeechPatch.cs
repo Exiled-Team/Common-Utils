@@ -3,7 +3,7 @@ using HarmonyLib;
 
 namespace Common_Utilities.Patches
 {
-    [HarmonyPatch(typeof(DissonanceUserSetup), nameof(DissonanceUserSetup.CallCmdAltIsActive))]
+    [HarmonyPatch(typeof(DissonanceUserSetup), nameof(DissonanceUserSetup.UserCode_CmdAltIsActive))]
     public static class SpeechPatch
     {
         public static bool Prefix(DissonanceUserSetup __instance, bool value)
@@ -27,8 +27,6 @@ namespace Common_Utilities.Patches
                     return Plugin.Singleton.Config.CanScp173Speak;
                 case RoleType.Scp106:
                     return Plugin.Singleton.Config.CanScp106Speak;
-                case RoleType.Scp0492:
-                    return Plugin.Singleton.Config.CanZombieSpeak;
                 case RoleType.Scp049:
                     return Plugin.Singleton.Config.CanScp0492Speak;
                 default:

@@ -95,7 +95,7 @@
         <Compile Include="EventHandlers\MapHandlers.cs" />
         <Compile Include="EventHandlers\PlayerHandlers.cs" />
         <Compile Include="EventHandlers\ServerHandlers.cs" />
-        <Compile Include="Patches\Scp049SpeechPatch.cs" />
+        <Compile Include="Patches\SpeechPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
