@@ -116,9 +116,9 @@ namespace Common_Utilities.EventHandlers
             {
                 yield return Timing.WaitForSeconds(plugin.Config.RagdollCleanupDelay);
                 
-                foreach (Ragdoll ragdoll in Object.FindObjectsOfType<Ragdoll>())
-                    if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.transform.position.y < -1500f)
-                        Object.Destroy(ragdoll);
+                foreach (Ragdoll ragdoll in Map.Ragdolls)
+                    if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
+                        ragdoll.Delete();
             }
         }
 

@@ -5,10 +5,11 @@ using Scp914;
 namespace Common_Utilities.EventHandlers
 {
     using System;
+    using Exiled.API.Enums;
     using Exiled.API.Extensions;
     using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
-    
+
     public class MapHandlers
     {
         private readonly Plugin plugin;
@@ -64,7 +65,7 @@ namespace Common_Utilities.EventHandlers
 
                     if (plugin.Gen.Next(100) <= chance)
                     {
-                        ev.Player.SetRole(destinationRole, true);
+                        ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, true);
                         ev.Player.Position = Exiled.API.Features.Scp914.OutputBooth.position;
                     }
                 }

@@ -1,16 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using Exiled.API.Extensions;
-using Exiled.API.Features;
-using Exiled.API.Interfaces;
-using Exiled.CustomItems.API.Features;
-using Scp914;
-
 namespace Common_Utilities
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Reflection;
+    using Exiled.API.Enums;
+    using Exiled.API.Extensions;
+    using Exiled.API.Features;
+    using Exiled.API.Interfaces;
+    using Exiled.CustomItems.API.Features;
+    using Scp914;
+
     public class Config : IConfig
     {
         [Description("Wether or not debug messages should be shown.")]

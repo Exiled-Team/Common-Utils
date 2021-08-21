@@ -4,6 +4,7 @@ namespace Common_Utilities.EventHandlers
 {
     using System;
     using System.Collections.Generic;
+    using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.Events.EventArgs;
     using MEC;
@@ -98,8 +99,8 @@ namespace Common_Utilities.EventHandlers
                 if (plugin.Config.ScpDmgMult.ContainsKey(ev.Attacker.Role))
                     ev.Amount *= plugin.Config.ScpDmgMult[ev.Attacker.Role];
             }
-            else if (plugin.Config.WepDmgMult.ContainsKey((ItemType) ev.Tool))
-                ev.Amount *= plugin.Config.WepDmgMult[(ItemType) ev.Tool];
+            else if (plugin.Config.WepDmgMult.ContainsKey((ItemType) ev.DamageType.Weapon))
+                ev.Amount *= plugin.Config.WepDmgMult[(ItemType) ev.DamageType.Weapon];
         }
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
