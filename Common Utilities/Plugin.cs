@@ -85,7 +85,9 @@ namespace Common_Utilities
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
 
-            Scp914.UpgradingItems += MapHandlers.OnScp914UpgradingItems;
+            Scp914.UpgradingItem += MapHandlers.OnScp914UpgradingItem;
+            Scp914.UpgradingPlayer += MapHandlers.OnScp914UpgradingPlayer;
+            Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
 
             Instance = new Harmony($"com.galaxy.cu-{DateTime.UtcNow.Ticks}");
             Instance.PatchAll();
@@ -108,7 +110,9 @@ namespace Common_Utilities
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
             Server.RestartingRound -= ServerHandlers.OnRestartingRound;
 
-            Scp914.UpgradingItems -= MapHandlers.OnScp914UpgradingItems;
+            Scp914.UpgradingItem -= MapHandlers.OnScp914UpgradingItem;
+            Scp914.UpgradingPlayer -= MapHandlers.OnScp914UpgradingPlayer;
+            Scp914.UpgradingInventoryItem -= MapHandlers.OnScp914UpgradingInventoryItem;
             
             Instance.UnpatchAll();
 

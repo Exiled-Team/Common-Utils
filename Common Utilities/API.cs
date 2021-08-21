@@ -1,6 +1,8 @@
 namespace Common_Utilities
 {
     using System.Collections.Generic;
+
+    using Exiled.API.Enums;
     
     public static class API
     {
