@@ -28,6 +28,8 @@ namespace Common_Utilities.Patches
                 case RoleType.Scp106:
                     return Plugin.Singleton.Config.CanScp106Speak;
                 case RoleType.Scp049:
+                    return Plugin.Singleton.Config.CanScp049Speak;
+                case RoleType.Scp0492:
                     return Plugin.Singleton.Config.CanScp0492Speak;
                 default:
                     return true;
