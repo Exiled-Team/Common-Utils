@@ -61,11 +61,13 @@ namespace Common_Utilities
                         {
                             ItemName = ItemType.KeycardJanitor.ToString(),
                             Chance = 10,
+                            Group = "none",
                         },
                         new ItemChance
                         {
                             ItemName = ItemType.Coin.ToString(),
                             Chance = 100,
+                            Group = "none",
                         },
                     },
                     Slot2 = new List<ItemChance>
@@ -74,7 +76,8 @@ namespace Common_Utilities
                         {
                             ItemName = ItemType.Flashlight.ToString(),
                             Chance = 100,
-                        }
+                            Group = "none",
+                        },
                     },
                 }
             }
