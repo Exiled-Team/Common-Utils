@@ -9,8 +9,10 @@ namespace Common_Utilities.EventHandlers
     using Exiled.API.Extensions;
     using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
+    using InventorySystem.Items.Firearms;
     using InventorySystem.Items.ThrowableProjectiles;
     using UnityEngine;
+    using Firearm = Exiled.API.Features.Items.Firearm;
 
     public class MapHandlers
     {
@@ -27,9 +29,12 @@ namespace Common_Utilities.EventHandlers
                         if (sourceItem != ev.Item.Type)
                             continue;
 
-                        if (plugin.Gen.Next(100) <= chance)
+                        int r = plugin.Rng.Next(100);
+                        Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", plugin.Config.Debug);
+                        if (r <= chance)
                         {
-                            UpgradeItem(ev.Item, destinationItem);
+                            UpgradeItem(ev.Item, destinationItem, ev.OutputPosition);
+                            ev.IsAllowed = false;
                             break;
                         }
                     }
@@ -46,7 +51,9 @@ namespace Common_Utilities.EventHandlers
                     if (sourceItem != ev.Item.Type)
                         continue;
 
-                    if (plugin.Gen.Next(100) <= chance)
+                    int r = plugin.Rng.Next(100);
+                    Log.Debug($"{nameof(OnScp914UpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", plugin.Config.Debug);
+                    if (r <= chance)
                     {
                         ev.Player.RemoveItem(ev.Item);
                         ev.Player.AddItem(destinationItem);
@@ -59,13 +66,14 @@ namespace Common_Utilities.EventHandlers
         {
             if (plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoleType sourceRole, RoleType destinationRole, int chance) in plugin.Config.Scp914ClassChanges[
-                    ev.KnobSetting])
+                foreach ((RoleType sourceRole, RoleType destinationRole, int chance) in plugin.Config.Scp914ClassChanges[ev.KnobSetting])
                 {
                     if (sourceRole != ev.Player.Role)
                         continue;
 
-                    if (plugin.Gen.Next(100) <= chance)
+                    int r = plugin.Rng.Next(100);
+                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})", plugin.Config.Debug);
+                    if (r <= chance)
                     {
                         ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, true);
                         ev.Player.Position = Exiled.API.Features.Scp914.OutputBooth.position;
@@ -74,10 +82,16 @@ namespace Common_Utilities.EventHandlers
             }
         }
 
-        internal void UpgradeItem(Pickup oldItem, ItemType newItem)
+        internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos)
         {
+            Item item = new Item(newItem);
+            if (oldItem.Base is FirearmPickup firearmPickup && item is Firearm firearm)
+                firearm.Ammo = firearmPickup.NetworkStatus.Ammo <= firearm.MaxAmmo
+                    ? firearmPickup.NetworkStatus.Ammo
+                    : firearm.MaxAmmo;
+
+            item.Spawn(pos);
             oldItem.Destroy();
-            new Item(newItem).Spawn(Exiled.API.Features.Scp914.OutputBooth.position, default);
         }
     }
 }

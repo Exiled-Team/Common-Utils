@@ -26,7 +26,7 @@ namespace Common_Utilities
         public ServerHandlers ServerHandlers;
         public MapHandlers MapHandlers;
         public List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
-        public Random Gen = new Random();
+        public Random Rng = new Random();
         public static Plugin Singleton;
         public Harmony Instance;
 
@@ -81,7 +81,7 @@ namespace Common_Utilities
             Scp914.UpgradingPlayer += MapHandlers.OnScp914UpgradingPlayer;
             Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
 
-            Instance = new Harmony($"com.galaxy.cu-{DateTime.UtcNow.Ticks}");
+            Instance = new Harmony($"com.joker.cu-{DateTime.UtcNow.Ticks}");
             Instance.PatchAll();
 
             base.OnEnabled();

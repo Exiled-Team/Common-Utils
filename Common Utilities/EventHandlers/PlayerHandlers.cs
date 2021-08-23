@@ -57,7 +57,7 @@ namespace Common_Utilities.EventHandlers
 
             for (int i = 0; i < _plugin.Config.StartingInventories[role].UsedSlots; i++)
             {
-                int r = _plugin.Gen.Next(100);
+                int r = _plugin.Rng.Next(100);
                 foreach ((string item, int chance, string groupKey) in _plugin.Config.StartingInventories[role][i])
                 {
                     if (player != null && !string.IsNullOrEmpty(groupKey) && groupKey != "none" && (!ServerStatic.PermissionsHandler._groups.TryGetValue(groupKey, out var group) || group != player.Group))
