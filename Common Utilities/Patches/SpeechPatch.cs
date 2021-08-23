@@ -10,31 +10,12 @@ namespace Common_Utilities.Patches
         {
             CharacterClassManager ccm = __instance.gameObject.GetComponent<CharacterClassManager>();
 
-            if (!HandleConfigLogic(ccm.CurClass)) return true;
+            if (!Plugin.Singleton.Config.ScpSpeech.Contains(ccm.NetworkCurClass))
+                return true;
 
             __instance.MimicAs939 = value;
 
             return true;
-        }
-
-        private static bool HandleConfigLogic(RoleType role)
-        {
-            switch(role)
-            {
-                case RoleType.Scp096:
-                    return Plugin.Singleton.Config.CanScp096Speak;
-                case RoleType.Scp173:
-                    return Plugin.Singleton.Config.CanScp173Speak;
-                case RoleType.Scp106:
-                    return Plugin.Singleton.Config.CanScp106Speak;
-                case RoleType.Scp049:
-                    return Plugin.Singleton.Config.CanScp049Speak;
-                case RoleType.Scp0492:
-                    return Plugin.Singleton.Config.CanScp0492Speak;
-                default:
-                    return true;
-            }
-
         }
     }
 }

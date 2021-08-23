@@ -8,6 +8,6 @@ namespace Common_Utilities
     {
         public static List<ItemType> GetStartItems(RoleType role) => Plugin.Singleton.PlayerHandlers.StartItems(role);
 
-        public static float GetHealthOnKill(RoleType role) => Plugin.Singleton.Config.HealOnKill.ContainsKey(role) ? Plugin.Singleton.Config.HealOnKill[role] : 0f;
+        public static float GetHealthOnKill(RoleType role) => Plugin.Singleton.Config.HealthOnKill.ContainsKey(role) ? Plugin.Singleton.Config.HealthOnKill[role] : 0f;
     }
 }

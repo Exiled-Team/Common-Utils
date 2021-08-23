@@ -4,85 +4,80 @@ namespace Common_Utilities.EventHandlers
 {
     using System;
     using System.Collections.Generic;
+    using Common_Utilities.Structs;
     using Exiled.API.Enums;
     using Exiled.API.Features;
+    using Exiled.CustomItems;
     using Exiled.Events.EventArgs;
     using MEC;
     using Player = Exiled.API.Features.Player;
     
     public class PlayerHandlers
     {
-        private readonly Plugin plugin;
-        public PlayerHandlers(Plugin plugin) => this.plugin = plugin;
+        private readonly Plugin _plugin;
+        public PlayerHandlers(Plugin plugin) => this._plugin = plugin;
 
         public void OnPlayerVerified(VerifiedEventArgs ev)
         {
             string message = FormatJoinMessage(ev.Player);
             if (!string.IsNullOrEmpty(message))
-                ev.Player.Broadcast(plugin.Config.JoinMessageDuration, message);
+                ev.Player.Broadcast(_plugin.Config.JoinMessageDuration, message);
         }
         
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (plugin.Config.Inventories.ContainsKey(ev.NewRole))
+            if (_plugin.Config.StartingInventories.ContainsKey(ev.NewRole))
             {
                 ev.Items.Clear();
-                ev.Items.AddRange(StartItems(ev.NewRole));
+                ev.Items.AddRange(StartItems(ev.NewRole, ev.Player));
             }
 
-            if (plugin.Config.Health.ContainsKey(ev.NewRole))
+            if (_plugin.Config.HealthValues.ContainsKey(ev.NewRole))
                 Timing.CallDelayed(1.5f, () =>
                 {
-                    ev.Player.Health = plugin.Config.Health[ev.NewRole];
-                    ev.Player.MaxHealth = plugin.Config.Health[ev.NewRole];
+                    ev.Player.Health = _plugin.Config.HealthValues[ev.NewRole];
+                    ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
                 });
-
-            if (plugin.Config.CustomInventories.ContainsKey(ev.NewRole))
-                Timing.CallDelayed(1.5f, () => HandleCustomItems(ev.Player));
-        }
-
-        private void HandleCustomItems(Player player)
-        {
-            foreach (KeyValuePair<string, List<Tuple<CustomItem, int>>> itemChanceBig in plugin.Config.CustomInventories[player.Role])
-            {
-                foreach ((CustomItem item, int chance) in itemChanceBig.Value)
-                {
-                    if (plugin.Gen.Next(100) > chance) 
-                        continue;
-                    item.Give(player);
-
-                    break;
-                }
-            }
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (!plugin.Config.HealOnKill.ContainsKey(ev.Killer.Role)) 
+            if (!_plugin.Config.HealthOnKill.ContainsKey(ev.Killer.Role)) 
                 return;
             
-            if (ev.Killer.Health + plugin.Config.HealOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)
-                ev.Killer.Health += plugin.Config.HealOnKill[ev.Killer.Role];
+            if (ev.Killer.Health + _plugin.Config.HealthOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)
+                ev.Killer.Health += _plugin.Config.HealthOnKill[ev.Killer.Role];
             else
                 ev.Killer.Health = ev.Killer.MaxHealth;
         }
 
-        public List<ItemType> StartItems(RoleType role)
+        public List<ItemType> StartItems(RoleType role, Player player = null)
         {
             List<ItemType> items = new List<ItemType>();
-            
-            if (plugin.Config.Inventories[role] == default)
-                return items;
-            
-            foreach (KeyValuePair<string, List<Tuple<ItemType, int>>> itemChanceBig in plugin.Config.Inventories[role])
+
+            for (int i = 0; i < _plugin.Config.StartingInventories[role].UsedSlots; i++)
             {
-                foreach ((ItemType item, int chance) in itemChanceBig.Value)
+                int r = _plugin.Gen.Next(100);
+                foreach ((string item, int chance) in _plugin.Config.StartingInventories[role][i])
                 {
-                    if (plugin.Gen.Next(100) > chance) 
-                        continue;
-                    
-                    items.Add(item);
-                    break;
+                    if (r <= chance)
+                    {
+                        if (Enum.TryParse(item, true, out ItemType type))
+                        {
+                            items.Add(type);
+                            break;
+                        }
+                        else if (CustomItem.TryGet(item, out CustomItem customItem))
+                        {
+                            if (player != null)
+                                Timing.CallDelayed(0.5f, () => customItem.Give(player));
+                            else
+                                Log.Warn($"{nameof(StartItems)}: Tried to give {customItem.Name} to a null player.");
+                            break;
+                        }
+                        else
+                            Log.Warn($"{nameof(StartItems)}: {item} is not a valid ItemType or it is a CustomItem that is not installed! It is being skipper in inventory decisions.");
+                    }
                 }
             }
 
@@ -90,28 +85,26 @@ namespace Common_Utilities.EventHandlers
         }
 
         private string FormatJoinMessage(Player player) => 
-            string.IsNullOrEmpty(plugin.Config.JoinMessage) ? string.Empty : plugin.Config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
+            string.IsNullOrEmpty(_plugin.Config.JoinMessage) ? string.Empty : _plugin.Config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
 
         public void OnPlayerHurting(HurtingEventArgs ev)
         {
-            if (ev.Attacker.Team == Team.SCP)
-            {
-                if (plugin.Config.ScpDmgMult.ContainsKey(ev.Attacker.Role))
-                    ev.Amount *= plugin.Config.ScpDmgMult[ev.Attacker.Role];
-            }
-            else if (plugin.Config.WepDmgMult.ContainsKey((ItemType) ev.DamageType.Weapon))
-                ev.Amount *= plugin.Config.WepDmgMult[(ItemType) ev.DamageType.Weapon];
+            if (_plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Attacker.Role))
+                ev.Amount *= _plugin.Config.RoleDamageMultipliers[ev.Attacker.Role];
+
+            if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(ev.DamageType.Weapon))
+                ev.Amount *= _plugin.Config.WeaponDamageMultipliers[ev.DamageType.Weapon];
         }
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
-            if (ev.Player.IsCuffed && plugin.Config.RestrictiveDisarming)
+            if (ev.Player.IsCuffed && _plugin.Config.RestrictiveDisarming)
                 ev.IsAllowed = false;
         }
 
         public void OnInteractingElevator(InteractingElevatorEventArgs ev)
         {
-            if (ev.Player.IsCuffed && plugin.Config.RestrictiveDisarming)
+            if (ev.Player.IsCuffed && _plugin.Config.RestrictiveDisarming)
                 ev.IsAllowed = false;
         }
     }
