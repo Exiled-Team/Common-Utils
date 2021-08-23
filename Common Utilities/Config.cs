@@ -49,7 +49,7 @@ namespace Common_Utilities
         public bool AutonukeLock { get; set; } = true;
 
         [Description(
-            "The list of items Class-D should have. Valid formatting should be ItemType:Chance where ItemType is the item to give them, and Chance is the percent chance of them spawning with it. You can specify the same item multiple times. This is true for all Inventory configs.")]
+            "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
         public Dictionary<RoleType, RoleInventory> StartingInventories { get; set; } = new Dictionary<RoleType, RoleInventory>
         {
             {
@@ -83,7 +83,7 @@ namespace Common_Utilities
             }
         };
         
-        [Description("The list of custom 914 recipies for the Rough setting. Valid formatting should be OriginalItemType:NewItemType:Chance where OriginalItem is the item being upgraded, NewItem is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
+        [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
         public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChanges { get; set; } = new Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>>
         {
             {
@@ -101,7 +101,7 @@ namespace Common_Utilities
             },
         };
         
-        [Description("The list of custom 914 recipies for 914. Valid formatting is OriginalRole:NewRole:Chance - IE: ClassD:Spectator:100 - for each knob setting defined.")]
+        [Description("The list of custom 914 recipies for roles. Original is the role to be changed, New is the new role to assign, Chance is the % chance of the upgrade occuring.")]
         public Dictionary<Scp914KnobSetting, List<PlayerUpgradeChance>> Scp914ClassChanges { get; set; } = new Dictionary<Scp914KnobSetting, List<PlayerUpgradeChance>>
         {
             {
@@ -110,8 +110,8 @@ namespace Common_Utilities
                     {
                         new PlayerUpgradeChance
                         {
-                            OldRole = RoleType.ClassD,
-                            NewRole = RoleType.Spectator,
+                            Original = RoleType.ClassD,
+                            New = RoleType.Spectator,
                             Chance = 100,
                         }
                     }
