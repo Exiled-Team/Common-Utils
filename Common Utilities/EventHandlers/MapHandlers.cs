@@ -9,6 +9,8 @@ namespace Common_Utilities.EventHandlers
     using Exiled.API.Extensions;
     using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
+    using InventorySystem.Items.ThrowableProjectiles;
+    using UnityEngine;
 
     public class MapHandlers
     {
@@ -17,9 +19,9 @@ namespace Common_Utilities.EventHandlers
         
         public void OnScp914UpgradingItem(UpgradingItemEventArgs ev)
         {
-            if (plugin.Config.Scp914Configs.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in plugin.Config.Scp914Configs[
+                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in plugin.Config.Scp914ItemChanges[
                         ev.KnobSetting])
                     {
                         if (sourceItem != ev.Item.Type)
@@ -36,9 +38,9 @@ namespace Common_Utilities.EventHandlers
 
         public void OnScp914UpgradingInventoryItem(UpgradingInventoryItemEventArgs ev)
         {
-            if (plugin.Config.Scp914Configs.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in plugin.Config.Scp914Configs[
+                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in plugin.Config.Scp914ItemChanges[
                     ev.KnobSetting])
                 {
                     if (sourceItem != ev.Item.Type)
@@ -55,9 +57,9 @@ namespace Common_Utilities.EventHandlers
 
         public void OnScp914UpgradingPlayer(UpgradingPlayerEventArgs ev)
         {
-            if (plugin.Config.Scp914RoleChanges.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoleType sourceRole, RoleType destinationRole, int chance) in plugin.Config.Scp914RoleChanges[
+                foreach ((RoleType sourceRole, RoleType destinationRole, int chance) in plugin.Config.Scp914ClassChanges[
                     ev.KnobSetting])
                 {
                     if (sourceRole != ev.Player.Role)
