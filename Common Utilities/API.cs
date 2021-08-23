@@ -1,3 +1,5 @@
+using System;
+
 namespace Common_Utilities
 {
     using System.Collections.Generic;
@@ -6,7 +8,7 @@ namespace Common_Utilities
     
     public static class API
     {
-        public static List<ItemType> GetStartItems(RoleType role) => Plugin.Singleton.PlayerHandlers.StartItems(role);
+        public static List<ItemType> GetStartItems(RoleType role, UserGroup userGroup = default) => Plugin.Singleton.PlayerHandlers.StartItems(role, userGroup);
 
         public static float GetHealthOnKill(RoleType role) => Plugin.Singleton.Config.HealOnKill.ContainsKey(role) ? Plugin.Singleton.Config.HealOnKill[role] : 0f;
     }

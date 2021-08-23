@@ -27,7 +27,7 @@ namespace Common_Utilities.EventHandlers
             if (plugin.Config.Inventories.ContainsKey(ev.NewRole))
             {
                 ev.Items.Clear();
-                ev.Items.AddRange(StartItems(ev.NewRole));
+                ev.Items.AddRange(StartItems(ev.NewRole, ev.Player.Group));
             }
 
             if (plugin.Config.Health.ContainsKey(ev.NewRole))
@@ -43,10 +43,13 @@ namespace Common_Utilities.EventHandlers
 
         private void HandleCustomItems(Player player)
         {
-            foreach (KeyValuePair<string, List<Tuple<CustomItem, int>>> itemChanceBig in plugin.Config.CustomInventories[player.Role])
+            foreach (KeyValuePair<string, List<Tuple<CustomItem, int, string>>> itemChanceBig in plugin.Config.CustomInventories[player.Role])
             {
-                foreach ((CustomItem item, int chance) in itemChanceBig.Value)
+                foreach ((CustomItem item, int chance, string groupKey) in itemChanceBig.Value)
                 {
+                    if (!string.IsNullOrEmpty(groupKey) && (!ServerStatic.PermissionsHandler._groups.TryGetValue(groupKey, out var group) || group != player.Group))
+                        continue;
+                    
                     if (plugin.Gen.Next(100) > chance) 
                         continue;
                     item.Give(player);
@@ -67,20 +70,23 @@ namespace Common_Utilities.EventHandlers
                 ev.Killer.Health = ev.Killer.MaxHealth;
         }
 
-        public List<ItemType> StartItems(RoleType role)
+        public List<ItemType> StartItems(RoleType role, UserGroup userGroup = default)
         {
             List<ItemType> items = new List<ItemType>();
             
             if (plugin.Config.Inventories[role] == default)
                 return items;
             
-            foreach (KeyValuePair<string, List<Tuple<ItemType, int>>> itemChanceBig in plugin.Config.Inventories[role])
+            foreach (KeyValuePair<string, List<Tuple<ItemType, int, string>>> itemChanceBig in plugin.Config.Inventories[role])
             {
-                foreach ((ItemType item, int chance) in itemChanceBig.Value)
+                foreach ((ItemType item, int chance, string groupKey) in itemChanceBig.Value)
                 {
+                    if (userGroup != default && !string.IsNullOrEmpty(groupKey) && (!ServerStatic.PermissionsHandler._groups.TryGetValue(groupKey, out var group) || group != userGroup))
+                        continue;
+
                     if (plugin.Gen.Next(100) > chance) 
                         continue;
-                    
+
                     items.Add(item);
                     break;
                 }

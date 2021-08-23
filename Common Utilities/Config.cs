@@ -365,8 +365,8 @@ namespace Common_Utilities
             }
         };
 
-        internal Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>> Inventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int>>>>();
-        internal Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int>>>> CustomInventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int>>>>();
+        internal Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int, string>>>> Inventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<ItemType, int, string>>>>();
+        internal Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int, string>>>> CustomInventories = new Dictionary<RoleType, Dictionary<string, List<Tuple<CustomItem, int, string>>>>();
         internal Dictionary<Scp914KnobSetting, List<Tuple<ItemType, ItemType, int>>> Scp914Configs = new Dictionary<Scp914KnobSetting, List<Tuple<ItemType, ItemType, int>>>();
         internal Dictionary<RoleType, int> Health = new Dictionary<RoleType, int>();
         internal Dictionary<RoleType, float> HealOnKill = new Dictionary<RoleType, float>();
@@ -678,7 +678,7 @@ namespace Common_Utilities
                         {
                             Log.Debug($"{nameof(ParseInventorySettings)}: {role} inventory has been set to \"empty\", they will spawn with no items.", Debug);
                             if (!Inventories.ContainsKey(role))
-                                Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int>>>{{slotName, new List<Tuple<ItemType, int>>()}});
+                                Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int, string>>>{{slotName, new List<Tuple<ItemType, int, string>>()}});
                             continue;
                         }
 
@@ -690,16 +690,24 @@ namespace Common_Utilities
                                 $"{nameof(ParseInventorySettings)}: Unable to parse item chance {rawChance[0]} for {rawChance[0]} in {configName} inventory settings.");
                             continue;
                         }
-                        
+
+                        string group = rawChance.Length > 2 ? rawChance[2] : "";
+                        if (!string.IsNullOrEmpty(group) && !Server.PermissionsHandler._groups.ContainsKey(group))
+                        {
+                            Log.Error(
+                                $"{nameof(ParseInventorySettings)}: Unable to find item group {rawChance[2]} for {rawChance[0]} in {configName} inventory settings.");
+                            continue;
+                        }
+
                         if (CustomItem.TryGet(rawChance[0], out CustomItem customItem))
                         {
                             Log.Debug($"{nameof(ParseInventorySettings)}: {rawChance[0]} is a custom item, adding to dictionary..", Debug);
                             if (!CustomInventories.ContainsKey(role))
-                                CustomInventories.Add(role, new Dictionary<string, List<Tuple<CustomItem, int>>>
+                                CustomInventories.Add(role, new Dictionary<string, List<Tuple<CustomItem, int, string>>>
                                 {
-                                    {"slot1", new List<Tuple<CustomItem, int>>()},{"slot2", new List<Tuple<CustomItem, int>>()},{"slot3", new List<Tuple<CustomItem, int>>()},{"slot4", new List<Tuple<CustomItem, int>>()},{"slot5", new List<Tuple<CustomItem, int>>()},{"slot6", new List<Tuple<CustomItem, int>>()},{"slot7", new List<Tuple<CustomItem, int>>()},{"slot8", new List<Tuple<CustomItem, int>>()},
+                                    {"slot1", new List<Tuple<CustomItem, int, string>>()},{"slot2", new List<Tuple<CustomItem, int, string>>()},{"slot3", new List<Tuple<CustomItem, int, string>>()},{"slot4", new List<Tuple<CustomItem, int, string>>()},{"slot5", new List<Tuple<CustomItem, int, string>>()},{"slot6", new List<Tuple<CustomItem, int, string>>()},{"slot7", new List<Tuple<CustomItem, int, string>>()},{"slot8", new List<Tuple<CustomItem, int, string>>()},
                                 });
-                            CustomInventories[role][slotName].Add(new Tuple<CustomItem, int>(customItem, chance));
+                            CustomInventories[role][slotName].Add(new Tuple<CustomItem, int, string>(customItem, chance, group));
 
                             continue;
                         }
@@ -716,11 +724,11 @@ namespace Common_Utilities
 
                         Log.Debug($"{nameof(ParseInventorySettings)}: {item} was added to {configName} inventory with {chance} chance.", Debug);
                         if (!Inventories.ContainsKey(role))
-                            Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int>>>
+                            Inventories.Add(role, new Dictionary<string, List<Tuple<ItemType, int, string>>>
                             {
-                                {"slot1", new List<Tuple<ItemType, int>>()}, {"slot2", new List<Tuple<ItemType, int>>()}, {"slot3", new List<Tuple<ItemType, int>>()}, {"slot4", new List<Tuple<ItemType, int>>()}, {"slot5", new List<Tuple<ItemType, int>>()}, {"slot6", new List<Tuple<ItemType, int>>()}, {"slot7", new List<Tuple<ItemType, int>>()}, {"slot8", new List<Tuple<ItemType, int>>()}
+                                {"slot1", new List<Tuple<ItemType, int, string>>()}, {"slot2", new List<Tuple<ItemType, int, string>>()}, {"slot3", new List<Tuple<ItemType, int, string>>()}, {"slot4", new List<Tuple<ItemType, int, string>>()}, {"slot5", new List<Tuple<ItemType, int, string>>()}, {"slot6", new List<Tuple<ItemType, int, string>>()}, {"slot7", new List<Tuple<ItemType, int, string>>()}, {"slot8", new List<Tuple<ItemType, int, string>>()}
                             });
-                        Inventories[role][slotName].Add(new Tuple<ItemType, int>(item, chance));
+                        Inventories[role][slotName].Add(new Tuple<ItemType, int, string>(item, chance, group));
                     }
                 }
             }
