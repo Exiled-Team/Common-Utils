@@ -4,9 +4,12 @@ namespace Common_Utilities
 {
     using System;
     using System.Collections.Generic;
+    using Common_Utilities.Configs;
     using Common_Utilities.EventHandlers;
+    using Common_Utilities.Structs;
     using MEC;
     using Exiled.API.Features;
+    using Scp914;
     using Server = Exiled.Events.Handlers.Server;
     using Player = Exiled.Events.Handlers.Player;
     using Scp914 = Exiled.Events.Handlers.Scp914;
@@ -15,7 +18,7 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Galaxy119";
-        public override Version Version { get; } = new Version(3, 0, 1);
+        public override Version Version { get; } = new Version(4, 0, 0);
         public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
         public override string Prefix { get; } = "CommonUtilities";
         
@@ -29,42 +32,31 @@ namespace Common_Utilities
 
         public override void OnEnabled()
         {
-            Singleton = this;
-            
-            Log.Info($"Parsing config..");
-            try
+            if (Config.Debug)
             {
-                Timing.CallDelayed(10f, () =>
+                foreach (KeyValuePair<RoleType, RoleInventory> inv in Config.StartingInventories)
                 {
-                    try
+                    for (int i = 0; i < inv.Value.UsedSlots; i++)
                     {
-                        Log.Debug($"Parsing inventory config..", Config.Debug);
-                        Config.ParseInventorySettings();
+                        foreach (ItemChance chance in inv.Value[i])
+                            Log.Debug($"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
                     }
-                    catch (Exception e)
-                    {
-                        Log.Error("Ya fucked up the parsing.");
-                        Log.Error($"{e.Message}\n{e.StackTrace}");
-                    }
-                });
-                Log.Debug($"Parsing health config..", Config.Debug);
-                Config.ParseHealthSettings();
-                Log.Debug($"Parsing health on kill config..", Config.Debug);
-                Config.ParseHealthOnKill();
-                Log.Debug($"Parsing 914 config..", Config.Debug);
-                Config.Parse914Settings();
-                Log.Debug($"Parsing 914 role config..", Config.Debug);
-                Config.Parse914ClassChanges();
-                Log.Debug($"Parsing SCP Damage Multipliers..", Config.Debug);
-                Config.ParseScpDamageMultipliers();
-                Log.Debug($"Parsing Weapon Damage Multipliers..", Config.Debug);
-                Config.ParseWeaponDamageMultipliers();
+                }
+
+                foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
+                {
+                    foreach ((ItemType oldItem, ItemType newItem, int chance) in upgrade.Value)
+                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
+                }
+
+                foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
+                {
+                    foreach ((RoleType oldRole, RoleType newRole, int chance) in upgrade.Value)
+                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance}");
+                }
             }
-            catch (Exception e)
-            {
-                Log.Error($"Ya fucked up the parsing.");
-                Log.Error($"{e.Message}\n{e.StackTrace}");
-            }
+
+            Singleton = this;
 
             Log.Info($"Instantiating Events..");
             PlayerHandlers = new PlayerHandlers(this);
