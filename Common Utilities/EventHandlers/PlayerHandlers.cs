@@ -76,6 +76,7 @@ namespace Common_Utilities.EventHandlers
                                 Timing.CallDelayed(0.5f, () => customItem.Give(player));
                             else
                                 Log.Warn($"{nameof(StartItems)}: Tried to give {customItem.Name} to a null player.");
+                            
                             break;
                         }
                         else

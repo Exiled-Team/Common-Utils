@@ -4,9 +4,11 @@ namespace Common_Utilities.Configs
     using System.Collections;
     using System.Collections.Generic;
     using Common_Utilities.Structs;
+    using YamlDotNet.Serialization;
 
     public class RoleInventory
     {
+        [YamlIgnore]
         public int UsedSlots
         {
             get
@@ -20,6 +22,8 @@ namespace Common_Utilities.Configs
                     i++;
                 if (!Slot4.IsEmpty())
                     i++;
+                if (!Slot5.IsEmpty())
+                    i++;
                 if (!Slot6.IsEmpty())
                     i++;
                 if (!Slot7.IsEmpty())
@@ -29,6 +33,7 @@ namespace Common_Utilities.Configs
                 return i;
             }
         }
+
         public List<ItemChance> Slot1 { get; set; } = new List<ItemChance>();
         public List<ItemChance> Slot2 { get; set; } = new List<ItemChance>();
         public List<ItemChance> Slot3 { get; set; } = new List<ItemChance>();
