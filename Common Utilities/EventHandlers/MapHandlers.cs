@@ -57,6 +57,7 @@ namespace Common_Utilities.EventHandlers
                     {
                         ev.Player.RemoveItem(ev.Item);
                         ev.Player.AddItem(destinationItem);
+                        break;
                     }
                 }
             }
@@ -77,6 +78,7 @@ namespace Common_Utilities.EventHandlers
                     {
                         ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, true);
                         ev.Player.Position = Exiled.API.Features.Scp914.OutputBooth.position;
+                        break;
                     }
                 }
             }

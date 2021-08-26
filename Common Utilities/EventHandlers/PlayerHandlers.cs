@@ -29,11 +29,14 @@ namespace Common_Utilities.EventHandlers
             if (_plugin.Config.StartingInventories.ContainsKey(ev.NewRole))
             {
                 ev.Items.Clear();
-                ev.Items.AddRange(StartItems(ev.NewRole, ev.Player));
+                List<ItemType> items = StartItems(ev.NewRole, ev.Player);
+                ev.Items.AddRange(items);
+                if (ev.Reason == SpawnReason.Escaped)
+                    Timing.CallDelayed(1f, () => ev.Player.ResetInventory(items));
             }
 
             if (_plugin.Config.HealthValues.ContainsKey(ev.NewRole))
-                Timing.CallDelayed(1.5f, () =>
+                Timing.CallDelayed(2.5f, () =>
                 {
                     ev.Player.Health = _plugin.Config.HealthValues[ev.NewRole];
                     ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
