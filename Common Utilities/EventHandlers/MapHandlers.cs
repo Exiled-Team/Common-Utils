@@ -110,7 +110,7 @@ namespace Common_Utilities.EventHandlers
                         foreach (Room room in Map.Rooms)
                             if (room.Type == roomType)
                             {
-                                ev.OutputPosition = room.Position + offset;
+                                ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
                                 break;
                             }
                     }
