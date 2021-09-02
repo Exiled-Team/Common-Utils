@@ -15,7 +15,7 @@ namespace Common_Utilities.EventHandlers
         private readonly Plugin plugin;
         public ServerHandlers(Plugin plugin) => this.plugin = plugin;
 
-        public Vector3 EscapeZone = new Vector3();
+        public Vector3 EscapeZone = Vector3.zero;
         
         public void OnRoundStarted()
         {
@@ -40,7 +40,10 @@ namespace Common_Utilities.EventHandlers
 
                 foreach (Player player in Player.List)
                 {
-                    if (!player.IsCuffed || player.Team != Team.CDP || player.Team != Team.MTF || Vector3.Distance(player.Position, EscapeZone) > 20f)
+                    if (EscapeZone == Vector3.zero)
+                        EscapeZone = player.GameObject.GetComponent<Escape>().worldPosition;
+
+                    if (!player.IsCuffed || player.Team != Team.CDP || player.Team != Team.MTF || (EscapeZone - player.Position).sqrMagnitude > 400f)
                         continue;
 
                     switch (player.Role)
