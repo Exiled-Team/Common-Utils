@@ -3,6 +3,7 @@ using Exiled.API.Extensions;
 namespace Common_Utilities.EventHandlers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Exiled.API.Features;
     using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
@@ -43,7 +44,7 @@ namespace Common_Utilities.EventHandlers
                     if (EscapeZone == Vector3.zero)
                         EscapeZone = player.GameObject.GetComponent<Escape>().worldPosition;
 
-                    if (!player.IsCuffed || player.Team != Team.CDP || player.Team != Team.MTF || (EscapeZone - player.Position).sqrMagnitude > 400f)
+                    if (!player.IsCuffed || (player.Team != Team.CHI && player.Team != Team.MTF) || (EscapeZone - player.Position).sqrMagnitude > 400f)
                         continue;
 
                     switch (player.Role)
@@ -53,14 +54,14 @@ namespace Common_Utilities.EventHandlers
                         case RoleType.NtfSergeant:
                         case RoleType.NtfCaptain:
                         case RoleType.NtfSpecialist:
-                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items)));
+                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
                             player.Role = RoleType.ChaosConscript;
                             break;
                         case RoleType.ChaosConscript:
                         case RoleType.ChaosMarauder:
                         case RoleType.ChaosRepressor:
                         case RoleType.ChaosRifleman:
-                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items)));
+                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
                             player.Role = RoleType.NtfPrivate;
                             break;
                     }

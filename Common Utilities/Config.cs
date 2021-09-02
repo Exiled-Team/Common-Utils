@@ -5,14 +5,16 @@ namespace Common_Utilities
     using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
+    using Common_Utilities.ConfigObjects;
     using Common_Utilities.Configs;
-    using Common_Utilities.Structs;
+    using CustomPlayerEffects;
     using Exiled.API.Enums;
     using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.API.Interfaces;
     using Exiled.CustomItems.API.Features;
     using Scp914;
+    using UnityEngine;
 
     public class Config : IConfig
     {
@@ -118,6 +120,38 @@ namespace Common_Utilities
                 }
             },
         };
+
+        public Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>> Scp914TeleportChances { get; set; } = new Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>>
+        {
+            {
+                Scp914KnobSetting.Rough, new List<Scp914TeleportChance>
+                {
+                    new Scp914TeleportChance
+                    {
+                        Room = RoomType.LczClassDSpawn,
+                        Chance = 100,
+                    }
+                }
+            }
+        };
+
+        [Description("A dictionary of random effects to apply to players when going through 914 on certain settings.")]
+        public Dictionary<Scp914KnobSetting, List<Scp914EffectChance>> Scp914EffectChances { get; set; } = new Dictionary<Scp914KnobSetting, List<Scp914EffectChance>> 
+        {
+            {
+                Scp914KnobSetting.Rough, new List<Scp914EffectChance>
+                {
+                    new Scp914EffectChance
+                    {
+                        Effect = EffectType.Amnesia,
+                        Chance = 100,
+                    }
+                }
+            }
+        };
+
+        [Description("Determines if 914 effects are exclusive, meaning only one can be applied each time a player is processed by 914.")]
+        public bool Scp914EffectsExclusivity { get; set; } = false;
 
         [Description("The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.")]
         public float RagdollCleanupDelay { get; set; } = 0f;

@@ -4,9 +4,9 @@ namespace Common_Utilities
 {
     using System;
     using System.Collections.Generic;
+    using Common_Utilities.ConfigObjects;
     using Common_Utilities.Configs;
     using Common_Utilities.EventHandlers;
-    using Common_Utilities.Structs;
     using MEC;
     using Exiled.API.Features;
     using Scp914;

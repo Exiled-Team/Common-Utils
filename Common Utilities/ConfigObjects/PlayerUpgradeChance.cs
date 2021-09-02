@@ -1,4 +1,4 @@
-namespace Common_Utilities.Structs
+namespace Common_Utilities.ConfigObjects
 {
     public class PlayerUpgradeChance
     {
