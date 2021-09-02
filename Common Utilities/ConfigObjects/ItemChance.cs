@@ -1,6 +1,6 @@
-namespace Common_Utilities.Structs
+namespace Common_Utilities.ConfigObjects
 {
-    public struct ItemChance
+    public class ItemChance
     {
         public string ItemName { get; set; }
         public int Chance { get; set; }

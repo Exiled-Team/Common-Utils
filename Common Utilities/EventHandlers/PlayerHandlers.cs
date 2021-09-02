@@ -4,7 +4,6 @@ namespace Common_Utilities.EventHandlers
 {
     using System;
     using System.Collections.Generic;
-    using Common_Utilities.Structs;
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.CustomItems;
@@ -26,7 +25,7 @@ namespace Common_Utilities.EventHandlers
         
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (_plugin.Config.StartingInventories.ContainsKey(ev.NewRole))
+            if (_plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite)
             {
                 ev.Items.Clear();
                 List<ItemType> items = StartItems(ev.NewRole, ev.Player);

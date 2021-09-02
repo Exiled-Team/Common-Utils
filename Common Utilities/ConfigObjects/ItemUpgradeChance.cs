@@ -1,6 +1,6 @@
-namespace Common_Utilities.Structs
+namespace Common_Utilities.ConfigObjects
 {
-    public struct ItemUpgradeChance
+    public class ItemUpgradeChance
     {
         public ItemType Original { get; set; }
         public ItemType New { get; set; }

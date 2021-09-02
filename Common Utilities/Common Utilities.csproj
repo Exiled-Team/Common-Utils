@@ -96,6 +96,8 @@
     <ItemGroup>
         <Compile Include="API.cs" />
         <Compile Include="Config.cs" />
+        <Compile Include="ConfigObjects\Scp914EffectChance.cs" />
+        <Compile Include="ConfigObjects\Scp914TeleportChance.cs" />
         <Compile Include="Configs\RoleInventory.cs" />
         <Compile Include="EventHandlers\MapHandlers.cs" />
         <Compile Include="EventHandlers\PlayerHandlers.cs" />
@@ -103,9 +105,9 @@
         <Compile Include="Patches\SpeechPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Structs\ItemChance.cs" />
-        <Compile Include="Structs\ItemUpgradeChance.cs" />
-        <Compile Include="Structs\PlayerUpgradeChance.cs" />
+        <Compile Include="ConfigObjects\ItemChance.cs" />
+        <Compile Include="ConfigObjects\ItemUpgradeChance.cs" />
+        <Compile Include="ConfigObjects\PlayerUpgradeChance.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />

@@ -4,21 +4,24 @@ namespace Common_Utilities
 {
     using System;
     using System.Collections.Generic;
+    using Common_Utilities.ConfigObjects;
     using Common_Utilities.Configs;
     using Common_Utilities.EventHandlers;
-    using Common_Utilities.Structs;
+    using Exiled.API.Enums;
     using MEC;
     using Exiled.API.Features;
     using Scp914;
+    using UnityEngine;
     using Server = Exiled.Events.Handlers.Server;
     using Player = Exiled.Events.Handlers.Player;
+    using Random = System.Random;
     using Scp914 = Exiled.Events.Handlers.Scp914;
 
     public class Plugin : Exiled.API.Features.Plugin<Config>
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Galaxy119";
-        public override Version Version { get; } = new Version(4, 0, 4);
+        public override Version Version { get; } = new Version(4, 1, 0);
         public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
         public override string Prefix { get; } = "CommonUtilities";
         
@@ -34,6 +37,7 @@ namespace Common_Utilities
         {
             if (Config.Debug)
             {
+                Log.Debug($"{Config.StartingInventories.Count}");
                 foreach (KeyValuePair<RoleType, RoleInventory> inv in Config.StartingInventories)
                 {
                     for (int i = 0; i < inv.Value.UsedSlots; i++)
@@ -43,16 +47,32 @@ namespace Common_Utilities
                     }
                 }
 
+                Log.Debug($"{Config.Scp914ItemChanges.Count}");
                 foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
                 {
                     foreach ((ItemType oldItem, ItemType newItem, int chance) in upgrade.Value)
                         Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
                 }
 
+                Log.Debug($"{Config.Scp914ClassChanges.Count}");
                 foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
                 {
                     foreach ((RoleType oldRole, RoleType newRole, int chance) in upgrade.Value)
                         Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance}");
+                }
+
+                Log.Debug($"{Config.Scp914EffectChances.Count}");
+                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config.Scp914EffectChances)
+                {
+                    foreach ((EffectType effect, int chance, float duration) in upgrade.Value)
+                        Log.Debug($"914 Effect Config: {upgrade.Key}: {effect} + {duration} - {chance}");
+                }
+
+                Log.Debug($"{Config.Scp914TeleportChances.Count}");
+                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
+                {
+                    foreach ((RoomType room, Vector3 offset, int chance) in upgrade.Value)
+                        Log.Debug($"914 Teleport Config: {upgrade.Key}: {room} + {offset} - {chance}");
                 }
             }
 

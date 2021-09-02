@@ -3,7 +3,7 @@ namespace Common_Utilities.Configs
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using Common_Utilities.Structs;
+    using Common_Utilities.ConfigObjects;
     using YamlDotNet.Serialization;
 
     public class RoleInventory
