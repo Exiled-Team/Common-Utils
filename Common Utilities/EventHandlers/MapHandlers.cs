@@ -23,21 +23,20 @@ namespace Common_Utilities.EventHandlers
         {
             if (plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in plugin.Config.Scp914ItemChanges[
-                        ev.KnobSetting])
-                    {
-                        if (sourceItem != ev.Item.Type)
-                            continue;
+                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in plugin.Config.Scp914ItemChanges[ev.KnobSetting])
+                {
+                    if (sourceItem != ev.Item.Type)
+                        continue;
 
-                        int r = plugin.Rng.Next(100);
-                        Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", plugin.Config.Debug);
-                        if (r <= chance)
-                        {
-                            UpgradeItem(ev.Item, destinationItem, ev.OutputPosition);
-                            ev.IsAllowed = false;
-                            break;
-                        }
+                    int r = plugin.Rng.Next(100);
+                    Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", plugin.Config.Debug);
+                    if (r <= chance)
+                    {
+                        UpgradeItem(ev.Item, destinationItem, ev.OutputPosition);
+                        ev.IsAllowed = false;
+                        break;
                     }
+                }
             }
         }
 
@@ -77,7 +76,6 @@ namespace Common_Utilities.EventHandlers
                     if (r <= chance)
                     {
                         ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, true);
-                        ev.Player.Position = Exiled.API.Features.Scp914.OutputBooth.position;
                         break;
                     }
                 }
@@ -100,8 +98,7 @@ namespace Common_Utilities.EventHandlers
 
             if (plugin.Config.Scp914TeleportChances.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoomType roomType, Vector3 offset, int chance) in plugin.Config.Scp914TeleportChances[
-                    ev.KnobSetting])
+                foreach ((RoomType roomType, Vector3 offset, int chance) in plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     int r = plugin.Rng.Next(100);
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})", plugin.Config.Debug);
@@ -113,6 +110,8 @@ namespace Common_Utilities.EventHandlers
                                 ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
                                 break;
                             }
+
+                        break;
                     }
                 }
             }
