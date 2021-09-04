@@ -55,7 +55,8 @@ namespace Common_Utilities.EventHandlers
                     if (r <= chance)
                     {
                         ev.Player.RemoveItem(ev.Item);
-                        ev.Player.AddItem(destinationItem);
+                        if (destinationItem != ItemType.None)
+                            ev.Player.AddItem(destinationItem);
                         break;
                     }
                 }
@@ -81,7 +82,7 @@ namespace Common_Utilities.EventHandlers
                 }
             }
 
-            if (plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting) && (ev.Player.Side != Side.Scp || !plugin.Config.ScpsImmuneTo914Effects))
             {
                 foreach ((EffectType effect, int chance, float duration) in plugin.Config.Scp914EffectChances[ev.KnobSetting])
                 {
@@ -119,13 +120,17 @@ namespace Common_Utilities.EventHandlers
 
         internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos)
         {
-            Item item = new Item(newItem);
-            if (oldItem.Base is FirearmPickup firearmPickup && item is Firearm firearm)
-                firearm.Ammo = firearmPickup.NetworkStatus.Ammo <= firearm.MaxAmmo
-                    ? firearmPickup.NetworkStatus.Ammo
-                    : firearm.MaxAmmo;
+            if (newItem != ItemType.None)
+            {
+                Item item = new Item(newItem);
+                if (oldItem.Base is FirearmPickup firearmPickup && item is Firearm firearm)
+                    firearm.Ammo = firearmPickup.NetworkStatus.Ammo <= firearm.MaxAmmo
+                        ? firearmPickup.NetworkStatus.Ammo
+                        : firearm.MaxAmmo;
 
-            item.Spawn(pos);
+                item.Spawn(pos);
+            }
+
             oldItem.Destroy();
         }
     }
