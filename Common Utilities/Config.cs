@@ -153,6 +153,9 @@ namespace Common_Utilities
         [Description("Determines if 914 effects are exclusive, meaning only one can be applied each time a player is processed by 914.")]
         public bool Scp914EffectsExclusivity { get; set; } = false;
 
+        [Description("Whether or not SCPs are immune to effects gained from 914.")]
+        public bool ScpsImmuneTo914Effects { get; set; } = false;
+
         [Description("The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.")]
         public float RagdollCleanupDelay { get; set; } = 0f;
 
