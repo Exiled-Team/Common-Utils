@@ -111,6 +111,40 @@ namespace Common_Utilities.EventHandlers
                     }
                 }
             }
+
+            if (plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting))
+            {
+                foreach ((EffectType effect, int chance, float duration) in plugin.Config.Scp914EffectChances[ev.KnobSetting])
+                {
+                    int r = plugin.Rng.Next(100);
+                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect. {effect} ({chance}). Should be added: {r <= chance} ({r}", plugin.Config.Debug);
+                    if (r <= chance)
+                    {
+                        ev.Player.EnableEffect(effect, duration);
+                        if (plugin.Config.Scp914EffectsExclusivity)
+                            break;
+                    }
+                }
+            }
+
+            if (plugin.Config.Scp914TeleportChances.ContainsKey(ev.KnobSetting))
+            {
+                foreach ((RoomType roomType, Vector3 offset, int chance) in plugin.Config.Scp914TeleportChances[
+                    ev.KnobSetting])
+                {
+                    int r = plugin.Rng.Next(100);
+                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})", plugin.Config.Debug);
+                    if (r <= chance)
+                    {
+                        foreach (Room room in Map.Rooms)
+                            if (room.Type == roomType)
+                            {
+                                ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
+                                break;
+                            }
+                    }
+                }
+            }
         }
 
         internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos)
