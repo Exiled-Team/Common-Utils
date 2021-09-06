@@ -45,9 +45,9 @@ namespace Common_Utilities
                             Log.Debug($"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
                     }
 
-                    foreach ((ItemType type, ushort amount) in inv.Value.Ammo)
+                    foreach ((ItemType type, ushort amount, string group) in inv.Value.Ammo)
                     {
-                        Log.Debug($"Ammo Config: {inv.Key} - {type} ({amount})");
+                        Log.Debug($"Ammo Config: {inv.Key} - {type} {amount} ({group})");
                     }
                 }
 

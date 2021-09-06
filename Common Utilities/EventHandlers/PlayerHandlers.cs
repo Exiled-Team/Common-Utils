@@ -34,8 +34,11 @@ namespace Common_Utilities.EventHandlers
                 if (_plugin.Config.StartingInventories[ev.NewRole].Ammo.Count > 0)
                 {
                     ev.Ammo.Clear();
-                    foreach ((ItemType type, ushort amount) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
-                        ev.Ammo.Add(type, amount);
+                    foreach ((ItemType type, ushort amount, string group) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
+                    {
+                        if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out var userGroup) && userGroup == ev.Player.Group))
+                            ev.Ammo.Add(type, amount);
+                    }
                 }
             }
 
