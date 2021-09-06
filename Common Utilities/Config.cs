@@ -79,6 +79,7 @@ namespace Common_Utilities
                         {
                             Type = ItemType.Ammo556x45,
                             Amount = 200,
+                            Group = "none",
                         }
                     }
                 }
