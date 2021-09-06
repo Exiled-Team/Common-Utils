@@ -1,7 +1,6 @@
 namespace Common_Utilities.Configs
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using Common_Utilities.ConfigObjects;
     using YamlDotNet.Serialization;
@@ -42,6 +41,8 @@ namespace Common_Utilities.Configs
         public List<ItemChance> Slot6 { get; set; } = new List<ItemChance>();
         public List<ItemChance> Slot7 { get; set; } = new List<ItemChance>();
         public List<ItemChance> Slot8 { get; set; } = new List<ItemChance>();
+
+        public List<StartingAmmo> Ammo { get; set; } = new List<StartingAmmo>();
 
         public IEnumerable<ItemChance> this[int i]
         {

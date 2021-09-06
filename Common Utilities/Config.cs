@@ -1,20 +1,12 @@
 namespace Common_Utilities
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
     using Common_Utilities.ConfigObjects;
     using Common_Utilities.Configs;
-    using CustomPlayerEffects;
     using Exiled.API.Enums;
-    using Exiled.API.Extensions;
-    using Exiled.API.Features;
     using Exiled.API.Interfaces;
-    using Exiled.CustomItems.API.Features;
     using Scp914;
-    using UnityEngine;
 
     public class Config : IConfig
     {
@@ -81,10 +73,18 @@ namespace Common_Utilities
                             Group = "none",
                         },
                     },
+                    Ammo = new List<StartingAmmo>
+                    {
+                        new StartingAmmo
+                        {
+                            Type = ItemType.Ammo556x45,
+                            Amount = 200,
+                        }
+                    }
                 }
             }
         };
-        
+
         [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
         public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChanges { get; set; } = new Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>>
         {

@@ -1,16 +1,11 @@
-using System.Collections.Generic;
 using Exiled.API.Features;
-using Scp914;
 
 namespace Common_Utilities.EventHandlers
 {
-    using System;
     using Exiled.API.Enums;
-    using Exiled.API.Extensions;
     using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
     using InventorySystem.Items.Firearms;
-    using InventorySystem.Items.ThrowableProjectiles;
     using UnityEngine;
     using Firearm = Exiled.API.Features.Items.Firearm;
 

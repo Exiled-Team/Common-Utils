@@ -44,6 +44,11 @@ namespace Common_Utilities
                         foreach (ItemChance chance in inv.Value[i])
                             Log.Debug($"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
                     }
+
+                    foreach ((ItemType type, ushort amount) in inv.Value.Ammo)
+                    {
+                        Log.Debug($"Ammo Config: {inv.Key} - {type} ({amount})");
+                    }
                 }
 
                 Log.Debug($"{Config.Scp914ItemChanges.Count}");
@@ -89,7 +94,7 @@ namespace Common_Utilities
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
-            
+
 
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;

@@ -1,7 +1,6 @@
 namespace Common_Utilities.ConfigObjects
 {
     using Exiled.API.Enums;
-    using Exiled.API.Features;
     using UnityEngine;
 
     public class Scp914TeleportChance

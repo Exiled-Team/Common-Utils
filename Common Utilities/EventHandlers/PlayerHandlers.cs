@@ -6,7 +6,6 @@ namespace Common_Utilities.EventHandlers
     using System.Collections.Generic;
     using Exiled.API.Enums;
     using Exiled.API.Features;
-    using Exiled.CustomItems;
     using Exiled.Events.EventArgs;
     using MEC;
     using Player = Exiled.API.Features.Player;
@@ -32,6 +31,12 @@ namespace Common_Utilities.EventHandlers
                 ev.Items.AddRange(items);
                 if (ev.Reason == SpawnReason.Escaped)
                     Timing.CallDelayed(1f, () => ev.Player.ResetInventory(items));
+                if (_plugin.Config.StartingInventories[ev.NewRole].Ammo.Count > 0)
+                {
+                    ev.Ammo.Clear();
+                    foreach ((ItemType type, ushort amount) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
+                        ev.Ammo.Add(type, amount);
+                }
             }
 
             if (_plugin.Config.HealthValues.ContainsKey(ev.NewRole))
