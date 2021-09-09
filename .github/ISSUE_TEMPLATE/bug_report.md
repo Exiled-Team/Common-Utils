@@ -23,6 +23,9 @@ A clear and concise description of what you expected to happen.
 **Server logs**
 Please include a pastebin of your localadmin log file (or both MA_log and SCP_log files if you use MultiAdmin) from the time in which the bug occured
 
+**Copy of current CU config section**
+
+
 **EXILED Version ("latest" is not a version):**
 
 
