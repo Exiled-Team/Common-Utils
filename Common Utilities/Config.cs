@@ -10,7 +10,7 @@ namespace Common_Utilities
 
     public class Config : IConfig
     {
-        [Description("Wether or not debug messages should be shown.")]
+        [Description("Whether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
         [Description("The SCP Roles able to use V to talk to humans.")]
