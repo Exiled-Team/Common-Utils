@@ -1,5 +1,3 @@
-using Exiled.API.Extensions;
-
 namespace Common_Utilities.EventHandlers
 {
     using System.Collections.Generic;

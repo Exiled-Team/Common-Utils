@@ -1,8 +1,6 @@
 namespace Common_Utilities.ConfigObjects
 {
-    using CustomPlayerEffects;
     using Exiled.API.Enums;
-    using Scp914;
 
     public class Scp914EffectChance
     {
