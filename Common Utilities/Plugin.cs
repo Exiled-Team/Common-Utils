@@ -1,5 +1,3 @@
-using HarmonyLib;
-
 namespace Common_Utilities
 {
     using System;
@@ -10,6 +8,7 @@ namespace Common_Utilities
     using Exiled.API.Enums;
     using MEC;
     using Exiled.API.Features;
+    using HarmonyLib;
     using Scp914;
     using UnityEngine;
     using Server = Exiled.Events.Handlers.Server;
@@ -17,7 +16,7 @@ namespace Common_Utilities
     using Random = System.Random;
     using Scp914 = Exiled.Events.Handlers.Scp914;
 
-    public class Plugin : Exiled.API.Features.Plugin<Config>
+    public class Plugin : Plugin<Config>
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Galaxy119";

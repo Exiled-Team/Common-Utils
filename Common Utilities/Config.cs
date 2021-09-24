@@ -1,24 +1,16 @@
 namespace Common_Utilities
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
     using Common_Utilities.ConfigObjects;
     using Common_Utilities.Configs;
-    using CustomPlayerEffects;
     using Exiled.API.Enums;
-    using Exiled.API.Extensions;
-    using Exiled.API.Features;
     using Exiled.API.Interfaces;
-    using Exiled.CustomItems.API.Features;
     using Scp914;
-    using UnityEngine;
 
     public class Config : IConfig
     {
-        [Description("Wether or not debug messages should be shown.")]
+        [Description("Whether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
         [Description("The SCP Roles able to use V to talk to humans.")]
