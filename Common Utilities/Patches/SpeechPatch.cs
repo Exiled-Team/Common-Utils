@@ -1,20 +1,22 @@
-using Assets._Scripts.Dissonance;
 using HarmonyLib;
+using Mirror;
+using PlayableScps;
+using PlayableScps.Messages;
 
 namespace Common_Utilities.Patches
 {
-    [HarmonyPatch(typeof(DissonanceUserSetup), nameof(DissonanceUserSetup.UserCode_CmdAltIsActive))]
+    [HarmonyPatch(typeof(Scp939), nameof(Scp939.ServerReceivedVoiceMsg))]
     public static class SpeechPatch
     {
-        public static bool Prefix(DissonanceUserSetup __instance, bool value)
+        public static bool Prefix(NetworkConnection conn, Scp939VoiceMessage msg)
         {
-            CharacterClassManager ccm = __instance.gameObject.GetComponent<CharacterClassManager>();
-
-            if (!Plugin.Singleton.Config.ScpSpeech.Contains(ccm.NetworkCurClass))
+            if (!ReferenceHub.TryGetHubNetID(conn.identity.netId, out ReferenceHub hub))
+                return false;
+            
+            if (!Plugin.Singleton.Config.ScpSpeech.Contains(hub.characterClassManager.NetworkCurClass))
                 return true;
 
-            __instance.MimicAs939 = value;
-
+            hub.dissonanceUserSetup.MimicAs939 = msg.IsMimicking;
             return true;
         }
     }
