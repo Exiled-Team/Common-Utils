@@ -75,8 +75,8 @@ namespace Common_Utilities
                 Log.Debug($"{Config.Scp914TeleportChances.Count}");
                 foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
                 {
-                    foreach ((RoomType room, Vector3 offset, int chance) in upgrade.Value)
-                        Log.Debug($"914 Teleport Config: {upgrade.Key}: {room} + {offset} - {chance}");
+                    foreach ((RoomType room, Vector3 offset, int chance, float damage) in upgrade.Value)
+                        Log.Debug($"914 Teleport Config: {upgrade.Key}: {room} + {offset} - {chance} [{damage}]");
                 }
             }
 
