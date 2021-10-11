@@ -23,7 +23,7 @@ namespace Common_Utilities.EventHandlers
         
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (_plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite)
+            if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite)
             {
                 ev.Items.Clear();
                 List<ItemType> items = StartItems(ev.NewRole, ev.Player);
