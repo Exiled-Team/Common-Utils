@@ -82,7 +82,7 @@ namespace Common_Utilities.EventHandlers
                 foreach ((EffectType effect, int chance, float duration) in plugin.Config.Scp914EffectChances[ev.KnobSetting])
                 {
                     int r = plugin.Rng.Next(100);
-                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect. {effect} ({chance}). Should be added: {r <= chance} ({r}", plugin.Config.Debug);
+                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect. {effect} ({chance}). Should be added: {r <= chance} ({r})", plugin.Config.Debug);
                     if (r <= chance)
                     {
                         ev.Player.EnableEffect(effect, duration);
@@ -106,12 +106,9 @@ namespace Common_Utilities.EventHandlers
                                 ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
                                 if (damage > 0f)
                                 {
-                                    float amount = ev.Player.Health *= damage;
-                                    if (damage > 1f)
-                                    {
-                                        Log.Warn($"SCP-914 teleport damage has been re-worked to a percentage. Please use values between 0 and 1 only. (The damage of this event has been adjusted to the old value)");
+                                    float amount = ev.Player.MaxHealth * damage;
+                                    if (damage > 1f) 
                                         amount = damage;
-                                    }
 
                                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}", plugin.Config.Debug);
                                     ev.Player.Hurt(amount, DamageTypes.Falldown, "SCP-914");
