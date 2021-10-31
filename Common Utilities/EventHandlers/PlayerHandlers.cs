@@ -48,6 +48,12 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.Health = _plugin.Config.HealthValues[ev.NewRole];
                     ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
                 });
+
+            if (ev.NewRole != RoleType.Spectator && _plugin.Config.PlayerHealthInfo)
+            {
+                Timing.CallDelayed(1f, () =>
+                    ev.Player.CustomInfo = $"{ev.Player.Health}/{ev.Player.MaxHealth}");
+            }
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
@@ -108,6 +114,10 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(ev.DamageType.Weapon))
                 ev.Amount *= _plugin.Config.WeaponDamageMultipliers[ev.DamageType.Weapon];
+
+            if (_plugin.Config.PlayerHealthInfo)
+                Timing.CallDelayed(0.5f, () =>
+                    ev.Target.CustomInfo = $"{ev.Target.Health}/{ev.Target.MaxHealth}");
         }
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)

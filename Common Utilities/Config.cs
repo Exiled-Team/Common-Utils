@@ -42,6 +42,9 @@ namespace Common_Utilities
         [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
 
+        [Description("Whether or not to show player's health under their name when you look at them.")]
+        public bool PlayerHealthInfo { get; set; } = true;
+
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
         public Dictionary<RoleType, RoleInventory> StartingInventories { get; set; } = new Dictionary<RoleType, RoleInventory>

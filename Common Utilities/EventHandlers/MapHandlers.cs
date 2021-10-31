@@ -105,7 +105,17 @@ namespace Common_Utilities.EventHandlers
                             {
                                 ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
                                 if (damage > 0f)
-                                    ev.Player.Hurt(damage, DamageTypes.Falldown, "SCP-914");
+                                {
+                                    float amount = ev.Player.Health *= damage;
+                                    if (damage > 1f)
+                                    {
+                                        Log.Warn($"SCP-914 teleport damage has been re-worked to a percentage. Please use values between 0 and 1 only. (The damage of this event has been adjusted to the old value)");
+                                        amount = damage;
+                                    }
+
+                                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}", plugin.Config.Debug);
+                                    ev.Player.Hurt(amount, DamageTypes.Falldown, "SCP-914");
+                                }
                                 break;
                             }
 
