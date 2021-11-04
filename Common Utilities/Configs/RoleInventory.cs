@@ -13,21 +13,21 @@ namespace Common_Utilities.Configs
             get
             {
                 int i = 0;
-                if (!Slot1.IsEmpty())
+                if (Slot1 != null && !Slot1.IsEmpty())
                     i++;
-                if (!Slot2.IsEmpty())
+                if (Slot2 != null && !Slot2.IsEmpty())
                     i++;
-                if (!Slot3.IsEmpty())
+                if (Slot3 != null && !Slot3.IsEmpty())
                     i++;
-                if (!Slot4.IsEmpty())
+                if (Slot4 != null && !Slot4.IsEmpty())
                     i++;
-                if (!Slot5.IsEmpty())
+                if (Slot5 != null && !Slot5.IsEmpty())
                     i++;
-                if (!Slot6.IsEmpty())
+                if (Slot6 != null && !Slot6.IsEmpty())
                     i++;
-                if (!Slot7.IsEmpty())
+                if (Slot7 != null && !Slot7.IsEmpty())
                     i++;
-                if (!Slot8.IsEmpty())
+                if (Slot8 != null && !Slot8.IsEmpty())
                     i++;
                 return i;
             }
