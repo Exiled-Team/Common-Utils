@@ -38,7 +38,7 @@ namespace Common_Utilities
         public ushort JoinMessageDuration { get; set; } = 5;
 
         [Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.")]
-        public float AutonukeTime { get; set; } = 600f;
+        public float AutonukeTime { get; set; } = 1500f;
         [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
 
