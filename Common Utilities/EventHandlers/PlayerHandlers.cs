@@ -119,7 +119,7 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.WeaponDamageMultipliers != null)
             {
-                if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(ev.DamageType.Weapon))
+                if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(ev.DamageType.Weapon) && ev.Attacker.CurrentItem.Type == ev.DamageType.Weapon)
                     ev.Amount *= _plugin.Config.WeaponDamageMultipliers[ev.DamageType.Weapon];
                 else if (ev.DamageType == DamageTypes.Grenade && _plugin.Config.WeaponDamageMultipliers.ContainsKey(ItemType.GrenadeHE))
                     ev.Amount *= _plugin.Config.WeaponDamageMultipliers[ItemType.GrenadeHE];
