@@ -27,6 +27,12 @@ namespace Common_Utilities.EventHandlers
         
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
+            if (ev.Player == null)
+            {
+                Log.Warn($"{nameof(OnChangingRole)}: Triggering player is null.");
+                return;
+            }
+
             if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite && _plugin.Config.StartingInventories[ev.NewRole].CheckGroup(ev.Player.Group.BadgeText))
             {
                 ev.Items.Clear();
