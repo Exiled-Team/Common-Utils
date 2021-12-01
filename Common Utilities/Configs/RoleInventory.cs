@@ -71,5 +71,10 @@ namespace Common_Utilities.Configs
                 }
             }
         }
+
+        public bool CheckGroup(string group)
+        {
+            
+        }
     }
 }

@@ -4,9 +4,11 @@ namespace Common_Utilities.EventHandlers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.Events.EventArgs;
+    using Exiled.Permissions.Features;
     using MEC;
     using Player = Exiled.API.Features.Player;
     
@@ -24,7 +26,7 @@ namespace Common_Utilities.EventHandlers
         
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite)
+            if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite && _plugin.Config.StartingInventories[ev.NewRole].CheckGroup(ev.Player.Group.BadgeText))
             {
                 ev.Items.Clear();
                 List<ItemType> items = StartItems(ev.NewRole, ev.Player);
@@ -34,15 +36,20 @@ namespace Common_Utilities.EventHandlers
 
                 if (_plugin.Config.StartingInventories[ev.NewRole].Ammo != null && _plugin.Config.StartingInventories[ev.NewRole].Ammo.Count > 0)
                 {
-                    Timing.CallDelayed(1f, () =>
+                    if (_plugin.Config.StartingInventories[ev.NewRole].Ammo.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
                     {
-                        ev.Ammo.Clear();
-                        foreach ((ItemType type, ushort amount, string group) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
+                        Timing.CallDelayed(1f, () =>
                         {
-                            if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
-                                ev.Ammo.Add(type, amount);
-                        }
-                    });
+                            ev.Ammo.Clear();
+                            foreach ((ItemType type, ushort amount, string group) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
+                            {
+                                if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
+                                {
+                                    ev.Ammo.Add(type, amount);
+                                }
+                            }
+                        });
+                    }
                 }
             }
 
