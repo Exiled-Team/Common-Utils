@@ -122,7 +122,7 @@ namespace Common_Utilities.EventHandlers
 
         public void OnPlayerHurting(HurtingEventArgs ev)
         {
-            if (_plugin.Config.RoleDamageMultipliers != null && _plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Attacker.Role))
+            if (_plugin.Config.RoleDamageMultipliers != null && ev.Attacker != null && _plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Attacker.Role))
                 ev.Amount *= _plugin.Config.RoleDamageMultipliers[ev.Attacker.Role];
 
             if (_plugin.Config.WeaponDamageMultipliers != null)
