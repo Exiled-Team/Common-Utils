@@ -70,7 +70,7 @@ namespace Common_Utilities.EventHandlers
 
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (_plugin.Config.HealthOnKill != null && _plugin.Config.HealthOnKill.ContainsKey(ev.Killer.Role))
+            if (ev.Killer != null && _plugin.Config.HealthOnKill != null && _plugin.Config.HealthOnKill.ContainsKey(ev.Killer.Role))
             {
 
                 if (ev.Killer.Health + _plugin.Config.HealthOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)
