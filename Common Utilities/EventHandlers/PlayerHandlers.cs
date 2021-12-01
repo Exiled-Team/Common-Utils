@@ -10,6 +10,7 @@ namespace Common_Utilities.EventHandlers
     using Exiled.Events.EventArgs;
     using Exiled.Permissions.Features;
     using MEC;
+    using PlayerStatsSystem;
     using Player = Exiled.API.Features.Player;
     
     public class PlayerHandlers
@@ -126,12 +127,21 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.WeaponDamageMultipliers != null)
             {
-                if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(ev.DamageType.Weapon) && ev.Attacker.CurrentItem.Type == ev.DamageType.Weapon)
-                    ev.Amount *= _plugin.Config.WeaponDamageMultipliers[ev.DamageType.Weapon];
-                else if (ev.DamageType == DamageTypes.Grenade && _plugin.Config.WeaponDamageMultipliers.ContainsKey(ItemType.GrenadeHE))
-                    ev.Amount *= _plugin.Config.WeaponDamageMultipliers[ItemType.GrenadeHE];
-                else if (ev.DamageType == DamageTypes.Scp018 && _plugin.Config.WeaponDamageMultipliers.ContainsKey(ItemType.SCP018))
-                    ev.Amount *= _plugin.Config.WeaponDamageMultipliers[ItemType.SCP018];
+                ItemType type = ItemType.None;
+                if (ev.DamageHandler is ExplosionDamageHandler)
+                    type = ItemType.GrenadeHE;
+                else if (ev.DamageHandler is MicroHidDamageHandler)
+                    type = ItemType.MicroHID;
+                else if (ev.DamageHandler is Scp018DamageHandler)
+                    type = ItemType.SCP018;
+                else if (ev.DamageHandler is FirearmDamageHandler firearmDamageHandler)
+                    type = firearmDamageHandler.WeaponType;
+
+                if (type != ItemType.None)
+                {
+                    if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(type) && ev.Attacker.CurrentItem.Type == type) 
+                        ev.Amount *= _plugin.Config.WeaponDamageMultipliers[type];
+                }
             }
 
             if (_plugin.Config.PlayerHealthInfo)

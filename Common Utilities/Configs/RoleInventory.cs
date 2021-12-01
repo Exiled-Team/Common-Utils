@@ -74,7 +74,8 @@ namespace Common_Utilities.Configs
 
         public bool CheckGroup(string group)
         {
-            
+            // I don't know what I was doing here?
+            return true;
         }
     }
 }
