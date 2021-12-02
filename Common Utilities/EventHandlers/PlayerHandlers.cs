@@ -33,8 +33,14 @@ namespace Common_Utilities.EventHandlers
                 return;
             }
 
-            if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite && _plugin.Config.StartingInventories[ev.NewRole].CheckGroup(ev.Player.Group.BadgeText))
+            if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite)
             {
+                if (ev.Items == null)
+                {
+                    Log.Warn("items is null");
+                    return;
+                }
+
                 ev.Items.Clear();
                 List<ItemType> items = StartItems(ev.NewRole, ev.Player);
                 ev.Items.AddRange(items);
