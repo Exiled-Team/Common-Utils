@@ -148,7 +148,7 @@ namespace Common_Utilities.EventHandlers
 
                 if (type != ItemType.None)
                 {
-                    if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(type) && ev.Attacker.CurrentItem.Type == type) 
+                    if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(type) && ev.Attacker != null && ev.Attacker.CurrentItem.Type == type) 
                         ev.Amount *= _plugin.Config.WeaponDamageMultipliers[type];
                 }
             }
