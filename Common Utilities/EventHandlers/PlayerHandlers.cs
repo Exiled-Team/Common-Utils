@@ -51,9 +51,7 @@ namespace Common_Utilities.EventHandlers
                 {
                     if (_plugin.Config.StartingInventories[ev.NewRole].Ammo.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
                     {
-                        Timing.CallDelayed(1f, () =>
-                        {
-                            ev.Ammo.Clear();
+                        ev.Ammo.Clear();
                             foreach ((ItemType type, ushort amount, string group) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
                             {
                                 if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
@@ -61,7 +59,6 @@ namespace Common_Utilities.EventHandlers
                                     ev.Ammo.Add(type, amount);
                                 }
                             }
-                        });
                     }
                 }
             }
