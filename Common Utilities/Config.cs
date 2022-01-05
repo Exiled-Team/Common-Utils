@@ -45,6 +45,9 @@ namespace Common_Utilities
         [Description("Whether or not to show player's health under their name when you look at them.")]
         public bool PlayerHealthInfo { get; set; } = true;
 
+        [Description("Whether or not friendly fire should automatically turn on when a round ends (it will turn itself back off before the next round starts).")]
+        public bool FriendlyFireOnRoundEnd { get; set; } = false;
+
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
         public Dictionary<RoleType, RoleInventory> StartingInventories { get; set; } = new Dictionary<RoleType, RoleInventory>
@@ -212,7 +215,7 @@ namespace Common_Utilities
                 RoleType.NtfCaptain, 150
             }
         };
-        
+
         [Description("If the plugin is enabled or not.")]
         public bool IsEnabled { get; set; } = true;
     }

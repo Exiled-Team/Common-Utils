@@ -11,24 +11,31 @@ namespace Common_Utilities.EventHandlers
     
     public class ServerHandlers
     {
-        private readonly Plugin plugin;
-        public ServerHandlers(Plugin plugin) => this.plugin = plugin;
+        private readonly Plugin _plugin;
+        public ServerHandlers(Plugin plugin) => this._plugin = plugin;
 
         public Vector3 EscapeZone = Vector3.zero;
+        private bool _friendlyFireDisable = false;
         
         public void OnRoundStarted()
         {
-            if (plugin.Config.AutonukeTime > -1)
-                plugin.Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
+            if (_friendlyFireDisable)
+            {
+                Server.FriendlyFire = false;
+                _friendlyFireDisable = false;
+            }
+
+            if (_plugin.Config.AutonukeTime > -1)
+                _plugin.Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
             
-            if (plugin.Config.RagdollCleanupDelay > 0)
-                plugin.Coroutines.Add(Timing.RunCoroutine(RagdollCleanup()));
+            if (_plugin.Config.RagdollCleanupDelay > 0)
+                _plugin.Coroutines.Add(Timing.RunCoroutine(RagdollCleanup()));
             
-            if (plugin.Config.ItemCleanupDelay > 0)
-                plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
+            if (_plugin.Config.ItemCleanupDelay > 0)
+                _plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
             
-            if (plugin.Config.DisarmSwitchTeams)
-                plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
+            if (_plugin.Config.DisarmSwitchTeams)
+                _plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
         }
 
         private IEnumerator<float> BetterDisarm()
@@ -52,14 +59,14 @@ namespace Common_Utilities.EventHandlers
                         case RoleType.NtfSergeant:
                         case RoleType.NtfCaptain:
                         case RoleType.NtfSpecialist:
-                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
+                            _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
                             player.Role = RoleType.ChaosConscript;
                             break;
                         case RoleType.ChaosConscript:
                         case RoleType.ChaosMarauder:
                         case RoleType.ChaosRepressor:
                         case RoleType.ChaosRifleman:
-                            plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
+                            _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
                             player.Role = RoleType.NtfPrivate;
                             break;
                     }
@@ -77,26 +84,32 @@ namespace Common_Utilities.EventHandlers
 
         public void OnWaitingForPlayers()
         {
-            if (plugin.Config.TimedBroadcastDelay > 0)
-                plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
+            if (_plugin.Config.TimedBroadcastDelay > 0)
+                _plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
             
             Warhead.IsLocked = false;
         }
         
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
-            foreach (CoroutineHandle coroutine in plugin.Coroutines)
+            if (_plugin.Config.FriendlyFireOnRoundEnd && !Server.FriendlyFire)
+            {
+                Server.FriendlyFire = true;
+                _friendlyFireDisable = true;
+            }
+
+            foreach (CoroutineHandle coroutine in _plugin.Coroutines)
                 Timing.KillCoroutines(coroutine);
-            plugin.Coroutines.Clear();
+            _plugin.Coroutines.Clear();
         }
 
         private IEnumerator<float> ServerBroadcast()
         {
             for (;;)
             {
-                yield return Timing.WaitForSeconds(plugin.Config.TimedBroadcastDelay);
+                yield return Timing.WaitForSeconds(_plugin.Config.TimedBroadcastDelay);
                 
-                Map.Broadcast(plugin.Config.TimedBroadcastDuration, plugin.Config.TimedBroadcast);
+                Map.Broadcast(_plugin.Config.TimedBroadcastDuration, _plugin.Config.TimedBroadcast);
             }
         }
 
@@ -104,10 +117,10 @@ namespace Common_Utilities.EventHandlers
         {
             for (;;)
             {
-                yield return Timing.WaitForSeconds(plugin.Config.ItemCleanupDelay);
+                yield return Timing.WaitForSeconds(_plugin.Config.ItemCleanupDelay);
 
                 foreach (ItemPickupBase item in Object.FindObjectsOfType<ItemPickupBase>())
-                    if (!plugin.Config.ItemCleanupOnlyPocket || item.NetworkInfo.Position.y < -1500f)
+                    if (!_plugin.Config.ItemCleanupOnlyPocket || item.NetworkInfo.Position.y < -1500f)
                         item.DestroySelf();
             }
         }
@@ -116,29 +129,29 @@ namespace Common_Utilities.EventHandlers
         {
             for (;;)
             {
-                yield return Timing.WaitForSeconds(plugin.Config.RagdollCleanupDelay);
+                yield return Timing.WaitForSeconds(_plugin.Config.RagdollCleanupDelay);
                 
                 foreach (Ragdoll ragdoll in Map.Ragdolls)
-                    if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
+                    if (!_plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
                         ragdoll.Delete();
             }
         }
 
         private IEnumerator<float> AutoNuke()
         {
-            yield return Timing.WaitForSeconds(plugin.Config.AutonukeTime);
+            yield return Timing.WaitForSeconds(_plugin.Config.AutonukeTime);
             
             Warhead.Start();
 
-            if (plugin.Config.AutonukeLock)
+            if (_plugin.Config.AutonukeLock)
                 Warhead.IsLocked = true;
         }
 
         public void OnRestartingRound()
         {
-            foreach (CoroutineHandle coroutine in plugin.Coroutines)
+            foreach (CoroutineHandle coroutine in _plugin.Coroutines)
                 Timing.KillCoroutines(coroutine);
-            plugin.Coroutines.Clear();
+            _plugin.Coroutines.Clear();
         }
     }
 }
