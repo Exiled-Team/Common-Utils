@@ -6,6 +6,7 @@ namespace Common_Utilities.EventHandlers
     using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
     using InventorySystem.Items.Firearms;
+    using MEC;
     using UnityEngine;
     using Firearm = Exiled.API.Features.Items.Firearm;
 
@@ -78,6 +79,7 @@ namespace Common_Utilities.EventHandlers
                             }
                         
                         ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, keepInventory);
+                        Timing.CallDelayed(0.15f, () => ev.Player.Position = ev.OutputPosition);
                         break;
                     }
                 }
