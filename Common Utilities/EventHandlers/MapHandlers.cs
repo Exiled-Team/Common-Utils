@@ -70,6 +70,13 @@ namespace Common_Utilities.EventHandlers
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})", _plugin.Config.Debug);
                     if (r <= chance)
                     {
+                        if (!keepInventory)
+                            foreach (Item item in ev.Player.Items)
+                            {
+                                ev.Player.RemoveItem(item, false);
+                                item.Spawn(ev.OutputPosition);
+                            }
+                        
                         ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, keepInventory);
                         break;
                     }
