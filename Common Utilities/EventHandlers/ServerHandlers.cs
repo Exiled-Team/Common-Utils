@@ -19,12 +19,6 @@ namespace Common_Utilities.EventHandlers
         
         public void OnRoundStarted()
         {
-            if (_friendlyFireDisable)
-            {
-                Server.FriendlyFire = false;
-                _friendlyFireDisable = false;
-            }
-
             if (_plugin.Config.AutonukeTime > -1)
                 _plugin.Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
             
@@ -84,6 +78,13 @@ namespace Common_Utilities.EventHandlers
 
         public void OnWaitingForPlayers()
         {
+            if (_friendlyFireDisable)
+            {
+                Log.Debug($"{nameof(OnWaitingForPlayers)}: Disabling friendly fire.", _plugin.Config.Debug);
+                Server.FriendlyFire = false;
+                _friendlyFireDisable = false;
+            }
+
             if (_plugin.Config.TimedBroadcastDelay > 0)
                 _plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
             
@@ -94,6 +95,7 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.FriendlyFireOnRoundEnd && !Server.FriendlyFire)
             {
+                Log.Debug($"{nameof(OnRoundEnded)}: Enabling friendly fire.", _plugin.Config.Debug);
                 Server.FriendlyFire = true;
                 _friendlyFireDisable = true;
             }

@@ -2,6 +2,7 @@ using Exiled.API.Features;
 
 namespace Common_Utilities.EventHandlers
 {
+    using System.Linq;
     using Exiled.API.Enums;
     using Exiled.API.Features.Items;
     using Exiled.Events.EventArgs;
@@ -72,14 +73,14 @@ namespace Common_Utilities.EventHandlers
                     if (r <= chance)
                     {
                         if (!keepInventory)
-                            foreach (Item item in ev.Player.Items)
+                            foreach (Item item in ev.Player.Items.ToList())
                             {
                                 ev.Player.RemoveItem(item, false);
                                 item.Spawn(ev.OutputPosition);
                             }
                         
                         ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, keepInventory);
-                        Timing.CallDelayed(0.15f, () => ev.Player.Position = ev.OutputPosition);
+                        Timing.CallDelayed(0.45f, () => ev.Player.Position = ev.OutputPosition);
                         break;
                     }
                 }
