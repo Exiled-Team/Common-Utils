@@ -17,8 +17,13 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 CommonUtilities:
 # Wether or not debug messages should be shown.
   debug: false
-  # Wether or not SCP-049 should be able to talk to humans.
-  scp049_speech: true
+  # The SCP Roles able to use V to talk to humans.
+  scp_speech:
+  - Scp049
+  # Whether or not MTF/CI can 'escape' while disarmed to switch teams.
+  disarm_switch_teams: true
+  # Whether or not disarmed people will be prevented from interacting with doors/elevators.
+  restrictive_disarming: true
   # The text displayed at the timed interval specified below.
   timed_broadcast: <color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>
   # The time each timed broadcast will be displayed.
@@ -30,120 +35,89 @@ CommonUtilities:
   # The amount of time (in seconds) the join message is displayed.
   join_message_duration: 5
   # The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.
-  autonuke_time: 1200
+  autonuke_time: 1500
   # Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.
   autonuke_lock: true
-  # The list of items Class-D should have. Valid formatting should be ItemType:Chance where ItemType is the item to give them, and Chance is the percent chance of them spawning with it. You can speci$
-  class_d_inventory:
-    slot1:
-    - Coin:100
-    slot2:
-    - Flashlight:100
-    slot3:
-    - KeycardJanitor:5
-    slot4:
-    - Medkit:1
-    - Painkillers:10
-    slot5:
-    slot6: []
-    slot7: []
-    slot8: []
-  chaos_inventory:
-    slot1: []
-    slot2: []
-    slot3: []
-    slot4: []
-    slot5: []
-    slot6: []
-    slot7: []
-    slot8: []
-  scientist_inventory:
-    slot1: []
-    slot2: []
-    slot3: []
-    slot4: []
-    slot5: []
-    slot6: []
-    slot7: []
-    slot8: []
-  guard_inventory:
-    slot1: []
-    slot2: []
-    slot3: []
-    slot4: []
-    slot5: []
-    slot6: []
-    slot7: []
-    slot8: []
-  cadet_inventory:
-    slot1: []
-    slot2: []
-    slot3: []
-    slot4: []
-    slot5: []
-    slot6: []
-    slot7: []
-    slot8: []
-  lieutenant_inventory:
-    slot1: []
-    slot2: []
-    slot3: []
-    slot4: []
-    slot5: []
-    slot6: []
-    slot7: []
-    slot8: []
-  commander_inventory:
-    slot1: []
-    slot2: []
-    slot3: []
-    slot4: []
-    slot5: []
-    slot6: []
-    slot7: []
-    slot8: []
-  ntf_sci_inventory:
-    slot1: []
-    slot2: []
-    slot3: []
-    slot4: []
-    slot5: []
-    slot6: []
-    slot7: []
-    slot8: []
-  # The list of custom 914 recipies for the Rough setting. Valid formatting should be OriginalItemType:NewItemType:Chance where OriginalItem is the item being upgraded, NewItem is the item to upgrade$
-  scp914_rough_chances:
-  - KeycardO5:KeycardJanitor:50
-  - KeycardO5:Coin:100
-  scp914_coarse_chances: []
-  scp914_oneto_one_chances: []
-  scp914_fine_chances: []
-  scp914_very_fine_chances: []
-  # The list of custom 914 recipies for 914. Valid formatting is OriginalRole:NewRole:Chance - IE: ClassD:Spectator:100 - for each knob setting defined.
+  # Whether or not to show player's health under their name when you look at them.
+  player_health_info: true
+  # The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.
+  starting_inventories:
+    ClassD:
+      slot1:
+      - item_name: KeycardJanitor
+        chance: 10
+        group: none
+      - item_name: Coin
+        chance: 100
+        group: none
+      slot2:
+      - item_name: Flashlight
+        chance: 100
+        group: none
+      slot3: []
+      slot4: []
+      slot5: []
+      slot6: []
+      slot7: []
+      slot8: []
+      ammo:
+      - type: Ammo556x45
+        amount: 200
+        group: none
+  # The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.
+  scp914_item_changes:
+    Rough:
+    - original: KeycardO5
+      new: MicroHID
+      chance: 50
+  # The list of custom 914 recipies for roles. Original is the role to be changed, New is the new role to assign, Chance is the % chance of the upgrade occuring.
   scp914_class_changes:
     Rough:
-    - ClassD:Scientist:10
-    - ClassD:Spectator:50
-    Coarse: []
-    OneToOne: []
-    Fine: []
-    VeryFine: []
+    - original: ClassD
+      new: Spectator
+      chance: 100
+  scp914_teleport_chances:
+    Rough:
+    - room: LczClassDSpawn
+      offset:
+        x: 0
+        y: 0
+        z: 0
+      chance: 100
+      damage: 0
+  # A dictionary of random effects to apply to players when going through 914 on certain settings.
+  scp914_effect_chances:
+    Rough:
+    - effect: Amnesia
+      chance: 100
+      duration: 0
+  # Determines if 914 effects are exclusive, meaning only one can be applied each time a player is processed by 914.
+  scp914_effects_exclusivity: false
+  # Whether or not SCPs are immune to effects gained from 914.
+  scps_immune_to914_effects: false
   # The frequency (in seconds) between ragdoll cleanups. Set to 0 to disable.
-  ragdoll_cleanup_delay: 300
+  ragdoll_cleanup_delay: 0
   # If ragdoll cleanup should only happen in the Pocket Dimension or not.
   ragdoll_cleanup_only_pocket: false
   # The frequency (in seconds) between item cleanups. Set to 0 to disable.
-  item_cleanup_delay: 900
+  item_cleanup_delay: 0
   # If item cleanup should only happen in the Pocket Dimension or not.
-  item_cleanup_only_pocket: true
+  item_cleanup_only_pocket: false
+  # A list of all roles and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.
+  role_damage_multipliers:
+    Scp173: 1
+  # A list of all Weapons and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.
+  weapon_damage_multipliers:
+    GunE11SR: 1
   # A list of roles and how much health they should be given when they kill someone.
   health_on_kill:
-    Scp173: 125
-    Scp096: 70
+    Scp173: 0
+    Scp93953: 10
+    Scp93989: 20
   # A list of roles and what their default starting health should be.
- health_values:
-    Scp173: 3000
-    NtfCommander: 200
+  health_values:
+    Scp173: 3200
+    NtfCaptain: 150
   # If the plugin is enabled or not.
   is_enabled: true
 
