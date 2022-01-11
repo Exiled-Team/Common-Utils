@@ -135,7 +135,7 @@ namespace Common_Utilities.EventHandlers
         {
             if (newItem != ItemType.None)
             {
-                Item item = new Item(newItem);
+                Item item = Item.Create(newItem);
                 if (oldItem.Base is FirearmPickup firearmPickup && item is Firearm firearm)
                     firearm.Ammo = firearmPickup.NetworkStatus.Ammo <= firearm.MaxAmmo
                         ? firearmPickup.NetworkStatus.Ammo

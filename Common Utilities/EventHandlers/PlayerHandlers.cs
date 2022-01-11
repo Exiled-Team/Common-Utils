@@ -6,6 +6,7 @@ namespace Common_Utilities.EventHandlers
     using System.Collections.Generic;
     using System.Linq;
     using Exiled.API.Enums;
+    using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.Events.EventArgs;
     using Exiled.Permissions.Features;
@@ -134,23 +135,9 @@ namespace Common_Utilities.EventHandlers
             if (_plugin.Config.RoleDamageMultipliers != null && ev.Attacker != null && _plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Attacker.Role))
                 ev.Amount *= _plugin.Config.RoleDamageMultipliers[ev.Attacker.Role];
 
-            if (_plugin.Config.WeaponDamageMultipliers != null)
+            if (_plugin.Config.DamageMultipliers != null && _plugin.Config.DamageMultipliers.ContainsKey(ev.Handler.Type))
             {
-                ItemType type = ItemType.None;
-                if (ev.DamageHandler is ExplosionDamageHandler)
-                    type = ItemType.GrenadeHE;
-                else if (ev.DamageHandler is MicroHidDamageHandler)
-                    type = ItemType.MicroHID;
-                else if (ev.DamageHandler is Scp018DamageHandler)
-                    type = ItemType.SCP018;
-                else if (ev.DamageHandler is FirearmDamageHandler firearmDamageHandler)
-                    type = firearmDamageHandler.WeaponType;
-
-                if (type != ItemType.None)
-                {
-                    if (_plugin.Config.WeaponDamageMultipliers.ContainsKey(type) && ev.Attacker != null && ev.Attacker.CurrentItem.Type == type) 
-                        ev.Amount *= _plugin.Config.WeaponDamageMultipliers[type];
-                }
+                ev.Amount *= _plugin.Config.DamageMultipliers[ev.Handler.Type];
             }
 
             if (_plugin.Config.PlayerHealthInfo)

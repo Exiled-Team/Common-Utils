@@ -184,10 +184,10 @@ namespace Common_Utilities
         };
         
         [Description("A list of all Weapons and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
-        public Dictionary<ItemType, float> WeaponDamageMultipliers { get; set; } = new Dictionary<ItemType, float>
+        public Dictionary<DamageType, float> DamageMultipliers { get; set; } = new Dictionary<DamageType, float>
         {
             {
-                ItemType.GunE11SR, 1.0f
+                DamageType.E11Sr, 1.0f
             }
         };
 
