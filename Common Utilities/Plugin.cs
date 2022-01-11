@@ -35,42 +35,65 @@ namespace Common_Utilities
         {
             if (Config.Debug)
             {
-                Log.Debug($"{Config.StartingInventories.Count}");
-                foreach (KeyValuePair<RoleType, RoleInventory> inv in Config.StartingInventories)
+                if (Config.StartingInventories != null)
                 {
-                    for (int i = 0; i < inv.Value.UsedSlots; i++)
+                    Log.Debug($"{Config.StartingInventories.Count}");
+                    foreach (KeyValuePair<RoleType, RoleInventory> inv in Config.StartingInventories)
                     {
-                        foreach (ItemChance chance in inv.Value[i])
-                            Log.Debug($"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
+                        for (int i = 0; i < inv.Value.UsedSlots; i++)
+                        {
+                            foreach (ItemChance chance in inv.Value[i])
+                                Log.Debug(
+                                    $"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
+                        }
+
+                        foreach ((ItemType type, ushort amount, string group) in inv.Value.Ammo)
+                        {
+                            Log.Debug($"Ammo Config: {inv.Key} - {type} {amount} ({group})");
+                        }
                     }
                 }
 
-                Log.Debug($"{Config.Scp914ItemChanges.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
+                if (Config.Scp914ItemChanges != null)
                 {
-                    foreach ((ItemType oldItem, ItemType newItem, int chance) in upgrade.Value)
-                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
+                    Log.Debug($"{Config.Scp914ItemChanges.Count}");
+                    foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
+                    {
+                        foreach ((ItemType oldItem, ItemType newItem, int chance) in upgrade.Value)
+                            Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
+                    }
                 }
 
-                Log.Debug($"{Config.Scp914ClassChanges.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
+                if (Config.Scp914ClassChanges != null)
                 {
-                    foreach ((RoleType oldRole, RoleType newRole, int chance) in upgrade.Value)
-                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance}");
+                    Log.Debug($"{Config.Scp914ClassChanges.Count}");
+                    foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config
+                        .Scp914ClassChanges)
+                    {
+                        foreach ((RoleType oldRole, RoleType newRole, int chance, bool keepInventory) in upgrade.Value)
+                            Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} Keep Inventory: {keepInventory}");
+                    }
                 }
 
-                Log.Debug($"{Config.Scp914EffectChances.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config.Scp914EffectChances)
+                if (Config.Scp914EffectChances != null)
                 {
-                    foreach ((EffectType effect, int chance, float duration) in upgrade.Value)
-                        Log.Debug($"914 Effect Config: {upgrade.Key}: {effect} + {duration} - {chance}");
+                    Log.Debug($"{Config.Scp914EffectChances.Count}");
+                    foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config
+                        .Scp914EffectChances)
+                    {
+                        foreach ((EffectType effect, int chance, float duration) in upgrade.Value)
+                            Log.Debug($"914 Effect Config: {upgrade.Key}: {effect} + {duration} - {chance}");
+                    }
                 }
 
-                Log.Debug($"{Config.Scp914TeleportChances.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
+                if (Config.Scp914TeleportChances != null)
                 {
-                    foreach ((RoomType room, Vector3 offset, int chance) in upgrade.Value)
-                        Log.Debug($"914 Teleport Config: {upgrade.Key}: {room} + {offset} - {chance}");
+                    Log.Debug($"{Config.Scp914TeleportChances.Count}");
+                    foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
+                    {
+                        foreach ((RoomType room, Vector3 offset, int chance, float damage) in upgrade.Value)
+                            Log.Debug($"914 Teleport Config: {upgrade.Key}: {room} + {offset} - {chance} [{damage}]");
+                    }
                 }
             }
 
@@ -88,7 +111,7 @@ namespace Common_Utilities
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
-            
+
 
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;

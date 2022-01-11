@@ -38,9 +38,15 @@ namespace Common_Utilities
         public ushort JoinMessageDuration { get; set; } = 5;
 
         [Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.")]
-        public float AutonukeTime { get; set; } = 600f;
+        public float AutonukeTime { get; set; } = 1500f;
         [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
+
+        [Description("Whether or not to show player's health under their name when you look at them.")]
+        public bool PlayerHealthInfo { get; set; } = true;
+
+        [Description("Whether or not friendly fire should automatically turn on when a round ends (it will turn itself back off before the next round starts).")]
+        public bool FriendlyFireOnRoundEnd { get; set; } = false;
 
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
@@ -73,10 +79,19 @@ namespace Common_Utilities
                             Group = "none",
                         },
                     },
+                    Ammo = new List<StartingAmmo>
+                    {
+                        new StartingAmmo
+                        {
+                            Type = ItemType.Ammo556x45,
+                            Amount = 200,
+                            Group = "none",
+                        }
+                    }
                 }
             }
         };
-        
+
         [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
         public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChanges { get; set; } = new Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>>
         {
@@ -169,10 +184,10 @@ namespace Common_Utilities
         };
         
         [Description("A list of all Weapons and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
-        public Dictionary<ItemType, float> WeaponDamageMultipliers { get; set; } = new Dictionary<ItemType, float>
+        public Dictionary<DamageType, float> DamageMultipliers { get; set; } = new Dictionary<DamageType, float>
         {
             {
-                ItemType.GunE11SR, 1.0f
+                DamageType.E11Sr, 1.0f
             }
         };
 
@@ -200,7 +215,7 @@ namespace Common_Utilities
                 RoleType.NtfCaptain, 150
             }
         };
-        
+
         [Description("If the plugin is enabled or not.")]
         public bool IsEnabled { get; set; } = true;
     }
