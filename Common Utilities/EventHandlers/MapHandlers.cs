@@ -86,7 +86,7 @@ namespace Common_Utilities.EventHandlers
                 }
             }
 
-            if (_plugin.Config.Scp914EffectChances != null && _plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting) && (ev.Player.Side != Side.Scp || !_plugin.Config.ScpsImmuneTo914Effects))
+            if (_plugin.Config.Scp914EffectChances != null && _plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting) && (ev.Player.Role.Side != Side.Scp || !_plugin.Config.ScpsImmuneTo914Effects))
             {
                 foreach ((EffectType effect, int chance, float duration) in _plugin.Config.Scp914EffectChances[ev.KnobSetting])
                 {

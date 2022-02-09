@@ -43,10 +43,10 @@ namespace Common_Utilities.EventHandlers
                     if (EscapeZone == Vector3.zero)
                         EscapeZone = player.GameObject.GetComponent<Escape>().worldPosition;
 
-                    if (!player.IsCuffed || (player.Team != Team.CHI && player.Team != Team.MTF) || (EscapeZone - player.Position).sqrMagnitude > 400f)
+                    if (!player.IsCuffed || (player.Role.Team != Team.CHI && player.Role.Team != Team.MTF) || (EscapeZone - player.Position).sqrMagnitude > 400f)
                         continue;
 
-                    switch (player.Role)
+                    switch (player.Role.Type)
                     {
                         case RoleType.FacilityGuard:
                         case RoleType.NtfPrivate:
@@ -54,14 +54,14 @@ namespace Common_Utilities.EventHandlers
                         case RoleType.NtfCaptain:
                         case RoleType.NtfSpecialist:
                             _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.Role = RoleType.ChaosConscript;
+                            player.SetRole(RoleType.ChaosConscript);
                             break;
                         case RoleType.ChaosConscript:
                         case RoleType.ChaosMarauder:
                         case RoleType.ChaosRepressor:
                         case RoleType.ChaosRifleman:
                             _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.Role = RoleType.NtfPrivate;
+                            player.SetRole(RoleType.NtfPrivate);
                             break;
                     }
                 }
