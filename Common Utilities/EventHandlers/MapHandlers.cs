@@ -120,7 +120,7 @@ namespace Common_Utilities.EventHandlers
                                         amount = damage;
 
                                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}", _plugin.Config.Debug);
-                                    ev.Player.Hurt("SCP-914 Teleport", amount, "SCP-914");
+                                    ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
                                 }
                                 break;
                             }
