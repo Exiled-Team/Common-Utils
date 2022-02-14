@@ -109,7 +109,7 @@ namespace Common_Utilities.EventHandlers
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})", _plugin.Config.Debug);
                     if (r <= chance)
                     {
-                        foreach (Room room in Map.Rooms)
+                        foreach (Room room in Room.List)
                             if (room.Type == roomType)
                             {
                                 ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
