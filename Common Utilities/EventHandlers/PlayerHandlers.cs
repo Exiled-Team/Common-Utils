@@ -6,12 +6,9 @@ namespace Common_Utilities.EventHandlers
     using System.Collections.Generic;
     using System.Linq;
     using Exiled.API.Enums;
-    using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.Events.EventArgs;
-    using Exiled.Permissions.Features;
     using MEC;
-    using PlayerStatsSystem;
     using Player = Exiled.API.Features.Player;
     
     public class PlayerHandlers
