@@ -155,5 +155,17 @@ namespace Common_Utilities.EventHandlers
                 Timing.KillCoroutines(coroutine);
             _plugin.Coroutines.Clear();
         }
+
+        public void OnWarheadStarting(StartingEventArgs ev)
+        {
+            foreach (Room room in Room.List)
+                room.Color = _plugin.Config.WarheadColor;
+        }
+
+        public void OnWarheadStopping(StoppingEventArgs ev)
+        {
+            foreach (Room room in Room.List)
+                room.ResetColor();
+        }
     }
 }

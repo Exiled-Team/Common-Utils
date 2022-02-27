@@ -111,6 +111,7 @@ namespace Common_Utilities
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
+            Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
 
 
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
@@ -121,6 +122,9 @@ namespace Common_Utilities
             Scp914.UpgradingItem += MapHandlers.OnScp914UpgradingItem;
             Scp914.UpgradingPlayer += MapHandlers.OnScp914UpgradingPlayer;
             Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
+
+            Exiled.Events.Handlers.Warhead.Starting += ServerHandlers.OnWarheadStarting;
+            Exiled.Events.Handlers.Warhead.Stopping += ServerHandlers.OnWarheadStopping;
 
             Instance = new Harmony($"com.joker.cu-{DateTime.UtcNow.Ticks}");
             Instance.PatchAll();

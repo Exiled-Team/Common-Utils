@@ -7,6 +7,7 @@ namespace Common_Utilities
     using Exiled.API.Enums;
     using Exiled.API.Interfaces;
     using Scp914;
+    using UnityEngine;
 
     public class Config : IConfig
     {
@@ -47,6 +48,12 @@ namespace Common_Utilities
 
         [Description("Whether or not friendly fire should automatically turn on when a round ends (it will turn itself back off before the next round starts).")]
         public bool FriendlyFireOnRoundEnd { get; set; } = false;
+
+        [Description("The multiplier applied to radio battery usage. Set to 0 to disable radio battery drain.")]
+        public float RadioBatteryDrainMultiplier { get; set; } = 1f;
+
+        [Description("The color to use for lights while the warhead is active.")]
+        public Color WarheadColor { get; set; } = new Color(1f, 0.2f, 0.2f);
 
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]

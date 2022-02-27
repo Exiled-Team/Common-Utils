@@ -153,5 +153,10 @@ namespace Common_Utilities.EventHandlers
             if (ev.Player.IsCuffed && _plugin.Config.RestrictiveDisarming)
                 ev.IsAllowed = false;
         }
+
+        public void OnUsingRadioBattery(UsingRadioBatteryEventArgs ev)
+        {
+            ev.Drain *= _plugin.Config.RadioBatteryDrainMultiplier;
+        }
     }
 }
