@@ -15,7 +15,7 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 # Default config:
 ```yaml
 CommonUtilities:
-# Wether or not debug messages should be shown.
+# Whether or not debug messages should be shown.
   debug: false
   # The SCP Roles able to use V to talk to humans.
   scp_speech:
@@ -40,6 +40,8 @@ CommonUtilities:
   autonuke_lock: true
   # Whether or not to show player's health under their name when you look at them.
   player_health_info: true
+  # Whether or not friendly fire should automatically turn on when a round ends (it will turn itself back off before the next round starts).
+  friendly_fire_on_round_end: false
   # The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.
   starting_inventories:
     ClassD:
@@ -76,6 +78,7 @@ CommonUtilities:
     - original: ClassD
       new: Spectator
       chance: 100
+      keep_inventory: true
   scp914_teleport_chances:
     Rough:
     - room: LczClassDSpawn
@@ -107,8 +110,8 @@ CommonUtilities:
   role_damage_multipliers:
     Scp173: 1
   # A list of all Weapons and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.
-  weapon_damage_multipliers:
-    GunE11SR: 1
+  damage_multipliers:
+    E11Sr: 1
   # A list of roles and how much health they should be given when they kill someone.
   health_on_kill:
     Scp173: 0
