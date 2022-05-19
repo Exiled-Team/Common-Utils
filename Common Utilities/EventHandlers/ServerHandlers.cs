@@ -178,6 +178,9 @@ namespace Common_Utilities.EventHandlers
                     if (!_plugin.AfkDict.ContainsKey(player))
                         _plugin.AfkDict.Add(player, 0);
 
+                    if (player.Role == RoleType.Spectator)
+                        continue;
+
                     if (_plugin.AfkDict[player] >= _plugin.Config.AfkLimit)
                         player.Kick("You were kicked by a plugin for being AFK.");
                     else if (_plugin.AfkDict[player] >= (_plugin.Config.AfkLimit / 2))
