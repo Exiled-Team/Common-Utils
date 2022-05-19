@@ -5,6 +5,7 @@ namespace Common_Utilities
     using Common_Utilities.ConfigObjects;
     using Common_Utilities.Configs;
     using Exiled.API.Enums;
+    using Exiled.API.Features;
     using Exiled.API.Interfaces;
     using Scp914;
     using UnityEngine;
@@ -15,7 +16,7 @@ namespace Common_Utilities
         public bool Debug { get; set; } = false;
 
         [Description("The SCP Roles able to use V to talk to humans.")]
-        public List<RoleType> ScpSpeech { get; set; } = new List<RoleType>
+        public List<RoleType> ScpSpeech { get; set; } = new()
         {
             RoleType.Scp049
         };
@@ -43,6 +44,15 @@ namespace Common_Utilities
         [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
 
+        [Description("The message given to all players when the auto-nuke is triggered. A duration of 2 or more will be a text message on-screen. A duration of 1 makes it a cassie announcement. A duration of 0 disables it.")]
+        public Broadcast AutonukeBroadcast { get; set; } = new()
+        {
+            Content = "The auto nuke has been activated.",
+            Duration = 10,
+            Show = true,
+            Type = global::Broadcast.BroadcastFlags.Normal
+        };
+
         [Description("Whether or not to show player's health under their name when you look at them.")]
         public bool PlayerHealthInfo { get; set; } = true;
 
@@ -53,24 +63,27 @@ namespace Common_Utilities
         public float RadioBatteryDrainMultiplier { get; set; } = 1f;
 
         [Description("The color to use for lights while the warhead is active.")]
-        public Color WarheadColor { get; set; } = new Color(1f, 0.2f, 0.2f);
+        public Color WarheadColor { get; set; } = new(1f, 0.2f, 0.2f);
+
+        [Description("The maximum time, in seconds, that a player can be AFK before being kicked. Set to -1 to disable AFK system.")]
+        public int AfkLimit { get; set; } = 120;
 
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
-        public Dictionary<RoleType, RoleInventory> StartingInventories { get; set; } = new Dictionary<RoleType, RoleInventory>
+        public Dictionary<RoleType, RoleInventory> StartingInventories { get; set; } = new()
         {
             {
                 RoleType.ClassD, new RoleInventory
                 {
                     Slot1 = new List<ItemChance>
                     {
-                        new ItemChance
+                        new()
                         {
                             ItemName = ItemType.KeycardJanitor.ToString(),
                             Chance = 10,
                             Group = "none",
                         },
-                        new ItemChance
+                        new()
                         {
                             ItemName = ItemType.Coin.ToString(),
                             Chance = 100,
@@ -79,7 +92,7 @@ namespace Common_Utilities
                     },
                     Slot2 = new List<ItemChance>
                     {
-                        new ItemChance
+                        new()
                         {
                             ItemName = ItemType.Flashlight.ToString(),
                             Chance = 100,
@@ -88,7 +101,7 @@ namespace Common_Utilities
                     },
                     Ammo = new List<StartingAmmo>
                     {
-                        new StartingAmmo
+                        new()
                         {
                             Type = ItemType.Ammo556x45,
                             Amount = 200,
@@ -100,13 +113,13 @@ namespace Common_Utilities
         };
 
         [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
-        public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChanges { get; set; } = new Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>>
+        public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChanges { get; set; } = new()
         {
             {
                 Scp914KnobSetting.Rough, new List<ItemUpgradeChance>
                 {
                     {
-                        new ItemUpgradeChance
+                        new()
                         {
                             Original = ItemType.KeycardO5,
                             New = ItemType.MicroHID,
@@ -118,13 +131,13 @@ namespace Common_Utilities
         };
         
         [Description("The list of custom 914 recipies for roles. Original is the role to be changed, New is the new role to assign, Chance is the % chance of the upgrade occuring.")]
-        public Dictionary<Scp914KnobSetting, List<PlayerUpgradeChance>> Scp914ClassChanges { get; set; } = new Dictionary<Scp914KnobSetting, List<PlayerUpgradeChance>>
+        public Dictionary<Scp914KnobSetting, List<PlayerUpgradeChance>> Scp914ClassChanges { get; set; } = new()
         {
             {
                 Scp914KnobSetting.Rough, new List<PlayerUpgradeChance>
                 {
                     {
-                        new PlayerUpgradeChance
+                        new()
                         {
                             Original = RoleType.ClassD,
                             New = RoleType.Spectator,
@@ -135,12 +148,13 @@ namespace Common_Utilities
             },
         };
 
-        public Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>> Scp914TeleportChances { get; set; } = new Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>>
+        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone, instead of the room type defined.")]
+        public Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>> Scp914TeleportChances { get; set; } = new()
         {
             {
                 Scp914KnobSetting.Rough, new List<Scp914TeleportChance>
                 {
-                    new Scp914TeleportChance
+                    new()
                     {
                         Room = RoomType.LczClassDSpawn,
                         Chance = 100,
@@ -150,12 +164,12 @@ namespace Common_Utilities
         };
 
         [Description("A dictionary of random effects to apply to players when going through 914 on certain settings.")]
-        public Dictionary<Scp914KnobSetting, List<Scp914EffectChance>> Scp914EffectChances { get; set; } = new Dictionary<Scp914KnobSetting, List<Scp914EffectChance>> 
+        public Dictionary<Scp914KnobSetting, List<Scp914EffectChance>> Scp914EffectChances { get; set; } = new()
         {
             {
                 Scp914KnobSetting.Rough, new List<Scp914EffectChance>
                 {
-                    new Scp914EffectChance
+                    new()
                     {
                         Effect = EffectType.Amnesia,
                         Chance = 100,
@@ -183,7 +197,7 @@ namespace Common_Utilities
         public bool ItemCleanupOnlyPocket { get; set; } = false;
         
         [Description("A list of all roles and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
-        public Dictionary<RoleType, float> RoleDamageMultipliers { get; set; } = new Dictionary<RoleType, float>
+        public Dictionary<RoleType, float> RoleDamageMultipliers { get; set; } = new()
         {
             {
                 RoleType.Scp173, 1.0f
@@ -191,7 +205,7 @@ namespace Common_Utilities
         };
         
         [Description("A list of all Weapons and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
-        public Dictionary<DamageType, float> DamageMultipliers { get; set; } = new Dictionary<DamageType, float>
+        public Dictionary<DamageType, float> DamageMultipliers { get; set; } = new()
         {
             {
                 DamageType.E11Sr, 1.0f
@@ -199,7 +213,7 @@ namespace Common_Utilities
         };
 
         [Description("A list of roles and how much health they should be given when they kill someone.")]
-        public Dictionary<RoleType, float> HealthOnKill { get; set; } = new Dictionary<RoleType, float>
+        public Dictionary<RoleType, float> HealthOnKill { get; set; } = new()
         {
             {
                 RoleType.Scp173, 0
@@ -213,7 +227,7 @@ namespace Common_Utilities
         };
         
         [Description("A list of roles and what their default starting health should be.")]
-        public Dictionary<RoleType, int> HealthValues { get; set; } = new Dictionary<RoleType, int>
+        public Dictionary<RoleType, int> HealthValues { get; set; } = new()
         {
             {
                 RoleType.Scp173, 3200

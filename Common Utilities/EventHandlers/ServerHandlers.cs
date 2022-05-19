@@ -15,7 +15,7 @@ namespace Common_Utilities.EventHandlers
         public ServerHandlers(Plugin plugin) => this._plugin = plugin;
 
         public Vector3 EscapeZone = Vector3.zero;
-        private bool _friendlyFireDisable = false;
+        private bool friendlyFireDisable = false;
         
         public void OnRoundStarted()
         {
@@ -78,11 +78,17 @@ namespace Common_Utilities.EventHandlers
 
         public void OnWaitingForPlayers()
         {
-            if (_friendlyFireDisable)
+            if (_plugin.Config.AfkLimit > 0)
+            {
+                _plugin.AfkDict.Clear();
+                _plugin.Coroutines.Add(Timing.RunCoroutine(AfkCheck()));
+            }
+
+            if (friendlyFireDisable)
             {
                 Log.Debug($"{nameof(OnWaitingForPlayers)}: Disabling friendly fire.", _plugin.Config.Debug);
                 Server.FriendlyFire = false;
-                _friendlyFireDisable = false;
+                friendlyFireDisable = false;
             }
 
             if (_plugin.Config.TimedBroadcastDelay > 0)
@@ -97,7 +103,7 @@ namespace Common_Utilities.EventHandlers
             {
                 Log.Debug($"{nameof(OnRoundEnded)}: Enabling friendly fire.", _plugin.Config.Debug);
                 Server.FriendlyFire = true;
-                _friendlyFireDisable = true;
+                friendlyFireDisable = true;
             }
 
             foreach (CoroutineHandle coroutine in _plugin.Coroutines)
@@ -142,11 +148,45 @@ namespace Common_Utilities.EventHandlers
         private IEnumerator<float> AutoNuke()
         {
             yield return Timing.WaitForSeconds(_plugin.Config.AutonukeTime);
+
+            switch (_plugin.Config.AutonukeBroadcast.Duration)
+            {
+                case 0:
+                    break;
+                case 1:
+                    Cassie.Message(_plugin.Config.AutonukeBroadcast.Content);
+                    break;
+                default:
+                    Map.Broadcast(_plugin.Config.AutonukeBroadcast);
+                    break;
+            }
             
             Warhead.Start();
 
             if (_plugin.Config.AutonukeLock)
                 Warhead.IsLocked = true;
+        }
+
+        private IEnumerator<float> AfkCheck()
+        {
+            for (;;)
+            {
+                yield return Timing.WaitForSeconds(1f);
+
+                foreach (Player player in Player.List)
+                {
+                    if (!_plugin.AfkDict.ContainsKey(player))
+                        _plugin.AfkDict.Add(player, 0);
+
+                    if (_plugin.AfkDict[player] >= _plugin.Config.AfkLimit)
+                        player.Kick("You were kicked by a plugin for being AFK.");
+                    else if (_plugin.AfkDict[player] >= (_plugin.Config.AfkLimit / 2))
+                        player.Broadcast(10,
+                            $"You have been AFK for {_plugin.AfkDict[player]} seconds. You will be automatically kicked if you remain AFK for a total of {_plugin.Config.AfkLimit} seconds.");
+                    else
+                        _plugin.AfkDict[player]++;
+                }
+            }
         }
 
         public void OnRestartingRound()

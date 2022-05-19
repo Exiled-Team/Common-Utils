@@ -103,27 +103,46 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.Scp914TeleportChances != null && _plugin.Config.Scp914TeleportChances.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoomType roomType, Vector3 offset, int chance, float damage) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
+                foreach ((RoomType roomType, Vector3 offset, int chance, float damage, ZoneType zone) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     int r = _plugin.Rng.Next(100);
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})", _plugin.Config.Debug);
                     if (r <= chance)
                     {
-                        foreach (Room room in Room.List)
-                            if (room.Type == roomType)
+                        if (zone != ZoneType.Unspecified)
+                        {
+                            ev.OutputPosition = Room.Random(zone).Position + ((Vector3.up * 1.5f) + offset);
+                            if (damage > 0f)
                             {
-                                ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
-                                if (damage > 0f)
-                                {
-                                    float amount = ev.Player.MaxHealth * damage;
-                                    if (damage > 1f) 
-                                        amount = damage;
+                                float amount = ev.Player.MaxHealth * damage;
+                                if (damage > 1f)
+                                    amount = damage;
 
-                                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}", _plugin.Config.Debug);
-                                    ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
-                                }
-                                break;
+                                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}", _plugin.Config.Debug);
+                                ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
                             }
+                        }
+                        else
+                        {
+                            foreach (Room room in Room.List)
+                                if (room.Type == roomType)
+                                {
+                                    ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
+                                    if (damage > 0f)
+                                    {
+                                        float amount = ev.Player.MaxHealth * damage;
+                                        if (damage > 1f)
+                                            amount = damage;
+
+                                        Log.Debug(
+                                            $"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}",
+                                            _plugin.Config.Debug);
+                                        ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
+                                    }
+
+                                    break;
+                                }
+                        }
 
                         break;
                     }

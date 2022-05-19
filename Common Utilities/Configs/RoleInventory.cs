@@ -1,6 +1,7 @@
 namespace Common_Utilities.Configs
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using Common_Utilities.ConfigObjects;
     using YamlDotNet.Serialization;
@@ -33,16 +34,16 @@ namespace Common_Utilities.Configs
             }
         }
 
-        public List<ItemChance> Slot1 { get; set; } = new List<ItemChance>();
-        public List<ItemChance> Slot2 { get; set; } = new List<ItemChance>();
-        public List<ItemChance> Slot3 { get; set; } = new List<ItemChance>();
-        public List<ItemChance> Slot4 { get; set; } = new List<ItemChance>();
-        public List<ItemChance> Slot5 { get; set; } = new List<ItemChance>();
-        public List<ItemChance> Slot6 { get; set; } = new List<ItemChance>();
-        public List<ItemChance> Slot7 { get; set; } = new List<ItemChance>();
-        public List<ItemChance> Slot8 { get; set; } = new List<ItemChance>();
+        public List<ItemChance> Slot1 { get; set; } = new();
+        public List<ItemChance> Slot2 { get; set; } = new();
+        public List<ItemChance> Slot3 { get; set; } = new();
+        public List<ItemChance> Slot4 { get; set; } = new();
+        public List<ItemChance> Slot5 { get; set; } = new();
+        public List<ItemChance> Slot6 { get; set; } = new();
+        public List<ItemChance> Slot7 { get; set; } = new();
+        public List<ItemChance> Slot8 { get; set; } = new();
 
-        public List<StartingAmmo> Ammo { get; set; } = new List<StartingAmmo>();
+        public List<StartingAmmo> Ammo { get; set; } = new();
 
         public IEnumerable<ItemChance> this[int i]
         {
@@ -70,12 +71,6 @@ namespace Common_Utilities.Configs
                         throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        public bool CheckGroup(string group)
-        {
-            // I don't know what I was doing here?
-            return true;
         }
     }
 }

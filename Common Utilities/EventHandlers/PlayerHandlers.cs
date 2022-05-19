@@ -71,7 +71,7 @@ namespace Common_Utilities.EventHandlers
             if (ev.NewRole != RoleType.Spectator && _plugin.Config.PlayerHealthInfo)
             {
                 Timing.CallDelayed(1f, () =>
-                    ev.Player.CustomInfo = $"{ev.Player.Health}/{ev.Player.MaxHealth}");
+                    ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
             }
         }
 
@@ -89,7 +89,7 @@ namespace Common_Utilities.EventHandlers
 
         public List<ItemType> StartItems(RoleType role, Player player = null)
         {
-            List<ItemType> items = new List<ItemType>();
+            List<ItemType> items = new();
 
             for (int i = 0; i < _plugin.Config.StartingInventories[role].UsedSlots; i++)
             {
@@ -139,24 +139,72 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.PlayerHealthInfo)
                 Timing.CallDelayed(0.5f, () =>
-                    ev.Target.CustomInfo = $"{ev.Target.Health}/{ev.Target.MaxHealth}");
+                    ev.Target.CustomInfo = $"({ev.Target.Health}/{ev.Target.MaxHealth}) {(!string.IsNullOrEmpty(ev.Target.CustomInfo) ? ev.Target.CustomInfo.Substring(ev.Target.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
+
+            if (ev.Attacker is not null && _plugin.AfkDict.ContainsKey(ev.Attacker))
+                _plugin.AfkDict[ev.Attacker] = 0;
         }
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
             if (ev.Player.IsCuffed && _plugin.Config.RestrictiveDisarming)
                 ev.IsAllowed = false;
+
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
         }
 
         public void OnInteractingElevator(InteractingElevatorEventArgs ev)
         {
             if (ev.Player.IsCuffed && _plugin.Config.RestrictiveDisarming)
                 ev.IsAllowed = false;
+
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
         }
 
         public void OnUsingRadioBattery(UsingRadioBatteryEventArgs ev)
         {
             ev.Drain *= _plugin.Config.RadioBatteryDrainMultiplier;
+
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
+        }
+
+        public void OnThrowingItem(ThrowingItemEventArgs ev)
+        {
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
+        }
+
+        public void OnMakingNoise(MakingNoiseEventArgs ev)
+        {
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
+        }
+
+        public void OnShooting(ShootingEventArgs ev)
+        {
+            if (_plugin.AfkDict.ContainsKey(ev.Shooter))
+                _plugin.AfkDict[ev.Shooter] = 0;
+        }
+
+        public void OnUsingItem(UsingItemEventArgs ev)
+        {
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
+        }
+
+        public void OnReloading(ReloadingWeaponEventArgs ev)
+        {
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
+        }
+
+        public void OnJumping(JumpingEventArgs ev)
+        {
+            if (_plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = 0;
         }
     }
 }
