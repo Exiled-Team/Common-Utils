@@ -142,8 +142,28 @@ namespace Common_Utilities.EventHandlers
         private IEnumerator<float> AutoNuke()
         {
             yield return Timing.WaitForSeconds(_plugin.Config.AutonukeTime);
-            
-            Warhead.Start();
+
+            if (Warhead.IsDetonated)
+            {
+                yield break;
+            }
+
+            switch (_plugin.Config.AutonukeBroadcast.Duration)
+            {
+                case 0:
+                    break;
+                case 1:
+                    Cassie.Message(_plugin.Config.AutonukeBroadcast.Content);
+                    break;
+                default:
+                    Map.Broadcast(_plugin.Config.AutonukeBroadcast);
+                    break;
+            }
+
+            if (!Warhead.IsInProgress)
+            {
+                Warhead.Start();
+            }
 
             if (_plugin.Config.AutonukeLock)
                 Warhead.IsLocked = true;
