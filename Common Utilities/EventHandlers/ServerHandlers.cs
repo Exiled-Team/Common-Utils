@@ -1,3 +1,8 @@
+using System;
+using Exiled.Events.EventArgs.Server;
+using Exiled.Events.EventArgs.Warhead;
+using PlayerRoles;
+
 namespace Common_Utilities.EventHandlers
 {
     using System.Collections.Generic;
@@ -12,7 +17,7 @@ namespace Common_Utilities.EventHandlers
     public class ServerHandlers
     {
         private readonly Plugin _plugin;
-        public ServerHandlers(Plugin plugin) => this._plugin = plugin;
+        public ServerHandlers(Plugin plugin) => _plugin = plugin;
 
         public Vector3 EscapeZone = Vector3.zero;
         private bool friendlyFireDisable = false;
@@ -41,27 +46,27 @@ namespace Common_Utilities.EventHandlers
                 foreach (Player player in Player.List)
                 {
                     if (EscapeZone == Vector3.zero)
-                        EscapeZone = player.GameObject.GetComponent<Escape>().worldPosition;
+                        EscapeZone = Escape.WorldPos;
 
-                    if (!player.IsCuffed || (player.Role.Team != Team.CHI && player.Role.Team != Team.MTF) || (EscapeZone - player.Position).sqrMagnitude > 400f)
+                    if (!player.IsCuffed || (player.Role.Team != Team.ChaosInsurgency && player.Role.Team != Team.FoundationForces) || (EscapeZone - player.Position).sqrMagnitude > 400f)
                         continue;
 
                     switch (player.Role.Type)
                     {
-                        case RoleType.FacilityGuard:
-                        case RoleType.NtfPrivate:
-                        case RoleType.NtfSergeant:
-                        case RoleType.NtfCaptain:
-                        case RoleType.NtfSpecialist:
+                        case RoleTypeId.FacilityGuard:
+                        case RoleTypeId.NtfPrivate:
+                        case RoleTypeId.NtfSergeant:
+                        case RoleTypeId.NtfCaptain:
+                        case RoleTypeId.NtfSpecialist:
                             _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.SetRole(RoleType.ChaosConscript);
+                            player.SetRole(RoleTypeId.ChaosConscript);
                             break;
-                        case RoleType.ChaosConscript:
-                        case RoleType.ChaosMarauder:
-                        case RoleType.ChaosRepressor:
-                        case RoleType.ChaosRifleman:
+                        case RoleTypeId.ChaosConscript:
+                        case RoleTypeId.ChaosMarauder:
+                        case RoleTypeId.ChaosRepressor:
+                        case RoleTypeId.ChaosRifleman:
                             _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.SetRole(RoleType.NtfPrivate);
+                            player.SetRole(RoleTypeId.NtfPrivate);
                             break;
                     }
                 }
@@ -127,9 +132,9 @@ namespace Common_Utilities.EventHandlers
             {
                 yield return Timing.WaitForSeconds(_plugin.Config.ItemCleanupDelay);
 
-                foreach (ItemPickupBase item in Object.FindObjectsOfType<ItemPickupBase>())
-                    if (!_plugin.Config.ItemCleanupOnlyPocket || item.NetworkInfo.Position.y < -1500f)
-                        item.DestroySelf();
+                foreach (Pickup pickup in Map.Pickups)
+                    if (!_plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
+                        pickup.Destroy();
             }
         }
 
@@ -176,18 +181,31 @@ namespace Common_Utilities.EventHandlers
                 foreach (Player player in Player.List)
                 {
                     if (!_plugin.AfkDict.ContainsKey(player))
-                        _plugin.AfkDict.Add(player, 0);
+                        _plugin.AfkDict.Add(player, new Tuple<int, Vector3>(0, player.Position));
 
-                    if (player.Role == RoleType.Spectator)
+                    if (player.Role.Type == RoleTypeId.None || player.IsNoClipEnabled || _plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
+                    {
+                        Log.Info($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoClipEnabled}");
                         continue;
+                    }
 
-                    if (_plugin.AfkDict[player] >= _plugin.Config.AfkLimit)
+                    if ((_plugin.AfkDict[player].Item2 - player.Position).sqrMagnitude > 2)
+                    {
+                        Log.Info($"Player {player.Nickname} has moved, resetting AFK timer.");
+                        _plugin.AfkDict[player] = new Tuple<int, Vector3>(0, player.Position);
+                    }
+
+                    if (_plugin.AfkDict[player].Item1 >= _plugin.Config.AfkLimit)
+                    {
+                        _plugin.AfkDict.Remove(player);
+                        Log.Debug($"Kicking {player.Nickname} for being AFK.", _plugin.Config.Debug);
                         player.Kick("You were kicked by a plugin for being AFK.");
-                    else if (_plugin.AfkDict[player] >= (_plugin.Config.AfkLimit / 2))
+                    }
+                    else if (_plugin.AfkDict[player].Item1 >= (_plugin.Config.AfkLimit / 2))
                         player.Broadcast(10,
-                            $"You have been AFK for {_plugin.AfkDict[player]} seconds. You will be automatically kicked if you remain AFK for a total of {_plugin.Config.AfkLimit} seconds.");
-                    else
-                        _plugin.AfkDict[player]++;
+                            $"You have been AFK for {_plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {_plugin.Config.AfkLimit} seconds.");
+                    
+                    _plugin.AfkDict[player] = new Tuple<int, Vector3>(_plugin.AfkDict[player].Item1 + 1, _plugin.AfkDict[player].Item2);
                 }
             }
         }

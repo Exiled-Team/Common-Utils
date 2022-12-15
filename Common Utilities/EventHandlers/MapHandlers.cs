@@ -1,4 +1,6 @@
 using Exiled.API.Features;
+using Exiled.Events.EventArgs.Scp914;
+using PlayerRoles;
 
 namespace Common_Utilities.EventHandlers
 {
@@ -14,7 +16,7 @@ namespace Common_Utilities.EventHandlers
     public class MapHandlers
     {
         private readonly Plugin _plugin;
-        public MapHandlers(Plugin plugin) => this._plugin = plugin;
+        public MapHandlers(Plugin plugin) => _plugin = plugin;
         
         public void OnScp914UpgradingItem(UpgradingItemEventArgs ev)
         {
@@ -22,14 +24,14 @@ namespace Common_Utilities.EventHandlers
             {
                 foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in _plugin.Config.Scp914ItemChanges[ev.KnobSetting])
                 {
-                    if (sourceItem != ev.Item.Type)
+                    if (sourceItem != ev.Pickup.Type)
                         continue;
 
                     int r = _plugin.Rng.Next(100);
-                    Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", _plugin.Config.Debug);
+                    Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", _plugin.Config.Debug);
                     if (r <= chance)
                     {
-                        UpgradeItem(ev.Item, destinationItem, ev.OutputPosition);
+                        UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition);
                         ev.IsAllowed = false;
                         break;
                     }
@@ -63,9 +65,9 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.Scp914ClassChanges != null && _plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoleType sourceRole, RoleType destinationRole, int chance, bool keepInventory) in _plugin.Config.Scp914ClassChanges[ev.KnobSetting])
+                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, int chance, bool keepInventory) in _plugin.Config.Scp914ClassChanges[ev.KnobSetting])
                 {
-                    if (sourceRole != ev.Player.Role || (destinationRole == RoleType.Scp106 && OneOhSixContainer.used))
+                    if (sourceRole != ev.Player.Role)
                         continue;
 
                     int r = _plugin.Rng.Next(100);
@@ -79,7 +81,7 @@ namespace Common_Utilities.EventHandlers
                                 item.Spawn(ev.OutputPosition);
                             }
                         
-                        ev.Player.SetRole(destinationRole, SpawnReason.ForceClass, keepInventory);
+                        ev.Player.SetRole(destinationRole);
                         Timing.CallDelayed(0.45f, () => ev.Player.Position = ev.OutputPosition);
                         break;
                     }

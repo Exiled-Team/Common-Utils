@@ -1,9 +1,11 @@
+using PlayerRoles;
+
 namespace Common_Utilities
 {
     using System.Collections.Generic;
     using System.ComponentModel;
-    using Common_Utilities.ConfigObjects;
-    using Common_Utilities.Configs;
+    using ConfigObjects;
+    using Configs;
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Interfaces;
@@ -16,9 +18,9 @@ namespace Common_Utilities
         public bool Debug { get; set; } = false;
 
         [Description("The SCP Roles able to use V to talk to humans.")]
-        public List<RoleType> ScpSpeech { get; set; } = new()
+        public List<RoleTypeId> ScpSpeech { get; set; } = new()
         {
-            RoleType.Scp049
+            RoleTypeId.Scp049
         };
 
         [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
@@ -67,13 +69,21 @@ namespace Common_Utilities
 
         [Description("The maximum time, in seconds, that a player can be AFK before being kicked. Set to -1 to disable AFK system.")]
         public int AfkLimit { get; set; } = 120;
+        
+        [Description("The roles that are ignored by the AFK system.")]
+        public List<RoleTypeId> AfkIgnoredRoles { get; set; } = new()
+        {
+            RoleTypeId.Scp079,
+            RoleTypeId.Spectator,
+            RoleTypeId.Tutorial,
+        };
 
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
-        public Dictionary<RoleType, RoleInventory> StartingInventories { get; set; } = new()
+        public Dictionary<RoleTypeId, RoleInventory> StartingInventories { get; set; } = new()
         {
             {
-                RoleType.ClassD, new RoleInventory
+                RoleTypeId.ClassD, new RoleInventory
                 {
                     Slot1 = new List<ItemChance>
                     {
@@ -139,8 +149,8 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            Original = RoleType.ClassD,
-                            New = RoleType.Spectator,
+                            Original = RoleTypeId.ClassD,
+                            New = RoleTypeId.Spectator,
                             Chance = 100,
                         }
                     }
@@ -171,7 +181,7 @@ namespace Common_Utilities
                 {
                     new()
                     {
-                        Effect = EffectType.Amnesia,
+                        Effect = EffectType.AmnesiaVision,
                         Chance = 100,
                     }
                 }
@@ -197,10 +207,10 @@ namespace Common_Utilities
         public bool ItemCleanupOnlyPocket { get; set; } = false;
         
         [Description("A list of all roles and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
-        public Dictionary<RoleType, float> RoleDamageMultipliers { get; set; } = new()
+        public Dictionary<RoleTypeId, float> RoleDamageMultipliers { get; set; } = new()
         {
             {
-                RoleType.Scp173, 1.0f
+                RoleTypeId.Scp173, 1.0f
             },
         };
         
@@ -213,27 +223,24 @@ namespace Common_Utilities
         };
 
         [Description("A list of roles and how much health they should be given when they kill someone.")]
-        public Dictionary<RoleType, float> HealthOnKill { get; set; } = new()
+        public Dictionary<RoleTypeId, float> HealthOnKill { get; set; } = new()
         {
             {
-                RoleType.Scp173, 0
+                RoleTypeId.Scp173, 0
             },
             {
-                RoleType.Scp93953, 10
+                RoleTypeId.Scp939, 10
             },
-            {
-                RoleType.Scp93989, 20
-            }
         };
         
         [Description("A list of roles and what their default starting health should be.")]
-        public Dictionary<RoleType, int> HealthValues { get; set; } = new()
+        public Dictionary<RoleTypeId, int> HealthValues { get; set; } = new()
         {
             {
-                RoleType.Scp173, 3200
+                RoleTypeId.Scp173, 3200
             },
             {
-                RoleType.NtfCaptain, 150
+                RoleTypeId.NtfCaptain, 150
             }
         };
 

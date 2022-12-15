@@ -1,4 +1,8 @@
 using Exiled.CustomItems.API.Features;
+using Exiled.Events.EventArgs.Interfaces;
+using Exiled.Events.EventArgs.Player;
+using PlayerRoles;
+using UnityEngine;
 
 namespace Common_Utilities.EventHandlers
 {
@@ -14,7 +18,7 @@ namespace Common_Utilities.EventHandlers
     public class PlayerHandlers
     {
         private readonly Plugin _plugin;
-        public PlayerHandlers(Plugin plugin) => this._plugin = plugin;
+        public PlayerHandlers(Plugin plugin) => _plugin = plugin;
 
         public void OnPlayerVerified(VerifiedEventArgs ev)
         {
@@ -31,7 +35,7 @@ namespace Common_Utilities.EventHandlers
                 return;
             }
 
-            if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.Lite)
+            if (_plugin.Config.StartingInventories != null && _plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.ShouldPreserveInventory)
             {
                 if (ev.Items == null)
                 {
@@ -68,26 +72,29 @@ namespace Common_Utilities.EventHandlers
                     ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
                 });
 
-            if (ev.NewRole != RoleType.Spectator && _plugin.Config.PlayerHealthInfo)
+            if (ev.NewRole != RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
             {
                 Timing.CallDelayed(1f, () =>
                     ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
             }
+
+            if (_plugin.Config.AfkIgnoredRoles.Contains(ev.NewRole) && _plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole == RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);;
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (ev.Killer != null && _plugin.Config.HealthOnKill != null && _plugin.Config.HealthOnKill.ContainsKey(ev.Killer.Role))
+            if (ev.Player != null && _plugin.Config.HealthOnKill != null && _plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))
             {
 
-                if (ev.Killer.Health + _plugin.Config.HealthOnKill[ev.Killer.Role] <= ev.Killer.MaxHealth)
-                    ev.Killer.Health += _plugin.Config.HealthOnKill[ev.Killer.Role];
+                if (ev.Player.Health + _plugin.Config.HealthOnKill[ev.Player.Role] <= ev.Player.MaxHealth)
+                    ev.Player.Health += _plugin.Config.HealthOnKill[ev.Player.Role];
                 else
-                    ev.Killer.Health = ev.Killer.MaxHealth;
+                    ev.Player.Health = ev.Player.MaxHealth;
             }
         }
 
-        public List<ItemType> StartItems(RoleType role, Player player = null)
+        public List<ItemType> StartItems(RoleTypeId role, Player player = null)
         {
             List<ItemType> items = new();
 
@@ -126,23 +133,26 @@ namespace Common_Utilities.EventHandlers
 
         private string FormatJoinMessage(Player player) => 
             string.IsNullOrEmpty(_plugin.Config.JoinMessage) ? string.Empty : _plugin.Config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
-
+        
         public void OnPlayerHurting(HurtingEventArgs ev)
         {
-            if (_plugin.Config.RoleDamageMultipliers != null && ev.Attacker != null && _plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Attacker.Role))
-                ev.Amount *= _plugin.Config.RoleDamageMultipliers[ev.Attacker.Role];
+            if (_plugin.Config.RoleDamageMultipliers != null && ev.Player != null && _plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Player.Role))
+                ev.Amount *= _plugin.Config.RoleDamageMultipliers[ev.Player.Role];
 
-            if (_plugin.Config.DamageMultipliers != null && _plugin.Config.DamageMultipliers.ContainsKey(ev.Handler.Type))
+            if (_plugin.Config.DamageMultipliers != null && _plugin.Config.DamageMultipliers.ContainsKey(ev.DamageHandler.Type))
             {
-                ev.Amount *= _plugin.Config.DamageMultipliers[ev.Handler.Type];
+                ev.Amount *= _plugin.Config.DamageMultipliers[ev.DamageHandler.Type];
             }
 
             if (_plugin.Config.PlayerHealthInfo)
                 Timing.CallDelayed(0.5f, () =>
                     ev.Target.CustomInfo = $"({ev.Target.Health}/{ev.Target.MaxHealth}) {(!string.IsNullOrEmpty(ev.Target.CustomInfo) ? ev.Target.CustomInfo.Substring(ev.Target.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
 
-            if (ev.Attacker is not null && _plugin.AfkDict.ContainsKey(ev.Attacker))
-                _plugin.AfkDict[ev.Attacker] = 0;
+            if (ev.Player is not null && _plugin.AfkDict.ContainsKey(ev.Player))
+            {
+                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+            }
         }
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
@@ -151,7 +161,10 @@ namespace Common_Utilities.EventHandlers
                 ev.IsAllowed = false;
 
             if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
+            {
+                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+            }
         }
 
         public void OnInteractingElevator(InteractingElevatorEventArgs ev)
@@ -160,51 +173,24 @@ namespace Common_Utilities.EventHandlers
                 ev.IsAllowed = false;
 
             if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
+            {
+                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+            }
         }
 
         public void OnUsingRadioBattery(UsingRadioBatteryEventArgs ev)
         {
             ev.Drain *= _plugin.Config.RadioBatteryDrainMultiplier;
-
-            if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
         }
 
-        public void OnThrowingItem(ThrowingItemEventArgs ev)
+        public void AntiAfkEventHandler(IPlayerEvent ev)
         {
             if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
-        }
-
-        public void OnMakingNoise(MakingNoiseEventArgs ev)
-        {
-            if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
-        }
-
-        public void OnShooting(ShootingEventArgs ev)
-        {
-            if (_plugin.AfkDict.ContainsKey(ev.Shooter))
-                _plugin.AfkDict[ev.Shooter] = 0;
-        }
-
-        public void OnUsingItem(UsingItemEventArgs ev)
-        {
-            if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
-        }
-
-        public void OnReloading(ReloadingWeaponEventArgs ev)
-        {
-            if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
-        }
-
-        public void OnJumping(JumpingEventArgs ev)
-        {
-            if (_plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = 0;
+            {
+                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+            }
         }
     }
 }

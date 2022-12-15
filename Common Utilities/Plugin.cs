@@ -1,10 +1,12 @@
+using PlayerRoles;
+
 namespace Common_Utilities
 {
     using System;
     using System.Collections.Generic;
-    using Common_Utilities.ConfigObjects;
-    using Common_Utilities.Configs;
-    using Common_Utilities.EventHandlers;
+    using ConfigObjects;
+    using Configs;
+    using EventHandlers;
     using Exiled.API.Enums;
     using MEC;
     using Exiled.API.Features;
@@ -20,7 +22,7 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Joker119";
-        public override Version RequiredExiledVersion { get; } = new(5, 2, 1);
+        public override Version RequiredExiledVersion { get; } = new(5, 3, 2);
         public override string Prefix { get; } = "CommonUtilities";
         
         public PlayerHandlers PlayerHandlers;
@@ -31,7 +33,7 @@ namespace Common_Utilities
         public string HarmonyName;
         public Harmony Instance;
         public List<CoroutineHandle> Coroutines { get; } = new();
-        public Dictionary<Exiled.API.Features.Player, int> AfkDict { get; } = new();
+        public Dictionary<Exiled.API.Features.Player, Tuple<int, Vector3>> AfkDict { get; } = new();
 
         public override void OnEnabled()
         {
@@ -40,7 +42,7 @@ namespace Common_Utilities
                 if (Config.StartingInventories != null)
                 {
                     Log.Debug($"{Config.StartingInventories.Count}");
-                    foreach (KeyValuePair<RoleType, RoleInventory> inv in Config.StartingInventories)
+                    foreach (KeyValuePair<RoleTypeId, RoleInventory> inv in Config.StartingInventories)
                     {
                         for (int i = 0; i < inv.Value.UsedSlots; i++)
                         {
@@ -72,7 +74,7 @@ namespace Common_Utilities
                     foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config
                         .Scp914ClassChanges)
                     {
-                        foreach ((RoleType oldRole, RoleType newRole, int chance, bool keepInventory) in upgrade.Value)
+                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, int chance, bool keepInventory) in upgrade.Value)
                             Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} Keep Inventory: {keepInventory}");
                     }
                 }
@@ -108,19 +110,21 @@ namespace Common_Utilities
             
             Log.Info($"Registering EventHandlers..");
             Player.Died += PlayerHandlers.OnPlayerDied;
-            Player.Jumping += PlayerHandlers.OnJumping;
-            Player.Shooting += PlayerHandlers.OnShooting;
-            Player.UsingItem += PlayerHandlers.OnUsingItem;
+            Player.Jumping += PlayerHandlers.AntiAfkEventHandler;
+            Player.Shooting += PlayerHandlers.AntiAfkEventHandler;
+            Player.UsingItem += PlayerHandlers.AntiAfkEventHandler;
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
             Player.Verified += PlayerHandlers.OnPlayerVerified;
-            Player.MakingNoise += PlayerHandlers.OnMakingNoise;
-            Player.ReloadingWeapon += PlayerHandlers.OnReloading;
+            Player.MakingNoise += PlayerHandlers.AntiAfkEventHandler;
+            Player.ReloadingWeapon += PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
-            Player.ThrowingItem += PlayerHandlers.OnThrowingItem;
+            Player.ThrowingItem += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
+            Player.ProcessingHotkey += PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
+            Player.ChangingMoveState += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
-            
+
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
@@ -143,17 +147,19 @@ namespace Common_Utilities
         public override void OnDisabled()
         {
             Player.Died -= PlayerHandlers.OnPlayerDied;
-            Player.Jumping -= PlayerHandlers.OnJumping;
-            Player.Shooting -= PlayerHandlers.OnShooting;
-            Player.UsingItem -= PlayerHandlers.OnUsingItem;
+            Player.Jumping -= PlayerHandlers.AntiAfkEventHandler;
+            Player.Shooting -= PlayerHandlers.AntiAfkEventHandler;
+            Player.UsingItem -= PlayerHandlers.AntiAfkEventHandler;
             Player.Hurting -= PlayerHandlers.OnPlayerHurting;
             Player.Verified -= PlayerHandlers.OnPlayerVerified;
-            Player.MakingNoise -= PlayerHandlers.OnMakingNoise;
-            Player.ReloadingWeapon -= PlayerHandlers.OnReloading;
+            Player.MakingNoise -= PlayerHandlers.AntiAfkEventHandler;
+            Player.ReloadingWeapon -= PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
-            Player.ThrowingItem -= PlayerHandlers.OnThrowingItem;
+            Player.ThrowingItem -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
+            Player.ProcessingHotkey -= PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
+            Player.ChangingMoveState -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingElevator -= PlayerHandlers.OnInteractingElevator;
             
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
