@@ -186,13 +186,13 @@ namespace Common_Utilities.EventHandlers
 
                     if (player.Role.Type == RoleTypeId.None || player.IsNoclipPermitted || _plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
                     {
-                        Log.Info($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted}");
+                        Log.Debug($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted}");
                         continue;
                     }
 
                     if ((_plugin.AfkDict[player].Item2 - player.Position).sqrMagnitude > 2)
                     {
-                        Log.Info($"Player {player.Nickname} has moved, resetting AFK timer.");
+                        Log.Debug($"Player {player.Nickname} has moved, resetting AFK timer.");
                         _plugin.AfkDict[player] = new Tuple<int, Vector3>(0, player.Position);
                     }
 
