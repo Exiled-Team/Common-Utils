@@ -205,7 +205,7 @@ namespace Common_Utilities.EventHandlers
                     else if (_plugin.AfkDict[player].Item1 >= (_plugin.Config.AfkLimit / 2))
                     {
                         player.ClearBroadcasts();
-                        player.Broadcast(10,
+                        player.Broadcast(5,
                             $"You have been AFK for {_plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {_plugin.Config.AfkLimit} seconds.");
                     }
 
