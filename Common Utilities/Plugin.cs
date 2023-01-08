@@ -22,7 +22,7 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Joker119";
-        public override Version RequiredExiledVersion { get; } = new(5, 3, 2);
+        public override Version RequiredExiledVersion { get; } = new(6, 0, 0);
         public override string Prefix { get; } = "CommonUtilities";
         
         public PlayerHandlers PlayerHandlers;
@@ -118,7 +118,7 @@ namespace Common_Utilities
             Player.MakingNoise += PlayerHandlers.AntiAfkEventHandler;
             Player.ReloadingWeapon += PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
-            Player.ThrowingItem += PlayerHandlers.AntiAfkEventHandler;
+            Player.ThrownItem += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
             Player.ProcessingHotkey += PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
@@ -130,7 +130,7 @@ namespace Common_Utilities
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
 
-            Scp914.UpgradingItem += MapHandlers.OnScp914UpgradingItem;
+            Scp914.UpgradingPickup += MapHandlers.OnScp914UpgradingItem;
             Scp914.UpgradingPlayer += MapHandlers.OnScp914UpgradingPlayer;
             Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
 
@@ -155,7 +155,7 @@ namespace Common_Utilities
             Player.MakingNoise -= PlayerHandlers.AntiAfkEventHandler;
             Player.ReloadingWeapon -= PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
-            Player.ThrowingItem -= PlayerHandlers.AntiAfkEventHandler;
+            Player.ThrownItem -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
             Player.ProcessingHotkey -= PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
@@ -167,7 +167,7 @@ namespace Common_Utilities
             Server.RestartingRound -= ServerHandlers.OnRestartingRound;
             Server.WaitingForPlayers -= ServerHandlers.OnWaitingForPlayers;
 
-            Scp914.UpgradingItem -= MapHandlers.OnScp914UpgradingItem;
+            Scp914.UpgradingPickup -= MapHandlers.OnScp914UpgradingItem;
             Scp914.UpgradingPlayer -= MapHandlers.OnScp914UpgradingPlayer;
             Scp914.UpgradingInventoryItem -= MapHandlers.OnScp914UpgradingInventoryItem;
 

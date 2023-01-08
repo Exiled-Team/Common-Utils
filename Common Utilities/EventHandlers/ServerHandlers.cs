@@ -1,4 +1,5 @@
 using System;
+using Exiled.API.Features.Pickups;
 using Exiled.Events.EventArgs.Server;
 using Exiled.Events.EventArgs.Warhead;
 using PlayerRoles;
@@ -59,14 +60,14 @@ namespace Common_Utilities.EventHandlers
                         case RoleTypeId.NtfCaptain:
                         case RoleTypeId.NtfSpecialist:
                             _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.SetRole(RoleTypeId.ChaosConscript);
+                            player.Role.Set(RoleTypeId.ChaosConscript);
                             break;
                         case RoleTypeId.ChaosConscript:
                         case RoleTypeId.ChaosMarauder:
                         case RoleTypeId.ChaosRepressor:
                         case RoleTypeId.ChaosRifleman:
                             _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.SetRole(RoleTypeId.NtfPrivate);
+                            player.Role.Set(RoleTypeId.NtfPrivate);
                             break;
                     }
                 }
@@ -78,7 +79,7 @@ namespace Common_Utilities.EventHandlers
             yield return Timing.WaitForSeconds(1f);
 
             foreach (Item item in items)
-                item.Spawn(player.Position, default);
+                item.CreatePickup(player.Position);
         }
 
         public void OnWaitingForPlayers()
@@ -91,7 +92,7 @@ namespace Common_Utilities.EventHandlers
 
             if (friendlyFireDisable)
             {
-                Log.Debug($"{nameof(OnWaitingForPlayers)}: Disabling friendly fire.", _plugin.Config.Debug);
+                Log.Debug($"{nameof(OnWaitingForPlayers)}: Disabling friendly fire.");
                 Server.FriendlyFire = false;
                 friendlyFireDisable = false;
             }
@@ -106,7 +107,7 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.FriendlyFireOnRoundEnd && !Server.FriendlyFire)
             {
-                Log.Debug($"{nameof(OnRoundEnded)}: Enabling friendly fire.", _plugin.Config.Debug);
+                Log.Debug($"{nameof(OnRoundEnded)}: Enabling friendly fire.");
                 Server.FriendlyFire = true;
                 friendlyFireDisable = true;
             }
@@ -132,7 +133,7 @@ namespace Common_Utilities.EventHandlers
             {
                 yield return Timing.WaitForSeconds(_plugin.Config.ItemCleanupDelay);
 
-                foreach (Pickup pickup in Map.Pickups)
+                foreach (Pickup pickup in Pickup.List)
                     if (!_plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
                         pickup.Destroy();
             }
@@ -144,9 +145,9 @@ namespace Common_Utilities.EventHandlers
             {
                 yield return Timing.WaitForSeconds(_plugin.Config.RagdollCleanupDelay);
                 
-                foreach (Ragdoll ragdoll in Map.Ragdolls)
+                foreach (Ragdoll ragdoll in Ragdoll.List)
                     if (!_plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
-                        ragdoll.Delete();
+                        ragdoll.Destroy();
             }
         }
 
@@ -183,9 +184,9 @@ namespace Common_Utilities.EventHandlers
                     if (!_plugin.AfkDict.ContainsKey(player))
                         _plugin.AfkDict.Add(player, new Tuple<int, Vector3>(0, player.Position));
 
-                    if (player.Role.Type == RoleTypeId.None || player.IsNoClipEnabled || _plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
+                    if (player.Role.Type == RoleTypeId.None || player.IsNoclipPermitted || _plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
                     {
-                        Log.Info($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoClipEnabled}");
+                        Log.Info($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted}");
                         continue;
                     }
 
@@ -198,7 +199,7 @@ namespace Common_Utilities.EventHandlers
                     if (_plugin.AfkDict[player].Item1 >= _plugin.Config.AfkLimit)
                     {
                         _plugin.AfkDict.Remove(player);
-                        Log.Debug($"Kicking {player.Nickname} for being AFK.", _plugin.Config.Debug);
+                        Log.Debug($"Kicking {player.Nickname} for being AFK.");
                         player.Kick("You were kicked by a plugin for being AFK.");
                     }
                     else if (_plugin.AfkDict[player].Item1 >= (_plugin.Config.AfkLimit / 2))

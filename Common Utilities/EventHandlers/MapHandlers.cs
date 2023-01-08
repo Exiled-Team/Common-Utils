@@ -1,4 +1,5 @@
 using Exiled.API.Features;
+using Exiled.API.Features.Pickups;
 using Exiled.Events.EventArgs.Scp914;
 using PlayerRoles;
 
@@ -18,7 +19,7 @@ namespace Common_Utilities.EventHandlers
         private readonly Plugin _plugin;
         public MapHandlers(Plugin plugin) => _plugin = plugin;
         
-        public void OnScp914UpgradingItem(UpgradingItemEventArgs ev)
+        public void OnScp914UpgradingItem(UpgradingPickupEventArgs ev)
         {
             if (_plugin.Config.Scp914ItemChanges != null && _plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
@@ -28,10 +29,10 @@ namespace Common_Utilities.EventHandlers
                         continue;
 
                     int r = _plugin.Rng.Next(100);
-                    Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", _plugin.Config.Debug);
+                    Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
                     {
-                        UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition);
+                        UpgradeItem(ev.Pickup, destinationItem, ev.Scp914.OutputChamber.position);
                         ev.IsAllowed = false;
                         break;
                     }
@@ -49,7 +50,7 @@ namespace Common_Utilities.EventHandlers
                         continue;
 
                     int r = _plugin.Rng.Next(100);
-                    Log.Debug($"{nameof(OnScp914UpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})", _plugin.Config.Debug);
+                    Log.Debug($"{nameof(OnScp914UpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
                     {
                         ev.Player.RemoveItem(ev.Item);
@@ -71,18 +72,23 @@ namespace Common_Utilities.EventHandlers
                         continue;
 
                     int r = _plugin.Rng.Next(100);
-                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})", _plugin.Config.Debug);
+                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})");
                     if (r <= chance)
                     {
                         if (!keepInventory)
                             foreach (Item item in ev.Player.Items.ToList())
                             {
                                 ev.Player.RemoveItem(item, false);
-                                item.Spawn(ev.OutputPosition);
+                                item.CreatePickup(ev.OutputPosition);
                             }
-                        
-                        ev.Player.SetRole(destinationRole);
-                        Timing.CallDelayed(0.45f, () => ev.Player.Position = ev.OutputPosition);
+
+                        ev.Player.Role.Set(destinationRole, SpawnReason.Respawn);
+                        Timing.CallDelayed(0.45f, () =>
+                            {
+                                ev.Player.ClearInventory();
+                                ev.Player.Position = ev.OutputPosition;
+                            }
+                        );
                         break;
                     }
                 }
@@ -93,7 +99,7 @@ namespace Common_Utilities.EventHandlers
                 foreach ((EffectType effect, int chance, float duration) in _plugin.Config.Scp914EffectChances[ev.KnobSetting])
                 {
                     int r = _plugin.Rng.Next(100);
-                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect. {effect} ({chance}). Should be added: {r <= chance} ({r})", _plugin.Config.Debug);
+                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect. {effect} ({chance}). Should be added: {r <= chance} ({r})");
                     if (r <= chance)
                     {
                         ev.Player.EnableEffect(effect, duration);
@@ -108,7 +114,7 @@ namespace Common_Utilities.EventHandlers
                 foreach ((RoomType roomType, Vector3 offset, int chance, float damage, ZoneType zone) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     int r = _plugin.Rng.Next(100);
-                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})", _plugin.Config.Debug);
+                    Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})");
                     if (r <= chance)
                     {
                         if (zone != ZoneType.Unspecified)
@@ -120,7 +126,7 @@ namespace Common_Utilities.EventHandlers
                                 if (damage > 1f)
                                     amount = damage;
 
-                                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}", _plugin.Config.Debug);
+                                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}");
                                 ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
                             }
                         }
@@ -137,8 +143,7 @@ namespace Common_Utilities.EventHandlers
                                             amount = damage;
 
                                         Log.Debug(
-                                            $"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}",
-                                            _plugin.Config.Debug);
+                                            $"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}");
                                         ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
                                     }
 
@@ -157,12 +162,10 @@ namespace Common_Utilities.EventHandlers
             if (newItem != ItemType.None)
             {
                 Item item = Item.Create(newItem);
-                if (oldItem.Base is FirearmPickup firearmPickup && item is Firearm firearm)
-                    firearm.Ammo = firearmPickup.NetworkStatus.Ammo <= firearm.MaxAmmo
-                        ? firearmPickup.NetworkStatus.Ammo
-                        : firearm.MaxAmmo;
+                if (oldItem is Exiled.API.Features.Pickups.FirearmPickup oldFirearm && item is Firearm firearm)
+                    firearm.Ammo = oldFirearm.Ammo <= firearm.MaxAmmo ? oldFirearm.Ammo : firearm.MaxAmmo;
 
-                item.Spawn(pos);
+                item.CreatePickup(pos);
             }
 
             oldItem.Destroy();

@@ -136,8 +136,8 @@ namespace Common_Utilities.EventHandlers
         
         public void OnPlayerHurting(HurtingEventArgs ev)
         {
-            if (_plugin.Config.RoleDamageMultipliers != null && ev.Player != null && _plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Player.Role))
-                ev.Amount *= _plugin.Config.RoleDamageMultipliers[ev.Player.Role];
+            if (_plugin.Config.RoleDamageMultipliers != null && ev.Attacker != null && _plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Attacker.Role))
+                ev.Amount *= _plugin.Config.RoleDamageMultipliers[ev.Attacker.Role];
 
             if (_plugin.Config.DamageMultipliers != null && _plugin.Config.DamageMultipliers.ContainsKey(ev.DamageHandler.Type))
             {
@@ -146,12 +146,12 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.PlayerHealthInfo)
                 Timing.CallDelayed(0.5f, () =>
-                    ev.Target.CustomInfo = $"({ev.Target.Health}/{ev.Target.MaxHealth}) {(!string.IsNullOrEmpty(ev.Target.CustomInfo) ? ev.Target.CustomInfo.Substring(ev.Target.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
+                    ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
 
-            if (ev.Player is not null && _plugin.AfkDict.ContainsKey(ev.Player))
+            if (ev.Attacker is not null && _plugin.AfkDict.ContainsKey(ev.Attacker))
             {
-                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
-                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+                Log.Debug($"Resetting {ev.Attacker.Nickname} AFK timer.");
+                _plugin.AfkDict[ev.Attacker] = new Tuple<int, Vector3>(0, ev.Attacker.Position);
             }
         }
 
@@ -162,7 +162,7 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.AfkDict.ContainsKey(ev.Player))
             {
-                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
+                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
                 _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
             }
         }
@@ -174,7 +174,7 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.AfkDict.ContainsKey(ev.Player))
             {
-                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
+                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
                 _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
             }
         }
@@ -188,7 +188,7 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.AfkDict.ContainsKey(ev.Player))
             {
-                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.", _plugin.Config.Debug);
+                Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
                 _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
             }
         }
