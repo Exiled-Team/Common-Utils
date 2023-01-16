@@ -118,7 +118,7 @@ namespace Common_Utilities
             Player.MakingNoise += PlayerHandlers.AntiAfkEventHandler;
             Player.ReloadingWeapon += PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
-            Player.ThrownItem += PlayerHandlers.AntiAfkEventHandler;
+            Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
             Player.ProcessingHotkey += PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
@@ -155,7 +155,7 @@ namespace Common_Utilities
             Player.MakingNoise -= PlayerHandlers.AntiAfkEventHandler;
             Player.ReloadingWeapon -= PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
-            Player.ThrownItem -= PlayerHandlers.AntiAfkEventHandler;
+            Player.ThrownProjectile -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
             Player.ProcessingHotkey -= PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
