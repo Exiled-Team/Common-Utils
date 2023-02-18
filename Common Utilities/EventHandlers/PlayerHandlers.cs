@@ -64,13 +64,13 @@ namespace Common_Utilities.EventHandlers
                 ev.Player.Health = _plugin.Config.HealthValues[ev.NewRole];
                 ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
             }
-            if (ev.NewRole != RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
+            if (ev.NewRole is not RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
             {
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
             }
 
             if (_plugin.Config.AfkIgnoredRoles.Contains(ev.NewRole) && _plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole == RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);;
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole is RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);;
         }
 
         public void OnPlayerDied(DiedEventArgs ev)

@@ -152,7 +152,7 @@ namespace Common_Utilities.EventHandlers
 
         internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos)
         {
-            if (newItem != ItemType.None)
+            if (newItem is not ItemType.None)
             {
                 Item item = Item.Create(newItem);
                 if (oldItem is Exiled.API.Features.Pickups.FirearmPickup oldFirearm && item is Firearm firearm)
