@@ -120,19 +120,22 @@ namespace Common_Utilities.EventHandlers
 
         private void AutoNuke()
         {
-            switch (_plugin.Config.AutonukeBroadcast.Duration)
+            if (Warhead.IsInProgress)
             {
-                case 0:
-                    break;
-                case 1:
-                    Cassie.Message(_plugin.Config.AutonukeBroadcast.Content);
-                    break;
-                default:
-                    Map.Broadcast(_plugin.Config.AutonukeBroadcast);
-                    break;
+                switch (_plugin.Config.AutonukeBroadcast.Duration)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        Cassie.Message(_plugin.Config.AutonukeBroadcast.Content);
+                        break;
+                    default:
+                        Map.Broadcast(_plugin.Config.AutonukeBroadcast);
+                        break;
+                }
+
+                Warhead.Start();
             }
-            
-            Warhead.Start();
 
             if (_plugin.Config.AutonukeLock)
                 Warhead.IsLocked = true;
