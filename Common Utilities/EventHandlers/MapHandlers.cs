@@ -83,12 +83,8 @@ namespace Common_Utilities.EventHandlers
                             }
 
                         ev.Player.Role.Set(destinationRole, SpawnReason.Respawn);
-                        Timing.CallDelayed(0.45f, () =>
-                            {
-                                ev.Player.ClearInventory();
-                                ev.Player.Position = ev.OutputPosition;
-                            }
-                        );
+                        ev.Player.ClearInventory();
+                        ev.Player.Position = ev.OutputPosition;
                         break;
                     }
                 }
