@@ -10,56 +10,57 @@ namespace Common_Utilities.EventHandlers
     using Exiled.Events.EventArgs.Server;
     using Exiled.Events.EventArgs.Warhead;
     using PlayerRoles;
+    using System.Collections.Generic;
 
     public class ServerHandlers
     {
         private readonly Plugin _plugin;
         public ServerHandlers(Plugin plugin) => _plugin = plugin;
 
-        public Vector3 EscapeZone = Vector3.zero;
         private bool friendlyFireDisable = false;
         
         public void OnRoundStarted()
         {
             if (_plugin.Config.AutonukeTime > -1)
                 _plugin.Coroutines.Add(Timing.CallDelayed(_plugin.Config.AutonukeTime, AutoNuke));
-            
+
             if (_plugin.Config.RagdollCleanupDelay > 0)
-                _plugin.Coroutines.Add(Timing.CallContinuously(_plugin.Config.RagdollCleanupDelay, RagdollCleanup));
-            
+                _plugin.Coroutines.Add(Timing.RunCoroutine(RagdollCleanup()));
+
             if (_plugin.Config.ItemCleanupDelay > 0)
-                _plugin.Coroutines.Add(Timing.CallContinuously(_plugin.Config.ItemCleanupDelay, ItemCleanup));
-            
+                _plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
+
             if (_plugin.Config.DisarmSwitchTeams)
-                _plugin.Coroutines.Add(Timing.CallContinuously(0.5f, BetterDisarm));
+                _plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
         }
 
-        private void BetterDisarm()
+        private IEnumerator<float> BetterDisarm()
         {
-
-            foreach (Player player in Player.List)
+            for (; ; )
             {
-                if (EscapeZone == Vector3.zero)
-                    EscapeZone = Escape.WorldPos;
+                yield return Timing.WaitForSeconds(.5f);
 
-                if (!player.IsCuffed || (player.Role.Team is not (Team.ChaosInsurgency or Team.FoundationForces)) || (EscapeZone - player.Position).sqrMagnitude > 156.5f)
-                    continue;
-
-                switch (player.Role.Type)
+                foreach (Player player in Player.List)
                 {
-                    case RoleTypeId.FacilityGuard:
-                    case RoleTypeId.NtfPrivate:
-                    case RoleTypeId.NtfSergeant:
-                    case RoleTypeId.NtfCaptain:
-                    case RoleTypeId.NtfSpecialist:
-                        player.Role.Set(RoleTypeId.ChaosConscript, SpawnReason.Escaped, RoleSpawnFlags.All);
-                        break;
-                    case RoleTypeId.ChaosConscript:
-                    case RoleTypeId.ChaosMarauder:
-                    case RoleTypeId.ChaosRepressor:
-                    case RoleTypeId.ChaosRifleman:
-                        player.Role.Set(RoleTypeId.NtfPrivate, SpawnReason.Escaped, RoleSpawnFlags.All);
-                        break;
+                    if (!player.IsCuffed || (player.Role.Team is not (Team.ChaosInsurgency or Team.FoundationForces)) || (Escape.WorldPos - player.Position).sqrMagnitude > 156.5f)
+                        continue;
+
+                    switch (player.Role.Type)
+                    {
+                        case RoleTypeId.FacilityGuard:
+                        case RoleTypeId.NtfPrivate:
+                        case RoleTypeId.NtfSergeant:
+                        case RoleTypeId.NtfCaptain:
+                        case RoleTypeId.NtfSpecialist:
+                            player.Role.Set(RoleTypeId.ChaosConscript, SpawnReason.Escaped, RoleSpawnFlags.All);
+                            break;
+                        case RoleTypeId.ChaosConscript:
+                        case RoleTypeId.ChaosMarauder:
+                        case RoleTypeId.ChaosRepressor:
+                        case RoleTypeId.ChaosRifleman:
+                            player.Role.Set(RoleTypeId.NtfPrivate, SpawnReason.Escaped, RoleSpawnFlags.All);
+                            break;
+                    }
                 }
             }
         }
@@ -69,7 +70,7 @@ namespace Common_Utilities.EventHandlers
             if (_plugin.Config.AfkLimit > 0)
             {
                 _plugin.AfkDict.Clear();
-                _plugin.Coroutines.Add(Timing.CallContinuously(1f, AfkCheck));
+                _plugin.Coroutines.Add(Timing.RunCoroutine(AfkCheck()));
             }
 
             if (friendlyFireDisable)
@@ -80,8 +81,8 @@ namespace Common_Utilities.EventHandlers
             }
 
             if (_plugin.Config.TimedBroadcastDelay > 0)
-                _plugin.Coroutines.Add(Timing.CallContinuously(_plugin.Config.TimedBroadcastDelay, ServerBroadcast));
-            
+                _plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
+
             Warhead.IsLocked = false;
         }
         
@@ -99,23 +100,38 @@ namespace Common_Utilities.EventHandlers
             _plugin.Coroutines.Clear();
         }
 
-        private void ServerBroadcast()
+        private IEnumerator<float> ServerBroadcast()
         {
-            Map.Broadcast(_plugin.Config.TimedBroadcastDuration, _plugin.Config.TimedBroadcast);
+            for (; ; )
+            {
+                yield return Timing.WaitForSeconds(_plugin.Config.TimedBroadcastDelay);
+
+                Map.Broadcast(_plugin.Config.TimedBroadcastDuration, _plugin.Config.TimedBroadcast);
+            }
         }
 
-        private void ItemCleanup()
+        private IEnumerator<float> ItemCleanup()
         {
-            foreach (Pickup pickup in Pickup.List.ToList())
-                if (!_plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
-                    pickup.Destroy();
+            for (; ; )
+            {
+                yield return Timing.WaitForSeconds(_plugin.Config.ItemCleanupDelay);
+
+                foreach (Pickup pickup in Pickup.List.ToList())
+                    if (!_plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
+                        pickup.Destroy();
+            }
         }
 
-        private void RagdollCleanup()
+        private IEnumerator<float> RagdollCleanup()
         {
-            foreach (Ragdoll ragdoll in Ragdoll.List.ToList())
-                if (!_plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
-                    ragdoll.Destroy();
+            for (; ; )
+            {
+                yield return Timing.WaitForSeconds(_plugin.Config.RagdollCleanupDelay);
+
+                foreach (Ragdoll ragdoll in Ragdoll.List.ToList())
+                    if (!_plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
+                        ragdoll.Destroy();
+            }
         }
 
         private void AutoNuke()
@@ -141,8 +157,12 @@ namespace Common_Utilities.EventHandlers
                 Warhead.IsLocked = true;
         }
 
-        private void AfkCheck()
+        private IEnumerator<float> AfkCheck()
         {
+            for (; ; )
+            {
+                yield return Timing.WaitForSeconds(1f);
+
                 foreach (Player player in Player.List)
                 {
                     if (!_plugin.AfkDict.ContainsKey(player))
@@ -175,6 +195,7 @@ namespace Common_Utilities.EventHandlers
 
                     _plugin.AfkDict[player] = new Tuple<int, Vector3>(_plugin.AfkDict[player].Item1 + 1, _plugin.AfkDict[player].Item2);
                 }
+            }
         }
 
         public void OnRestartingRound()
