@@ -32,7 +32,7 @@ namespace Common_Utilities.EventHandlers
                     Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
                     {
-                        UpgradeItem(ev.Pickup, destinationItem, ev.Scp914.OutputChamber.position);
+                        UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition);
                         ev.IsAllowed = false;
                         break;
                     }
