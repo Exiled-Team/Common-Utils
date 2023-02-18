@@ -42,7 +42,7 @@ namespace Common_Utilities.EventHandlers
 
                 foreach (Player player in Player.List)
                 {
-                    if (!player.IsCuffed || (player.Role.Team is not (Team.ChaosInsurgency or Team.FoundationForces)) || (Escape.WorldPos - player.Position).sqrMagnitude > 156.5f)
+                    if (!player.IsCuffed || (player.Role.Team != Team.ChaosInsurgency && player.Role.Team != Team.FoundationForces) || (Escape.WorldPos - player.Position).sqrMagnitude > Escape.RadiusSqr)
                         continue;
 
                     switch (player.Role.Type)
