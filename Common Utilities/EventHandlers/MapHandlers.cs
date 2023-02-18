@@ -54,7 +54,7 @@ namespace Common_Utilities.EventHandlers
                     if (r <= chance)
                     {
                         ev.Player.RemoveItem(ev.Item);
-                        if (destinationItem != ItemType.None)
+                        if (destinationItem is not ItemType.None)
                             ev.Player.AddItem(destinationItem);
                         break;
                     }
@@ -75,15 +75,12 @@ namespace Common_Utilities.EventHandlers
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})");
                     if (r <= chance)
                     {
+                        ev.Player.Role.Set(destinationRole, SpawnReason.Respawn, RoleSpawnFlags.None);
                         if (!keepInventory)
-                            foreach (Item item in ev.Player.Items.ToList())
-                            {
-                                ev.Player.RemoveItem(item, false);
-                                item.CreatePickup(ev.OutputPosition);
-                            }
-
-                        ev.Player.Role.Set(destinationRole, SpawnReason.Respawn);
-                        ev.Player.ClearInventory();
+                        {
+                            ev.Player.ClearInventory();
+                            ev.Player.Ammo.Clear();
+                        }
                         ev.Player.Position = ev.OutputPosition;
                         break;
                     }
