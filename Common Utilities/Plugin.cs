@@ -24,7 +24,8 @@ namespace Common_Utilities
         public override string Author { get; } = "Joker119";
         public override Version RequiredExiledVersion { get; } = new(6, 0, 0);
         public override string Prefix { get; } = "CommonUtilities";
-        
+        public override PluginPriority Priority => PluginPriority.Higher;
+
         public PlayerHandlers PlayerHandlers;
         public ServerHandlers ServerHandlers;
         public MapHandlers MapHandlers;
