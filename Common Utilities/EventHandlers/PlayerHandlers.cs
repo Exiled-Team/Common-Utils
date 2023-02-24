@@ -176,7 +176,7 @@ namespace Common_Utilities.EventHandlers
 
         public void AntiAfkEventHandler(IPlayerEvent ev)
         {
-            if (_plugin.AfkDict.ContainsKey(ev.Player))
+            if (ev.Player != null && _plugin.AfkDict.ContainsKey(ev.Player))
             {
                 Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
                 _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
