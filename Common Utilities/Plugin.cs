@@ -64,7 +64,7 @@ namespace Common_Utilities
                     Log.Debug($"{Config.Scp914ItemChanges.Count}");
                     foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
                     {
-                        foreach ((ItemType oldItem, ItemType newItem, int chance) in upgrade.Value)
+                        foreach ((ItemType oldItem, ItemType newItem, double chance) in upgrade.Value)
                             Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
                     }
                 }
@@ -75,7 +75,7 @@ namespace Common_Utilities
                     foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config
                         .Scp914ClassChanges)
                     {
-                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, int chance, bool keepInventory) in upgrade.Value)
+                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, double chance, bool keepInventory) in upgrade.Value)
                             Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} Keep Inventory: {keepInventory}");
                     }
                 }
@@ -86,7 +86,7 @@ namespace Common_Utilities
                     foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config
                         .Scp914EffectChances)
                     {
-                        foreach ((EffectType effect, int chance, float duration) in upgrade.Value)
+                        foreach ((EffectType effect, double chance, float duration) in upgrade.Value)
                             Log.Debug($"914 Effect Config: {upgrade.Key}: {effect} + {duration} - {chance}");
                     }
                 }
@@ -96,7 +96,7 @@ namespace Common_Utilities
                     Log.Debug($"{Config.Scp914TeleportChances.Count}");
                     foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
                     {
-                        foreach ((RoomType room, Vector3 offset, int chance, float damage, ZoneType zone) in upgrade.Value)
+                        foreach ((RoomType room, Vector3 offset, double chance, float damage, ZoneType zone) in upgrade.Value)
                             Log.Debug($"914 Teleport Config: {upgrade.Key}: {room}/{zone} + {offset} - {chance} [{damage}]");
                     }
                 }

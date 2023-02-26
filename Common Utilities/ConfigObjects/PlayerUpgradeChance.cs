@@ -6,10 +6,10 @@ namespace Common_Utilities.ConfigObjects
     {
         public RoleTypeId Original { get; set; }
         public RoleTypeId New { get; set; }
-        public int Chance { get; set; }
+        public double Chance { get; set; }
         public bool KeepInventory { get; set; } = true;
 
-        public void Deconstruct(out RoleTypeId old, out RoleTypeId newRole, out int i, out bool keepInventory)
+        public void Deconstruct(out RoleTypeId old, out RoleTypeId newRole, out double i, out bool keepInventory)
         {
             old = Original;
             newRole = New;

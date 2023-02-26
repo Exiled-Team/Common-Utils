@@ -23,12 +23,12 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.Scp914ItemChanges != null && _plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in _plugin.Config.Scp914ItemChanges[ev.KnobSetting])
+                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in _plugin.Config.Scp914ItemChanges[ev.KnobSetting])
                 {
                     if (sourceItem != ev.Pickup.Type)
                         continue;
 
-                    int r = _plugin.Rng.Next(100);
+                    double r = _plugin.Rng.NextDouble() * 100;
                     Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
                     {
@@ -44,12 +44,12 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.Scp914ItemChanges != null && _plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((ItemType sourceItem, ItemType destinationItem, int chance) in _plugin.Config.Scp914ItemChanges[ev.KnobSetting])
+                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in _plugin.Config.Scp914ItemChanges[ev.KnobSetting])
                 {
                     if (sourceItem != ev.Item.Type)
                         continue;
 
-                    int r = _plugin.Rng.Next(100);
+                    double r = _plugin.Rng.NextDouble() * 100;
                     Log.Debug($"{nameof(OnScp914UpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
                     {
@@ -66,12 +66,12 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.Scp914ClassChanges != null && _plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, int chance, bool keepInventory) in _plugin.Config.Scp914ClassChanges[ev.KnobSetting])
+                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, double chance, bool keepInventory) in _plugin.Config.Scp914ClassChanges[ev.KnobSetting])
                 {
                     if (sourceRole != ev.Player.Role)
                         continue;
 
-                    int r = _plugin.Rng.Next(100);
+                    double r = _plugin.Rng.NextDouble() * 100;
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})");
                     if (r <= chance)
                     {
@@ -89,9 +89,9 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.Scp914EffectChances != null && _plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting) && (ev.Player.Role.Side != Side.Scp || !_plugin.Config.ScpsImmuneTo914Effects))
             {
-                foreach ((EffectType effect, int chance, float duration) in _plugin.Config.Scp914EffectChances[ev.KnobSetting])
+                foreach ((EffectType effect, double chance, float duration) in _plugin.Config.Scp914EffectChances[ev.KnobSetting])
                 {
-                    int r = _plugin.Rng.Next(100);
+                    double r = _plugin.Rng.NextDouble() * 100;
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect. {effect} ({chance}). Should be added: {r <= chance} ({r})");
                     if (r <= chance)
                     {
@@ -104,9 +104,9 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.Scp914TeleportChances != null && _plugin.Config.Scp914TeleportChances.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoomType roomType, Vector3 offset, int chance, float damage, ZoneType zone) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
+                foreach ((RoomType roomType, Vector3 offset, double chance, float damage, ZoneType zone) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
-                    int r = _plugin.Rng.Next(100);
+                    double r = _plugin.Rng.NextDouble() * 100;
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})");
                     if (r <= chance)
                     {
