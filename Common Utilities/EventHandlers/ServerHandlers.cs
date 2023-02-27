@@ -136,7 +136,7 @@ namespace Common_Utilities.EventHandlers
 
         private void AutoNuke()
         {
-            if (Warhead.IsInProgress)
+            if (!Warhead.IsInProgress)
             {
                 switch (_plugin.Config.AutonukeBroadcast.Duration)
                 {
