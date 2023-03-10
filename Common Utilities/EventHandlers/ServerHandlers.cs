@@ -1,55 +1,48 @@
-using System;
-using Exiled.API.Features.Pickups;
-using Exiled.Events.EventArgs.Server;
-using Exiled.Events.EventArgs.Warhead;
-using PlayerRoles;
-
 namespace Common_Utilities.EventHandlers
 {
-    using System.Collections.Generic;
     using System.Linq;
+    using Exiled.API.Enums;
     using Exiled.API.Features;
-    using Exiled.API.Features.Items;
-    using Exiled.Events.EventArgs;
-    using InventorySystem.Items.Pickups;
     using MEC;
     using UnityEngine;
-    
+    using System;
+    using Exiled.API.Features.Pickups;
+    using Exiled.Events.EventArgs.Server;
+    using Exiled.Events.EventArgs.Warhead;
+    using PlayerRoles;
+    using System.Collections.Generic;
+
     public class ServerHandlers
     {
         private readonly Plugin _plugin;
         public ServerHandlers(Plugin plugin) => _plugin = plugin;
 
-        public Vector3 EscapeZone = Vector3.zero;
         private bool friendlyFireDisable = false;
         
         public void OnRoundStarted()
         {
             if (_plugin.Config.AutonukeTime > -1)
-                _plugin.Coroutines.Add(Timing.RunCoroutine(AutoNuke()));
-            
+                _plugin.Coroutines.Add(Timing.CallDelayed(_plugin.Config.AutonukeTime, AutoNuke));
+
             if (_plugin.Config.RagdollCleanupDelay > 0)
                 _plugin.Coroutines.Add(Timing.RunCoroutine(RagdollCleanup()));
-            
+
             if (_plugin.Config.ItemCleanupDelay > 0)
                 _plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
-            
+
             if (_plugin.Config.DisarmSwitchTeams)
                 _plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
         }
 
         private IEnumerator<float> BetterDisarm()
         {
-            for (;;)
+            for (; ; )
             {
-                yield return Timing.WaitForSeconds(1.5f);
+                yield return Timing.WaitForSeconds(.5f);
 
                 foreach (Player player in Player.List)
                 {
-                    if (EscapeZone == Vector3.zero)
-                        EscapeZone = Escape.WorldPos;
-
-                    if (!player.IsCuffed || (player.Role.Team != Team.ChaosInsurgency && player.Role.Team != Team.FoundationForces) || (EscapeZone - player.Position).sqrMagnitude > 400f)
+                    if (!player.IsCuffed || (player.Role.Team != Team.ChaosInsurgency && player.Role.Team != Team.FoundationForces) || (Escape.WorldPos - player.Position).sqrMagnitude > Escape.RadiusSqr)
                         continue;
 
                     switch (player.Role.Type)
@@ -59,27 +52,17 @@ namespace Common_Utilities.EventHandlers
                         case RoleTypeId.NtfSergeant:
                         case RoleTypeId.NtfCaptain:
                         case RoleTypeId.NtfSpecialist:
-                            _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.Role.Set(RoleTypeId.ChaosConscript);
+                            player.Role.Set(RoleTypeId.ChaosConscript, SpawnReason.Escaped, RoleSpawnFlags.All);
                             break;
                         case RoleTypeId.ChaosConscript:
                         case RoleTypeId.ChaosMarauder:
                         case RoleTypeId.ChaosRepressor:
                         case RoleTypeId.ChaosRifleman:
-                            _plugin.Coroutines.Add(Timing.RunCoroutine(DropItems(player, player.Items.ToList())));
-                            player.Role.Set(RoleTypeId.NtfPrivate);
+                            player.Role.Set(RoleTypeId.NtfPrivate, SpawnReason.Escaped, RoleSpawnFlags.All);
                             break;
                     }
                 }
             }
-        }
-
-        public IEnumerator<float> DropItems(Player player, IEnumerable<Item> items)
-        {
-            yield return Timing.WaitForSeconds(1f);
-
-            foreach (Item item in items)
-                item.CreatePickup(player.Position);
         }
 
         public void OnWaitingForPlayers()
@@ -99,7 +82,7 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.TimedBroadcastDelay > 0)
                 _plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
-            
+
             Warhead.IsLocked = false;
         }
         
@@ -119,21 +102,21 @@ namespace Common_Utilities.EventHandlers
 
         private IEnumerator<float> ServerBroadcast()
         {
-            for (;;)
+            for (; ; )
             {
                 yield return Timing.WaitForSeconds(_plugin.Config.TimedBroadcastDelay);
-                
+
                 Map.Broadcast(_plugin.Config.TimedBroadcastDuration, _plugin.Config.TimedBroadcast);
             }
         }
 
         private IEnumerator<float> ItemCleanup()
         {
-            for (;;)
+            for (; ; )
             {
                 yield return Timing.WaitForSeconds(_plugin.Config.ItemCleanupDelay);
 
-                foreach (Pickup pickup in Pickup.List)
+                foreach (Pickup pickup in Pickup.List.ToList())
                     if (!_plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
                         pickup.Destroy();
             }
@@ -141,33 +124,34 @@ namespace Common_Utilities.EventHandlers
 
         private IEnumerator<float> RagdollCleanup()
         {
-            for (;;)
+            for (; ; )
             {
                 yield return Timing.WaitForSeconds(_plugin.Config.RagdollCleanupDelay);
-                
-                foreach (Ragdoll ragdoll in Ragdoll.List)
+
+                foreach (Ragdoll ragdoll in Ragdoll.List.ToList())
                     if (!_plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
                         ragdoll.Destroy();
             }
         }
 
-        private IEnumerator<float> AutoNuke()
+        private void AutoNuke()
         {
-            yield return Timing.WaitForSeconds(_plugin.Config.AutonukeTime);
-
-            switch (_plugin.Config.AutonukeBroadcast.Duration)
+            if (!Warhead.IsInProgress)
             {
-                case 0:
-                    break;
-                case 1:
-                    Cassie.Message(_plugin.Config.AutonukeBroadcast.Content);
-                    break;
-                default:
-                    Map.Broadcast(_plugin.Config.AutonukeBroadcast);
-                    break;
+                switch (_plugin.Config.AutonukeBroadcast.Duration)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        Cassie.Message(_plugin.Config.AutonukeBroadcast.Content);
+                        break;
+                    default:
+                        Map.Broadcast(_plugin.Config.AutonukeBroadcast);
+                        break;
+                }
+
+                Warhead.Start();
             }
-            
-            Warhead.Start();
 
             if (_plugin.Config.AutonukeLock)
                 Warhead.IsLocked = true;
@@ -175,7 +159,7 @@ namespace Common_Utilities.EventHandlers
 
         private IEnumerator<float> AfkCheck()
         {
-            for (;;)
+            for (; ; )
             {
                 yield return Timing.WaitForSeconds(1f);
 
@@ -221,13 +205,13 @@ namespace Common_Utilities.EventHandlers
             _plugin.Coroutines.Clear();
         }
 
-        public void OnWarheadStarting(StartingEventArgs ev)
+        public void OnWarheadStarting(StartingEventArgs _)
         {
             foreach (Room room in Room.List)
                 room.Color = _plugin.Config.WarheadColor;
         }
 
-        public void OnWarheadStopping(StoppingEventArgs ev)
+        public void OnWarheadStopping(StoppingEventArgs _)
         {
             foreach (Room room in Room.List)
                 room.ResetColor();

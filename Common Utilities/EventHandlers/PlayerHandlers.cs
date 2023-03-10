@@ -1,20 +1,17 @@
-using Exiled.CustomItems.API.Features;
-using Exiled.Events.EventArgs.Interfaces;
-using Exiled.Events.EventArgs.Player;
-using PlayerRoles;
-using UnityEngine;
-
 namespace Common_Utilities.EventHandlers
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Exiled.API.Enums;
     using Exiled.API.Features;
-    using Exiled.Events.EventArgs;
-    using MEC;
+    using Exiled.CustomItems.API.Features;
+    using Exiled.Events.EventArgs.Interfaces;
+    using Exiled.Events.EventArgs.Player;
+    using PlayerRoles;
+    using UnityEngine;
+
     using Player = Exiled.API.Features.Player;
-    
+
     public class PlayerHandlers
     {
         private readonly Plugin _plugin;
@@ -44,10 +41,7 @@ namespace Common_Utilities.EventHandlers
                 }
 
                 ev.Items.Clear();
-                List<ItemType> items = StartItems(ev.NewRole, ev.Player);
-                ev.Items.AddRange(items);
-                if (ev.Reason == SpawnReason.Escaped)
-                    Timing.CallDelayed(1f, () => ev.Player.ResetInventory(items));
+                ev.Items.AddRange(StartItems(ev.NewRole, ev.Player));
 
                 if (_plugin.Config.StartingInventories[ev.NewRole].Ammo != null && _plugin.Config.StartingInventories[ev.NewRole].Ammo.Count > 0)
                 {
@@ -66,20 +60,17 @@ namespace Common_Utilities.EventHandlers
             }
 
             if (_plugin.Config.HealthValues != null && _plugin.Config.HealthValues.ContainsKey(ev.NewRole))
-                Timing.CallDelayed(2.5f, () =>
-                {
-                    ev.Player.Health = _plugin.Config.HealthValues[ev.NewRole];
-                    ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
-                });
-
-            if (ev.NewRole != RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
             {
-                Timing.CallDelayed(1f, () =>
-                    ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
+                ev.Player.Health = _plugin.Config.HealthValues[ev.NewRole];
+                ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
+            }
+            if (ev.NewRole is not RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
+            {
+                ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
             }
 
             if (_plugin.Config.AfkIgnoredRoles.Contains(ev.NewRole) && _plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole == RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);;
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole is RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);;
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
@@ -101,7 +92,7 @@ namespace Common_Utilities.EventHandlers
             for (int i = 0; i < _plugin.Config.StartingInventories[role].UsedSlots; i++)
             {
                 int r = _plugin.Rng.Next(100);
-                foreach ((string item, int chance, string groupKey) in _plugin.Config.StartingInventories[role][i])
+                foreach ((string item, double chance, string groupKey) in _plugin.Config.StartingInventories[role][i])
                 {
                     if (player != null && !string.IsNullOrEmpty(groupKey) && groupKey != "none" && (!ServerStatic.PermissionsHandler._groups.TryGetValue(groupKey, out var group) || group != player.Group))
                         continue;
@@ -116,7 +107,7 @@ namespace Common_Utilities.EventHandlers
                         else if (CustomItem.TryGet(item, out CustomItem customItem))
                         {
                             if (player != null)
-                                Timing.CallDelayed(0.5f, () => customItem.Give(player));
+                                customItem.Give(player);
                             else
                                 Log.Warn($"{nameof(StartItems)}: Tried to give {customItem.Name} to a null player.");
                             
@@ -145,8 +136,7 @@ namespace Common_Utilities.EventHandlers
             }
 
             if (_plugin.Config.PlayerHealthInfo)
-                Timing.CallDelayed(0.5f, () =>
-                    ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}");
+                ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
 
             if (ev.Attacker is not null && _plugin.AfkDict.ContainsKey(ev.Attacker))
             {
@@ -186,7 +176,7 @@ namespace Common_Utilities.EventHandlers
 
         public void AntiAfkEventHandler(IPlayerEvent ev)
         {
-            if (_plugin.AfkDict.ContainsKey(ev.Player))
+            if (ev.Player != null && _plugin.AfkDict.ContainsKey(ev.Player))
             {
                 Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
                 _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);

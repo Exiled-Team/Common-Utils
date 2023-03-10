@@ -45,32 +45,17 @@ namespace Common_Utilities.Configs
 
         public List<StartingAmmo> Ammo { get; set; } = new();
 
-        public IEnumerable<ItemChance> this[int i]
+        public IEnumerable<ItemChance> this[int i] => i switch
         {
-            get
-            {
-                switch (i)
-                {
-                    case 0:
-                        return Slot1;
-                    case 1:
-                        return Slot2;
-                    case 2:
-                        return Slot3;
-                    case 3:
-                        return Slot4;
-                    case 4:
-                        return Slot5;
-                    case 5:
-                        return Slot6;
-                    case 6:
-                        return Slot7;
-                    case 7:
-                        return Slot8;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
+            0 => Slot1,
+            1 => Slot2,
+            2 => Slot3,
+            3 => Slot4,
+            4 => Slot5,
+            5 => Slot6,
+            6 => Slot7,
+            7 => Slot8,
+            _ => throw new ArgumentOutOfRangeException(),
+        };
     }
 }
