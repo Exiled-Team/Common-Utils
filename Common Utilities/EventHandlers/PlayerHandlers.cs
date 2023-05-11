@@ -58,21 +58,30 @@ namespace Common_Utilities.EventHandlers
                     }
                 }
             }
-
-            if (_plugin.Config.HealthValues != null && _plugin.Config.HealthValues.ContainsKey(ev.NewRole))
+        }
+        public void OnSpawned(SpawnedEventArgs ev)
+        {
+            if (ev.Player == null)
             {
-                ev.Player.Health = _plugin.Config.HealthValues[ev.NewRole];
-                ev.Player.MaxHealth = _plugin.Config.HealthValues[ev.NewRole];
+                Log.Warn($"{nameof(OnSpawned)}: Triggering player is null.");
+                return;
             }
-            if (ev.NewRole is not RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
+
+            RoleTypeId NewRole = ev.Player.Role.Type;
+            if (_plugin.Config.HealthValues != null && _plugin.Config.HealthValues.TryGetValue(NewRole, out int health))
+            {
+                ev.Player.Health = health;
+                ev.Player.MaxHealth = health;
+            }
+            if (NewRole is not RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
             {
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
             }
 
-            if (_plugin.Config.AfkIgnoredRoles.Contains(ev.NewRole) && _plugin.AfkDict.ContainsKey(ev.Player))
-                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole is RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);;
-        }
+            if (_plugin.Config.AfkIgnoredRoles.Contains(NewRole) && _plugin.AfkDict.ContainsKey(ev.Player))
+                _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(NewRole is RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position); ;
 
+        }
         public void OnPlayerDied(DiedEventArgs ev)
         {
             if (ev.Player != null && _plugin.Config.HealthOnKill != null && _plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))

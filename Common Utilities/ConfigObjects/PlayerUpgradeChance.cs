@@ -7,14 +7,14 @@ namespace Common_Utilities.ConfigObjects
         public RoleTypeId Original { get; set; }
         public RoleTypeId New { get; set; }
         public double Chance { get; set; }
-        public bool KeepInventory { get; set; } = true;
+        public RoleSpawnFlags SpawnFlags { get; set; }
 
-        public void Deconstruct(out RoleTypeId old, out RoleTypeId newRole, out double i, out bool keepInventory)
+        public void Deconstruct(out RoleTypeId old, out RoleTypeId newRole, out double i, out RoleSpawnFlags spawnFlags)
         {
             old = Original;
             newRole = New;
             i = Chance;
-            keepInventory = KeepInventory;
+            spawnFlags = SpawnFlags;
         }
     }
 }

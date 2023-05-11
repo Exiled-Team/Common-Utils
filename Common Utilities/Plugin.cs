@@ -22,7 +22,7 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Joker119";
-        public override Version RequiredExiledVersion { get; } = new(6, 0, 0);
+        public override Version RequiredExiledVersion { get; } = new(7, 0, 0);
         public override string Prefix { get; } = "CommonUtilities";
         public override PluginPriority Priority => PluginPriority.Higher;
 
@@ -75,8 +75,8 @@ namespace Common_Utilities
                     foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config
                         .Scp914ClassChanges)
                     {
-                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, double chance, bool keepInventory) in upgrade.Value)
-                            Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} Keep Inventory: {keepInventory}");
+                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, double chance, RoleSpawnFlags spawnFlags) in upgrade.Value)
+                            Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} RoleSpawnFlags: {spawnFlags}");
                     }
                 }
 
@@ -119,6 +119,7 @@ namespace Common_Utilities
             Player.MakingNoise += PlayerHandlers.AntiAfkEventHandler;
             Player.ReloadingWeapon += PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole += PlayerHandlers.OnChangingRole;
+            Player.Spawned += PlayerHandlers.OnSpawned;
             Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
             Player.ProcessingHotkey += PlayerHandlers.AntiAfkEventHandler;
@@ -156,6 +157,7 @@ namespace Common_Utilities
             Player.MakingNoise -= PlayerHandlers.AntiAfkEventHandler;
             Player.ReloadingWeapon -= PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
+            Player.Spawned -= PlayerHandlers.OnSpawned;
             Player.ThrownProjectile -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
             Player.ProcessingHotkey -= PlayerHandlers.AntiAfkEventHandler;
