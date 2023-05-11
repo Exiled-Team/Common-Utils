@@ -68,10 +68,10 @@ namespace Common_Utilities.EventHandlers
             }
 
             RoleTypeId NewRole = ev.Player.Role.Type;
-            if (_plugin.Config.HealthValues != null && _plugin.Config.HealthValues.ContainsKey(NewRole))
+            if (_plugin.Config.HealthValues != null && _plugin.Config.HealthValues.TryGetValue(NewRole, out int health))
             {
-                ev.Player.Health = _plugin.Config.HealthValues[NewRole];
-                ev.Player.MaxHealth = _plugin.Config.HealthValues[NewRole];
+                ev.Player.Health = health;
+                ev.Player.MaxHealth = health;
             }
             if (NewRole is not RoleTypeId.Spectator && _plugin.Config.PlayerHealthInfo)
             {
