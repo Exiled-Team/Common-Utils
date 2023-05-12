@@ -121,8 +121,7 @@ CommonUtilities:
   # A list of roles and how much health they should be given when they kill someone.
   health_on_kill:
     Scp173: 0
-    Scp93953: 10
-    Scp93989: 20
+    Scp939: 10
   # A list of roles and what their default starting health should be.
   health_values:
     Scp173: 3200
