@@ -17,9 +17,15 @@ Common Utils is a plugin that serves many common utilites in a day to day server
 CommonUtilities:
 # Whether or not debug messages should be shown.
   debug: false
-  # The SCP Roles able to use V to talk to humans.
+  # The SCP Roles able to use the ProximityChat to talk to humans.
   scp_speech:
-  - Scp049
+    - Scp049
+  # Max hearing distance
+  max_proximity_distance: 12
+  # Hint displayed when a SCP enables proximity chat
+  enable_hint: Proximity Chat has been enabled!
+  # Hint displayed when a SCP disables proximity chat
+  disable_hint: Proximity Chat has been disabled!
   # Whether or not MTF/CI can 'escape' while disarmed to switch teams.
   disarm_switch_teams: true
   # Whether or not disarmed people will be prevented from interacting with doors/elevators.
