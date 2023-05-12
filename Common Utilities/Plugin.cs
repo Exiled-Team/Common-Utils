@@ -31,6 +31,8 @@ namespace Common_Utilities
         public MapHandlers MapHandlers;
         public Random Rng = new();
         public static Plugin Singleton;
+        public static Config cfg;
+        public static List<ReferenceHub> ProximityToggled { get; set; } = new List<ReferenceHub>();
         public string HarmonyName;
         public Harmony Instance;
         public List<CoroutineHandle> Coroutines { get; } = new();
@@ -108,7 +110,8 @@ namespace Common_Utilities
             PlayerHandlers = new PlayerHandlers(this);
             ServerHandlers = new ServerHandlers(this);
             MapHandlers = new MapHandlers(this);
-            
+            cfg = Config;
+
             Log.Info($"Registering EventHandlers..");
             Player.Died += PlayerHandlers.OnPlayerDied;
             Player.Jumping += PlayerHandlers.AntiAfkEventHandler;
@@ -162,7 +165,7 @@ namespace Common_Utilities
             Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
             Player.ChangingMoveState -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingElevator -= PlayerHandlers.OnInteractingElevator;
-            
+
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
             Server.RoundStarted -= ServerHandlers.OnRoundStarted;
             Server.RestartingRound -= ServerHandlers.OnRestartingRound;
@@ -174,9 +177,10 @@ namespace Common_Utilities
 
             Exiled.Events.Handlers.Warhead.Starting -= ServerHandlers.OnWarheadStarting;
             Exiled.Events.Handlers.Warhead.Stopping -= ServerHandlers.OnWarheadStopping;
-            
+
             Instance.UnpatchAll(HarmonyName);
 
+            cfg = null;
             ServerHandlers = null;
             PlayerHandlers = null;
             MapHandlers = null;
