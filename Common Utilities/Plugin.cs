@@ -22,7 +22,7 @@ namespace Common_Utilities
     {
         public override string Name { get; } = "Common Utilities";
         public override string Author { get; } = "Joker119";
-        public override Version RequiredExiledVersion { get; } = new(6, 0, 0);
+        public override Version RequiredExiledVersion { get; } = new(7, 0, 0);
         public override string Prefix { get; } = "CommonUtilities";
         public override PluginPriority Priority => PluginPriority.Higher;
 
