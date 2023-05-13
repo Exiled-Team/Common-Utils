@@ -168,9 +168,9 @@ namespace Common_Utilities.EventHandlers
                     if (!_plugin.AfkDict.ContainsKey(player))
                         _plugin.AfkDict.Add(player, new Tuple<int, Vector3>(0, player.Position));
 
-                    if (player.Role.Type == RoleTypeId.None || player.IsNoclipPermitted || _plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
+                    if (player.Role.Type == RoleTypeId.None || player.IsNoclipPermitted || player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity) || _plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
                     {
-                        Log.Debug($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted}");
+                        Log.Debug($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted} AFKImunity: {player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity)}");
                         continue;
                     }
 
