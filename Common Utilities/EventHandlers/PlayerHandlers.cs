@@ -78,7 +78,7 @@ namespace Common_Utilities.EventHandlers
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
             }
 
-            if (_plugin.Config.AfkIgnoredRoles.Contains(NewRole) && _plugin.AfkDict.ContainsKey(ev.Player))
+            if (_plugin.Config.AfkIgnoredRoles.Contains(NewRole) && _plugin.AfkDict.ContainsKey(ev.Player) && !ev.Player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity))
                 _plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(NewRole is RoleTypeId.Spectator ? _plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position); ;
 
         }
