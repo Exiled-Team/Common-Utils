@@ -121,23 +121,17 @@ namespace Common_Utilities.EventHandlers
                         }
                         else
                         {
-                            foreach (Room room in Room.List)
-                                if (room.Type == roomType)
-                                {
-                                    ev.OutputPosition = (room.Position + (Vector3.up * 1.5f)) + offset;
-                                    if (damage > 0f)
-                                    {
-                                        float amount = ev.Player.MaxHealth * damage;
-                                        if (damage > 1f)
-                                            amount = damage;
+                            ev.OutputPosition = Room.Get(roomType).Position + (Vector3.up * 1.5f) + offset;
+                            if (damage > 0f)
+                            {
+                                float amount = ev.Player.MaxHealth * damage;
+                                if (damage > 1f)
+                                    amount = damage;
 
-                                        Log.Debug(
-                                            $"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}");
-                                        ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
-                                    }
-
-                                    break;
-                                }
+                                Log.Debug(
+                                    $"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is being damaged for {amount}. -- {ev.Player.Health} * {damage}");
+                                ev.Player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
+                            }
                         }
 
                         break;
