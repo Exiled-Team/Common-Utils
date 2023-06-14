@@ -3,6 +3,7 @@ namespace Common_Utilities.EventHandlers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Common_Utilities.ConfigObjects;
     using Exiled.API.Features;
     using Exiled.CustomItems.API.Features;
     using Exiled.Events.EventArgs.Interfaces;
@@ -100,12 +101,15 @@ namespace Common_Utilities.EventHandlers
 
             for (int i = 0; i < _plugin.Config.StartingInventories[role].UsedSlots; i++)
             {
-                int r = _plugin.Rng.Next(100);
-                foreach ((string item, double chance, string groupKey) in _plugin.Config.StartingInventories[role][i])
-                {
-                    if (player != null && !string.IsNullOrEmpty(groupKey) && groupKey != "none" && (!ServerStatic.PermissionsHandler._groups.TryGetValue(groupKey, out var group) || group != player.Group))
-                        continue;
-                    
+                IEnumerable<ItemChance> itemChances = _plugin.Config.StartingInventories[role][i].Where(x => player == null || string.IsNullOrEmpty(x.Group) || x.Group == "none" || ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group);
+                double r;
+                if (_plugin.Config.FixProbability)
+                    r = _plugin.Rng.NextDouble() * itemChances.Sum(val => val.Chance);
+                else
+                    r = _plugin.Rng.NextDouble() * 100;
+
+                foreach ((string item, double chance, string groupKey) in itemChances)
+                {                    
                     if (r <= chance)
                     {
                         if (Enum.TryParse(item, true, out ItemType type))

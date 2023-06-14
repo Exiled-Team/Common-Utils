@@ -77,6 +77,8 @@ namespace Common_Utilities
             RoleTypeId.Spectator,
             RoleTypeId.Tutorial,
         };
+        [Description("The probability of any config under will be based about how mush chance you put on it (and not cheking item one per one based on %)")]
+        public bool FixProbability { get; set; } = false;
 
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
