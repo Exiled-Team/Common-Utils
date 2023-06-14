@@ -26,7 +26,7 @@ namespace Common_Utilities.EventHandlers
                         continue;
 
                     double r;
-                    if (_plugin.Config.FixProbability)
+                    if (_plugin.Config.AdditiveProbabilities)
                         r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == sourceItem).Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
@@ -52,7 +52,7 @@ namespace Common_Utilities.EventHandlers
                         continue;
 
                     double r;
-                    if (_plugin.Config.FixProbability)
+                    if (_plugin.Config.AdditiveProbabilities)
                         r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == sourceItem).Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
@@ -79,7 +79,7 @@ namespace Common_Utilities.EventHandlers
                         continue;
 
                     double r;
-                    if (_plugin.Config.FixProbability)
+                    if (_plugin.Config.AdditiveProbabilities)
                         r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914ClassChanges[ev.KnobSetting].Where(x => x.Original == sourceRole).Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
@@ -100,7 +100,7 @@ namespace Common_Utilities.EventHandlers
                 foreach ((EffectType effect, double chance, float duration) in _plugin.Config.Scp914EffectChances[ev.KnobSetting])
                 {
                     double r;
-                    if (_plugin.Config.FixProbability)
+                    if (_plugin.Config.AdditiveProbabilities)
                         r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914EffectChances[ev.KnobSetting].Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
@@ -120,7 +120,7 @@ namespace Common_Utilities.EventHandlers
                 foreach ((RoomType roomType, Vector3 offset, double chance, float damage, ZoneType zone) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     double r;
-                    if (_plugin.Config.FixProbability)
+                    if (_plugin.Config.AdditiveProbabilities)
                         r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914TeleportChances[ev.KnobSetting].Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;

@@ -103,7 +103,7 @@ namespace Common_Utilities.EventHandlers
             {
                 IEnumerable<ItemChance> itemChances = _plugin.Config.StartingInventories[role][i].Where(x => player == null || string.IsNullOrEmpty(x.Group) || x.Group == "none" || ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group);
                 double r;
-                if (_plugin.Config.FixProbability)
+                if (_plugin.Config.AdditiveProbabilities)
                     r = _plugin.Rng.NextDouble() * itemChances.Sum(val => val.Chance);
                 else
                     r = _plugin.Rng.NextDouble() * 100;
