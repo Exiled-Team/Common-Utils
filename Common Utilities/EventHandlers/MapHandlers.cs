@@ -5,7 +5,9 @@ using PlayerRoles;
 
 namespace Common_Utilities.EventHandlers
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Common_Utilities.ConfigObjects;
     using Exiled.API.Enums;
     using Exiled.API.Features.Items;
     using UnityEngine;
@@ -20,14 +22,13 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.Scp914ItemChanges != null && _plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in _plugin.Config.Scp914ItemChanges[ev.KnobSetting])
-                {
-                    if (sourceItem != ev.Pickup.Type)
-                        continue;
+                IEnumerable<ItemUpgradeChance> itemUpgradeChance = _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Pickup.Type);
 
+                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in itemUpgradeChance)
+                {
                     double r;
                     if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == sourceItem).Sum(x => x.Chance);
+                        r = _plugin.Rng.NextDouble() * itemUpgradeChance.Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
 
@@ -46,14 +47,13 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.Scp914ItemChanges != null && _plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in _plugin.Config.Scp914ItemChanges[ev.KnobSetting])
-                {
-                    if (sourceItem != ev.Item.Type)
-                        continue;
+                IEnumerable<ItemUpgradeChance> itemUpgradeChance = _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Item.Type);
 
+                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in itemUpgradeChance)
+                {
                     double r;
                     if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == sourceItem).Sum(x => x.Chance);
+                        r = _plugin.Rng.NextDouble() * itemUpgradeChance.Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
 
@@ -73,14 +73,13 @@ namespace Common_Utilities.EventHandlers
         {
             if (_plugin.Config.Scp914ClassChanges != null && _plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
             {
-                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, double chance, RoleSpawnFlags spawnFlags) in _plugin.Config.Scp914ClassChanges[ev.KnobSetting])
-                {
-                    if (sourceRole != ev.Player.Role)
-                        continue;
+                IEnumerable<PlayerUpgradeChance> playerUpgradeChance = _plugin.Config.Scp914ClassChanges[ev.KnobSetting].Where(x => x.Original == ev.Player.Role);
 
+                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, double chance, RoleSpawnFlags spawnFlags) in playerUpgradeChance)
+                {
                     double r;
                     if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914ClassChanges[ev.KnobSetting].Where(x => x.Original == sourceRole).Sum(x => x.Chance);
+                        r = _plugin.Rng.NextDouble() * playerUpgradeChance.Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
 
@@ -97,11 +96,13 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.Scp914EffectChances != null && _plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting) && (ev.Player.Role.Side != Side.Scp || !_plugin.Config.ScpsImmuneTo914Effects))
             {
-                foreach ((EffectType effect, double chance, float duration) in _plugin.Config.Scp914EffectChances[ev.KnobSetting])
+                IEnumerable<Scp914EffectChance> scp914EffectChances = _plugin.Config.Scp914EffectChances[ev.KnobSetting];
+
+                foreach ((EffectType effect, double chance, float duration) in scp914EffectChances)
                 {
                     double r;
                     if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914EffectChances[ev.KnobSetting].Sum(x => x.Chance);
+                        r = _plugin.Rng.NextDouble() * scp914EffectChances.Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
 
@@ -117,11 +118,13 @@ namespace Common_Utilities.EventHandlers
 
             if (_plugin.Config.Scp914TeleportChances != null && _plugin.Config.Scp914TeleportChances.ContainsKey(ev.KnobSetting))
             {
+                IEnumerable<Scp914TeleportChance> scp914TeleportChances = _plugin.Config.Scp914TeleportChances[ev.KnobSetting];
+
                 foreach ((RoomType roomType, Vector3 offset, double chance, float damage, ZoneType zone) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     double r;
                     if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * _plugin.Config.Scp914TeleportChances[ev.KnobSetting].Sum(x => x.Chance);
+                        r = _plugin.Rng.NextDouble() * scp914TeleportChances.Sum(x => x.Chance);
                     else
                         r = _plugin.Rng.NextDouble() * 100;
 
@@ -167,7 +170,7 @@ namespace Common_Utilities.EventHandlers
             if (newItem is not ItemType.None)
             {
                 Item item = Item.Create(newItem);
-                if (oldItem is Exiled.API.Features.Pickups.FirearmPickup oldFirearm && item is Firearm firearm)
+                if (oldItem is FirearmPickup oldFirearm && item is Firearm firearm)
                     firearm.Ammo = oldFirearm.Ammo <= firearm.MaxAmmo ? oldFirearm.Ammo : firearm.MaxAmmo;
 
                 item.CreatePickup(pos);
