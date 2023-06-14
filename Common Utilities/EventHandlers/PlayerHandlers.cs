@@ -24,7 +24,6 @@ namespace Common_Utilities.EventHandlers
             if (!string.IsNullOrEmpty(message))
                 ev.Player.Broadcast(_plugin.Config.JoinMessageDuration, message);
         }
-        
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
             if (ev.Player == null)
@@ -49,17 +48,18 @@ namespace Common_Utilities.EventHandlers
                     if (_plugin.Config.StartingInventories[ev.NewRole].Ammo.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
                     {
                         ev.Ammo.Clear();
-                            foreach ((ItemType type, ushort amount, string group) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
+                        foreach ((ItemType type, ushort amount, string group) in _plugin.Config.StartingInventories[ev.NewRole].Ammo)
+                        {
+                            if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
                             {
-                                if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
-                                {
-                                    ev.Ammo.Add(type, amount);
-                                }
+                                ev.Ammo.Add(type, amount);
                             }
+                        }
                     }
                 }
             }
         }
+
         public void OnSpawned(SpawnedEventArgs ev)
         {
             if (ev.Player == null)
@@ -107,9 +107,10 @@ namespace Common_Utilities.EventHandlers
                     r = _plugin.Rng.NextDouble() * itemChances.Sum(val => val.Chance);
                 else
                     r = _plugin.Rng.NextDouble() * 100;
-
+                Log.Debug($"[StartItems] ActualChance ({r})/{itemChances.Sum(val => val.Chance)}");
                 foreach ((string item, double chance, string groupKey) in itemChances)
-                {                    
+                {
+                    Log.Debug($"[StartItems] Probability ({r})/{chance}");
                     if (r <= chance)
                     {
                         if (Enum.TryParse(item, true, out ItemType type))
@@ -129,6 +130,7 @@ namespace Common_Utilities.EventHandlers
                         else
                             Log.Warn($"{nameof(StartItems)}: {item} is not a valid ItemType or it is a CustomItem that is not installed! It is being skipper in inventory decisions.");
                     }
+                    r -= chance;
                 }
             }
 

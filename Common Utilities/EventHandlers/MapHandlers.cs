@@ -39,6 +39,7 @@ namespace Common_Utilities.EventHandlers
                         ev.IsAllowed = false;
                         break;
                     }
+                    r -= chance;
                 }
             }
         }
@@ -65,6 +66,7 @@ namespace Common_Utilities.EventHandlers
                             ev.Player.AddItem(destinationItem);
                         break;
                     }
+                    r -= chance;
                 }
             }
         }
@@ -91,6 +93,7 @@ namespace Common_Utilities.EventHandlers
                         ev.Player.Position = ev.OutputPosition;
                         break;
                     }
+                    r -= chance;
                 }
             }
 
@@ -113,6 +116,7 @@ namespace Common_Utilities.EventHandlers
                         if (_plugin.Config.Scp914EffectsExclusivity)
                             break;
                     }
+                    r -= chance;
                 }
             }
 
@@ -161,6 +165,7 @@ namespace Common_Utilities.EventHandlers
 
                         break;
                     }
+                    r -= chance;
                 }
             }
         }
