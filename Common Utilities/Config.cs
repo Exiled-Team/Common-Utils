@@ -183,7 +183,7 @@ namespace Common_Utilities
                 {
                     new()
                     {
-                        Effect = EffectType.AmnesiaVision,
+                        Effect = EffectType.Bleeding,
                         Chance = 100,
                     }
                 }
