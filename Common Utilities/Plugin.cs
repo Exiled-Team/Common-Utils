@@ -75,8 +75,8 @@ namespace Common_Utilities
                     foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config
                         .Scp914ClassChanges)
                     {
-                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, double chance, RoleSpawnFlags spawnFlags) in upgrade.Value)
-                            Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} RoleSpawnFlags: {spawnFlags}");
+                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, double chance, bool keepInventory) in upgrade.Value)
+                            Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory}");
                     }
                 }
 

@@ -77,7 +77,7 @@ namespace Common_Utilities.EventHandlers
             {
                 IEnumerable<PlayerUpgradeChance> playerUpgradeChance = _plugin.Config.Scp914ClassChanges[ev.KnobSetting].Where(x => x.Original == ev.Player.Role);
 
-                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, double chance, RoleSpawnFlags spawnFlags) in playerUpgradeChance)
+                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, double chance, bool keepInventory) in playerUpgradeChance)
                 {
                     double r;
                     if (_plugin.Config.AdditiveProbabilities)
@@ -88,7 +88,7 @@ namespace Common_Utilities.EventHandlers
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})");
                     if (r <= chance)
                     {
-                        ev.Player.Role.Set(destinationRole, SpawnReason.Respawn, spawnFlags);
+                        ev.Player.Role.Set(destinationRole, SpawnReason.Respawn, keepInventory ? RoleSpawnFlags.None : RoleSpawnFlags.AssignInventory);
 
                         ev.Player.Position = ev.OutputPosition;
                         break;
