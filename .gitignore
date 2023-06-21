@@ -1,6 +1,6 @@
-/Common-Utils/bin/*
-/Common-Utils/obj/*
-/Common-Utils.sln.DotSettings.user
+/Common Utilities/bin/*
+/Common Utilities/obj/*
+/Common Utilities.sln.DotSettings.user
 /packages
 /packages/*
 /.idea/*
