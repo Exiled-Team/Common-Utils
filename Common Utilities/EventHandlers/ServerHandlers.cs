@@ -66,44 +66,6 @@ public class ServerHandlers
         plugin.Coroutines.Clear();
     }
 
-    private IEnumerator<float> ServerBroadcast()
-    {
-        for (; ; )
-        {
-            yield return Timing.WaitForSeconds(plugin.Config.TimedBroadcastDelay);
-
-            Map.Broadcast(plugin.Config.TimedBroadcastDuration, plugin.Config.TimedBroadcast);
-        }
-    }
-
-    private IEnumerator<float> ItemCleanup()
-    {
-        for (; ; )
-        {
-            yield return Timing.WaitForSeconds(plugin.Config.ItemCleanupDelay);
-
-            foreach (Pickup pickup in Pickup.List.ToList())
-            {
-                if (!plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
-                    pickup.Destroy();
-            }
-        }
-    }
-
-    private IEnumerator<float> RagdollCleanup()
-    {
-        for (; ; )
-        {
-            yield return Timing.WaitForSeconds(plugin.Config.RagdollCleanupDelay);
-
-            foreach (Ragdoll ragdoll in Ragdoll.List.ToList())
-            {
-                if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
-                    ragdoll.Destroy();
-            }
-        }
-    }
-
     public void OnRestartingRound()
     {
         foreach (CoroutineHandle coroutine in plugin.Coroutines)
@@ -155,8 +117,7 @@ public class ServerHandlers
                 else if (plugin.AfkDict[player].Item1 >= (plugin.Config.AfkLimit / 2))
                 {
                     player.ClearBroadcasts();
-                    player.Broadcast(5,
-                                     $"You have been AFK for {plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {plugin.Config.AfkLimit} seconds.");
+                    player.Broadcast(5, $"You have been AFK for {plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {plugin.Config.AfkLimit} seconds.");
                 }
 
                 plugin.AfkDict[player] = new Tuple<int, Vector3>(plugin.AfkDict[player].Item1 + 1, plugin.AfkDict[player].Item2);
@@ -185,5 +146,43 @@ public class ServerHandlers
 
         if (plugin.Config.AutonukeLock)
             Warhead.IsLocked = true;
+    }
+
+    private IEnumerator<float> ServerBroadcast()
+    {
+        for (; ; )
+        {
+            yield return Timing.WaitForSeconds(plugin.Config.TimedBroadcastDelay);
+
+            Map.Broadcast(plugin.Config.TimedBroadcastDuration, plugin.Config.TimedBroadcast);
+        }
+    }
+
+    private IEnumerator<float> ItemCleanup()
+    {
+        for (; ; )
+        {
+            yield return Timing.WaitForSeconds(plugin.Config.ItemCleanupDelay);
+
+            foreach (Pickup pickup in Pickup.List.ToList())
+            {
+                if (!plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
+                    pickup.Destroy();
+            }
+        }
+    }
+
+    private IEnumerator<float> RagdollCleanup()
+    {
+        for (; ; )
+        {
+            yield return Timing.WaitForSeconds(plugin.Config.RagdollCleanupDelay);
+
+            foreach (Ragdoll ragdoll in Ragdoll.List.ToList())
+            {
+                if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
+                    ragdoll.Destroy();
+            }
+        }
     }
 }

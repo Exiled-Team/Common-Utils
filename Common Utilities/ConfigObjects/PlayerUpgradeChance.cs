@@ -1,12 +1,12 @@
-using PlayerRoles;
-
 namespace Common_Utilities.ConfigObjects;
+
+using PlayerRoles;
 
 public class PlayerUpgradeChance
 {
     public RoleTypeId Original { get; set; }
 
-    public string New { get; set; }
+    public string New { get; set; } = RoleTypeId.Spectator.ToString();
 
     public double Chance { get; set; }
 

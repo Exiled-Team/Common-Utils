@@ -46,12 +46,12 @@ public class PlayerHandlers
             ev.Items.Clear();
             ev.Items.AddRange(StartItems(ev.NewRole, ev.Player));
 
-            if (plugin.Config.StartingInventories[ev.NewRole].Ammo?.Count > 0)
+            if (plugin.Config.StartingInventories[ev.NewRole]?.Ammo?.Count > 0)
             {
-                if (plugin.Config.StartingInventories[ev.NewRole].Ammo!.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
+                if (plugin.Config.StartingInventories[ev.NewRole] !.Ammo!.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
                 {
                     ev.Ammo.Clear();
-                    foreach ((ItemType type, ushort amount, string group) in plugin.Config.StartingInventories[ev.NewRole].Ammo!)
+                    foreach ((ItemType type, ushort amount, string group) in plugin.Config.StartingInventories[ev.NewRole] !.Ammo!)
                     {
                         if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
                         {
@@ -74,14 +74,13 @@ public class PlayerHandlers
         }
 
         if (plugin.Config.AfkIgnoredRoles.Contains(ev.NewRole) && plugin.AfkDict.ContainsKey(ev.Player))
-            plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole is RoleTypeId.Spectator ? plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);;
+            plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole is RoleTypeId.Spectator ? plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);
     }
 
     public void OnPlayerDied(DiedEventArgs ev)
     {
         if (ev.Player != null && plugin.Config.HealthOnKill != null && plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))
         {
-
             if (ev.Player.Health + plugin.Config.HealthOnKill[ev.Player.Role] <= ev.Player.MaxHealth)
                 ev.Player.Health += plugin.Config.HealthOnKill[ev.Player.Role];
             else
@@ -96,10 +95,10 @@ public class PlayerHandlers
         if (plugin.Config.StartingInventories is null)
             return new List<ItemType>();
 
-        for (int i = 0; i < plugin.Config.StartingInventories[role].UsedSlots; i++)
+        for (int i = 0; i < plugin.Config.StartingInventories[role]?.UsedSlots; i++)
         {
             int r = Loader.Random.Next(101);
-            foreach ((string item, double chance, string groupKey) in plugin.Config.StartingInventories[role][i])
+            foreach ((string item, double chance, string groupKey) in plugin.Config.StartingInventories[role] ![i] !)
             {
                 if (player != null && !string.IsNullOrEmpty(groupKey) && groupKey != "none" && (!ServerStatic.PermissionsHandler._groups.TryGetValue(groupKey, out var group) || group != player.Group))
                     continue;

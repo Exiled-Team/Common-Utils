@@ -1,7 +1,6 @@
-using PlayerRoles;
-
 namespace Common_Utilities;
 
+using PlayerRoles;
 using System;
 using System.Collections.Generic;
 using ConfigObjects;
@@ -15,7 +14,6 @@ using Scp914;
 using UnityEngine;
 using Server = Exiled.Events.Handlers.Server;
 using Player = Exiled.Events.Handlers.Player;
-using Random = System.Random;
 using Scp914 = Exiled.Events.Handlers.Scp914;
 
 public class Plugin : Plugin<Config>

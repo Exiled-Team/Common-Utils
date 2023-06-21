@@ -1,8 +1,3 @@
-using Exiled.API.Features;
-using Exiled.API.Features.Pickups;
-using Exiled.Events.EventArgs.Scp914;
-using PlayerRoles;
-
 namespace Common_Utilities.EventHandlers;
 
 using System;
@@ -11,6 +6,10 @@ using System.Linq;
 
 using Common_Utilities.ConfigObjects;
 
+using Exiled.API.Features;
+using Exiled.API.Features.Pickups;
+using Exiled.Events.EventArgs.Scp914;
+using PlayerRoles;
 using Exiled.API.Enums;
 using Exiled.API.Features.Items;
 using Exiled.CustomRoles.API.Features;

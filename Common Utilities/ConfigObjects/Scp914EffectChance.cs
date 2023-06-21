@@ -5,7 +5,9 @@ using Exiled.API.Enums;
 public class Scp914EffectChance
 {
     public EffectType Effect { get; set; }
+
     public double Chance { get; set; }
+
     public float Duration { get; set; }
 
     public void Deconstruct(out EffectType effect, out double chance, out float duration)
