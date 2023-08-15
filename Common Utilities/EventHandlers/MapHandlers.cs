@@ -31,7 +31,7 @@ public class MapHandlers
     {
         if (plugin.Config.Scp914ItemChanges != null && plugin.Config.Scp914ItemChanges.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance>? change))
         {
-            foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in change)
+            foreach ((ItemType sourceItem, ItemType destinationItem, double chance, int count) in change)
             {
                 if (sourceItem != ev.Pickup.Type)
                     continue;
@@ -40,7 +40,7 @@ public class MapHandlers
                 Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                 if (r <= chance)
                 {
-                    UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition);
+                    UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition, count);
                     ev.IsAllowed = false;
                     break;
                 }
@@ -52,7 +52,7 @@ public class MapHandlers
     {
         if (plugin.Config.Scp914ItemChanges != null && plugin.Config.Scp914ItemChanges.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance>? change))
         {
-            foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in change)
+            foreach ((ItemType sourceItem, ItemType destinationItem, double chance, int count) in change)
             {
                 if (sourceItem != ev.Item.Type)
                     continue;
@@ -63,7 +63,11 @@ public class MapHandlers
                 {
                     ev.Player.RemoveItem(ev.Item);
                     if (destinationItem is not ItemType.None)
-                        ev.Player.AddItem(destinationItem);
+                    {
+                        for (int i = 0; i < count && !ev.Player.IsInventoryFull; i++)
+                            ev.Player.AddItem(destinationItem);
+                    }
+
                     break;
                 }
             }
@@ -173,15 +177,18 @@ public class MapHandlers
         }
     }
 
-    internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos)
+    internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos, int count)
     {
         if (newItem is not ItemType.None)
         {
-            Item item = Item.Create(newItem);
-            if (oldItem is Exiled.API.Features.Pickups.FirearmPickup oldFirearm && item is Firearm firearm)
-                firearm.Ammo = oldFirearm.Ammo <= firearm.MaxAmmo ? oldFirearm.Ammo : firearm.MaxAmmo;
+            for (int i = 0; i < count; i++)
+            {
+                Item item = Item.Create(newItem);
+                if (oldItem is Exiled.API.Features.Pickups.FirearmPickup oldFirearm && item is Firearm firearm)
+                    firearm.Ammo = oldFirearm.Ammo <= firearm.MaxAmmo ? oldFirearm.Ammo : firearm.MaxAmmo;
 
-            item.CreatePickup(pos);
+                item.CreatePickup(pos);
+            }
         }
 
         oldItem.Destroy();

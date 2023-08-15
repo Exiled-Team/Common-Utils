@@ -75,8 +75,8 @@ public class Plugin : Plugin<Config>
                 Log.Debug($"{Config.Scp914ItemChanges.Count}");
                 foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
                 {
-                    foreach ((ItemType oldItem, ItemType newItem, double chance) in upgrade.Value)
-                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
+                    foreach ((ItemType oldItem, ItemType newItem, double chance, int count) in upgrade.Value)
+                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance} - {count}");
                 }
             }
 
