@@ -27,7 +27,7 @@
     <HarmonyVersion>2.2.2</HarmonyVersion>
     <StyleCopVersion>1.1.118</StyleCopVersion>
     <SemanticVersioningVersion>1.3.0</SemanticVersioningVersion>
-    <ExiledVersion>7.0.0-rc.5</ExiledVersion>
+    <ExiledVersion>8.0.0-beta.1</ExiledVersion>
 
     <Copyright>Copyright © $(Authors) 2020 - $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
     <RepositoryType>Git</RepositoryType>

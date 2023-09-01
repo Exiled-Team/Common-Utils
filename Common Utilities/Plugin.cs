@@ -27,7 +27,7 @@ public class Plugin : Plugin<Config>
 
     public override string Author => "Joker119";
 
-    public override Version RequiredExiledVersion { get; } = new(6, 0, 0);
+    public override Version RequiredExiledVersion { get; } = new(8, 0, 0);
 
     public override string Prefix => "CommonUtilities";
 
@@ -133,7 +133,6 @@ public class Plugin : Plugin<Config>
         Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
         Player.Escaping += PlayerHandlers.OnPlayerEscaping;
         Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
-        Player.ProcessingHotkey += PlayerHandlers.AntiAfkEventHandler;
         Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
         Player.ChangingMoveState += PlayerHandlers.AntiAfkEventHandler;
         Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
@@ -170,7 +169,6 @@ public class Plugin : Plugin<Config>
         Player.ChangingRole -= PlayerHandlers.OnChangingRole;
         Player.ThrownProjectile -= PlayerHandlers.AntiAfkEventHandler;
         Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
-        Player.ProcessingHotkey -= PlayerHandlers.AntiAfkEventHandler;
         Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
         Player.ChangingMoveState -= PlayerHandlers.AntiAfkEventHandler;
         Player.InteractingElevator -= PlayerHandlers.OnInteractingElevator;
