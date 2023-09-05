@@ -26,6 +26,15 @@ public class PlayerHandlers
         if (!string.IsNullOrEmpty(message))
             ev.Player.Broadcast(plugin.Config.JoinMessageDuration, message);
     }
+    
+    public void OnSpawned(SpawnedEventArgs ev)
+    {
+        if (plugin.Config.HealthValues != null && plugin.Config.HealthValues.ContainsKey(ev.Player.Role))
+        {
+            ev.Player.MaxHealth = plugin.Config.HealthValues[ev.Player.Role];
+            ev.Player.Health = plugin.Config.HealthValues[ev.Player.Role];
+        }
+    }
 
     public void OnChangingRole(ChangingRoleEventArgs ev)
     {
@@ -60,12 +69,6 @@ public class PlayerHandlers
                     }
                 }
             }
-        }
-
-        if (plugin.Config.HealthValues != null && plugin.Config.HealthValues.ContainsKey(ev.NewRole))
-        {
-            ev.Player.Health = plugin.Config.HealthValues[ev.NewRole];
-            ev.Player.MaxHealth = plugin.Config.HealthValues[ev.NewRole];
         }
 
         if (ev.NewRole is not RoleTypeId.Spectator && plugin.Config.PlayerHealthInfo)
