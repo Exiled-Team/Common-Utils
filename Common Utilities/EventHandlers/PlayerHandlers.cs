@@ -82,12 +82,12 @@ public class PlayerHandlers
 
     public void OnPlayerDied(DiedEventArgs ev)
     {
-        if (ev.Player != null && plugin.Config.HealthOnKill != null && plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))
+        if (ev.Attacker != null && plugin.Config.HealthOnKill != null && plugin.Config.HealthOnKill.ContainsKey(ev.Attacker.Role))
         {
-            if (ev.Player.Health + plugin.Config.HealthOnKill[ev.Player.Role] <= ev.Player.MaxHealth)
-                ev.Player.Health += plugin.Config.HealthOnKill[ev.Player.Role];
+            if (ev.Attacker.Health + plugin.Config.HealthOnKill[ev.Attacker.Role] <= ev.Attacker.MaxHealth)
+                ev.Attacker.Health += plugin.Config.HealthOnKill[ev.Attacker.Role];
             else
-                ev.Player.Health = ev.Player.MaxHealth;
+                ev.Attacker.Health = ev.Attacker.MaxHealth;
         }
     }
 
