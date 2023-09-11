@@ -9,6 +9,8 @@ using Exiled.Events.EventArgs.Interfaces;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Loader;
 
+using MEC;
+
 using PlayerRoles;
 using UnityEngine;
 
@@ -62,29 +64,15 @@ public class PlayerHandlers
             }
         }
 
-        if (plugin.Config.HealthValues != null && plugin.Config.HealthValues.ContainsKey(ev.NewRole))
-        {
-            ev.Player.Health = plugin.Config.HealthValues[ev.NewRole];
-            ev.Player.MaxHealth = plugin.Config.HealthValues[ev.NewRole];
-        }
-
-        if (ev.NewRole is not RoleTypeId.Spectator && plugin.Config.PlayerHealthInfo)
-        {
-            ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
-        }
-
         if (plugin.Config.AfkIgnoredRoles.Contains(ev.NewRole) && plugin.AfkDict.ContainsKey(ev.Player))
             plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(ev.NewRole is RoleTypeId.Spectator ? plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);
     }
 
     public void OnPlayerDied(DiedEventArgs ev)
     {
-        if (ev.Player != null && plugin.Config.HealthOnKill != null && plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))
+        if (ev.Attacker != null && plugin.Config.HealthOnKill != null && plugin.Config.HealthOnKill.TryGetValue(ev.Attacker.Role.Type, out float amount))
         {
-            if (ev.Player.Health + plugin.Config.HealthOnKill[ev.Player.Role] <= ev.Player.MaxHealth)
-                ev.Player.Health += plugin.Config.HealthOnKill[ev.Player.Role];
-            else
-                ev.Player.Health = ev.Player.MaxHealth;
+            ev.Attacker.Heal(amount);
         }
     }
 
@@ -138,8 +126,13 @@ public class PlayerHandlers
             ev.Amount *= multiplier;
         }
 
-        if (plugin.Config.PlayerHealthInfo)
-            ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
+        Timing.CallDelayed(
+            0.25f,
+            () =>
+            {
+                if (plugin.Config.PlayerHealthInfo)
+                    ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
+            });
 
         if (ev.Attacker is not null && plugin.AfkDict.ContainsKey(ev.Attacker))
         {
@@ -213,6 +206,20 @@ public class PlayerHandlers
         }
     }
 
+    public void OnPlayerSpawned(SpawnedEventArgs ev)
+    {
+        if (plugin.Config.HealthValues != null && plugin.Config.HealthValues.TryGetValue(ev.Player.Role.Type, out int amount))
+        {
+            ev.Player.MaxHealth = amount;
+            ev.Player.Health = amount;
+        }
+
+        if (ev.Player.Role.Type is not RoleTypeId.Spectator && plugin.Config.PlayerHealthInfo)
+        {
+            ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
+        }
+    }
+    
     private string FormatJoinMessage(Player player) =>
         string.IsNullOrEmpty(plugin.Config.JoinMessage) ? string.Empty : plugin.Config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
 }

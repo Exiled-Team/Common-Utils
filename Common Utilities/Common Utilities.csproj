@@ -8,8 +8,8 @@
         <Version>7.0.4</Version>
         <LangVersion>default</LangVersion>
         <Nullable>enable</Nullable>
-        <AssemblyVersion>7.0.5</AssemblyVersion>
-        <FileVersion>7.0.5</FileVersion>
+        <AssemblyVersion>7.0.6</AssemblyVersion>
+        <FileVersion>7.0.6</FileVersion>
     </PropertyGroup>
 
     <Import Project="../Plugin.props" />
