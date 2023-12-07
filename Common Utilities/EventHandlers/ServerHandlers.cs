@@ -85,8 +85,8 @@ namespace Common_Utilities.EventHandlers
                 _plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
 
             // Fix GrandLoadout not able to give this 2 inventory
-            StartingInventories.DefinedInventories.Add(RoleTypeId.Tutorial, new(Array.Empty<ItemType>(), new()));
-            StartingInventories.DefinedInventories.Add(RoleTypeId.ClassD, new(Array.Empty<ItemType>(), new()));
+            StartingInventories.DefinedInventories[RoleTypeId.Tutorial] = new(Array.Empty<ItemType>(), new());
+            StartingInventories.DefinedInventories[RoleTypeId.ClassD] = new(Array.Empty<ItemType>(), new());
 
             Warhead.IsLocked = false;
         }

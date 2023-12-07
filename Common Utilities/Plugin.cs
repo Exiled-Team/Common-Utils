@@ -122,7 +122,6 @@ namespace Common_Utilities
             Player.Spawned += PlayerHandlers.OnSpawned;
             Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
-            Player.ProcessingHotkey += PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
             Player.ChangingMoveState += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
@@ -160,7 +159,6 @@ namespace Common_Utilities
             Player.Spawned -= PlayerHandlers.OnSpawned;
             Player.ThrownProjectile -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
-            Player.ProcessingHotkey -= PlayerHandlers.AntiAfkEventHandler;
             Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
             Player.ChangingMoveState -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingElevator -= PlayerHandlers.OnInteractingElevator;
