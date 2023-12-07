@@ -1,16 +1,15 @@
+namespace Common_Utilities;
+
+using Exiled.API.Features;
+using System.Collections.Generic;
+
 using PlayerRoles;
 
-namespace Common_Utilities
+public static class API
 {
-    using Exiled.API.Features;
-    using System.Collections.Generic;
+    public static List<ItemType> GetStartItems(RoleTypeId role) => Plugin.Instance.PlayerHandlers.StartItems(role);
 
-    public static class API
-    {
-        public static List<ItemType> GetStartItems(RoleTypeId role) => Plugin.Singleton.PlayerHandlers.StartItems(role);
+    public static List<ItemType> GetStartItems(RoleTypeId role, Player player) => Plugin.Instance.PlayerHandlers.StartItems(role, player);
 
-        public static List<ItemType> GetStartItems(RoleTypeId role, Player player) => Plugin.Singleton.PlayerHandlers.StartItems(role, player);
-
-        public static float GetHealthOnKill(RoleTypeId role) => Plugin.Singleton.Config.HealthOnKill.ContainsKey(role) ? Plugin.Singleton.Config.HealthOnKill[role] : 0f;
-    }
+    public static float GetHealthOnKill(RoleTypeId role) => Plugin.Instance.Config.HealthOnKill?.ContainsKey(role) ?? false ? Plugin.Instance.Config.HealthOnKill[role] : 0f;
 }
