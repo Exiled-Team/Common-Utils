@@ -1,5 +1,6 @@
 namespace Common_Utilities.EventHandlers
 {
+#pragma warning disable IDE0018
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -85,8 +86,8 @@ namespace Common_Utilities.EventHandlers
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
             }
 
-            if (plugin.Config.AfkIgnoredRoles.Contains(newRole) && plugin.AfkDict.ContainsKey(ev.Player))
-                plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(newRole is RoleTypeId.Spectator ? plugin.AfkDict[ev.Player].Item1 : 0, ev.Player.Position);
+            if (plugin.Config.AfkIgnoredRoles.Contains(newRole) && plugin.AfkDict.TryGetValue(ev.Player, out Tuple<int, Vector3> value))
+                plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(newRole is RoleTypeId.Spectator ? value.Item1 : 0, ev.Player.Position);
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
@@ -148,13 +149,12 @@ namespace Common_Utilities.EventHandlers
         
         public void OnPlayerHurting(HurtingEventArgs ev)
         {
-            if (plugin.Config.RoleDamageMultipliers != null && ev.Attacker != null && plugin.Config.RoleDamageMultipliers.ContainsKey(ev.Attacker.Role))
-                ev.Amount *= plugin.Config.RoleDamageMultipliers[ev.Attacker.Role];
+            float damageMultiplier;
+            if (plugin.Config.RoleDamageMultipliers != null && ev.Attacker != null && plugin.Config.RoleDamageMultipliers.TryGetValue(ev.Attacker.Role, out damageMultiplier))
+                ev.Amount *= damageMultiplier;
 
-            if (plugin.Config.DamageMultipliers != null && plugin.Config.DamageMultipliers.ContainsKey(ev.DamageHandler.Type))
-            {
-                ev.Amount *= plugin.Config.DamageMultipliers[ev.DamageHandler.Type];
-            }
+            if (plugin.Config.DamageMultipliers != null && plugin.Config.DamageMultipliers.TryGetValue(ev.DamageHandler.Type, out damageMultiplier))
+                ev.Amount *= damageMultiplier;
 
             if (plugin.Config.PlayerHealthInfo)
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
