@@ -1,32 +1,27 @@
-﻿using Exiled.API.Features;
-using HarmonyLib;
-using InventorySystem;
-using InventorySystem.Configs;
-using InventorySystem.Items;
-using PlayerRoles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common_Utilities.EventHandlers;
-using Common_Utilities.ConfigObjects;
-using Common_Utilities.Configs;
-
-namespace Common_Utilities.Patches
+﻿namespace Common_Utilities.Patches
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Common_Utilities.ConfigObjects;
+    using Common_Utilities.Configs;
+    using Exiled.API.Features;
+    using HarmonyLib;
+    using InventorySystem;
+    using PlayerRoles;
+
     [HarmonyPatch(typeof(InventoryItemProvider), nameof(InventoryItemProvider.ServerGrantLoadout))]
     public class ServerGrantLoadoutPatches
     {
         public static bool Prefix(ReferenceHub target, RoleTypeId roleTypeId, bool resetInventory = true)
         {
-            if (Plugin.Singleton.Config.StartingInventories == null || !Plugin.Singleton.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) || !Player.TryGet(target, out Player player))
+            if (Main.Singleton.Config.StartingInventories == null || !Main.Singleton.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) || !Player.TryGet(target, out Player player))
                 return true;
 
             if (resetInventory)
                 player.ClearInventory();
 
-            player.AddItem(Plugin.Singleton.PlayerHandlers.StartItems(roleTypeId, player));
+            player.AddItem(Main.Singleton.PlayerHandlers.StartItems(roleTypeId, player));
 
             if (startingInventories.Ammo != null && startingInventories.Ammo.Count > 0)
             {

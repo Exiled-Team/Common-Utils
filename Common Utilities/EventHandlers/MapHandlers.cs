@@ -1,36 +1,41 @@
-using Exiled.API.Features;
-using Exiled.API.Features.Pickups;
-using Exiled.Events.EventArgs.Scp914;
-using PlayerRoles;
-
 namespace Common_Utilities.EventHandlers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+
     using Common_Utilities.ConfigObjects;
     using Exiled.API.Enums;
+    using Exiled.API.Features;
     using Exiled.API.Features.Items;
+    using Exiled.API.Features.Pickups;
+    using Exiled.CustomRoles.API.Features;
+    using Exiled.Events.EventArgs.Scp914;
+    using MEC;
+    using PlayerRoles;
     using UnityEngine;
+
     using Firearm = Exiled.API.Features.Items.Firearm;
 
     public class MapHandlers
     {
-        private readonly Plugin _plugin;
-        public MapHandlers(Plugin plugin) => _plugin = plugin;
+        private readonly Main plugin;
+
+        public MapHandlers(Main plugin) => this.plugin = plugin;
         
         public void OnScp914UpgradingItem(UpgradingPickupEventArgs ev)
         {
-            if (_plugin.Config.Scp914ItemChanges != null && _plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ItemChanges != null && plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                IEnumerable<ItemUpgradeChance> itemUpgradeChance = _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Pickup.Type);
+                IEnumerable<ItemUpgradeChance> itemUpgradeChance = plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Pickup.Type);
 
-                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in itemUpgradeChance)
+                foreach ((ItemType sourceItem, ItemType destinationItem, double chance, int count) in itemUpgradeChance)
                 {
                     double r;
-                    if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * itemUpgradeChance.Sum(x => x.Chance);
+                    if (plugin.Config.AdditiveProbabilities)
+                        r = plugin.Rng.NextDouble() * itemUpgradeChance.Sum(x => x.Chance);
                     else
-                        r = _plugin.Rng.NextDouble() * 100;
+                        r = plugin.Rng.NextDouble() * 100;
 
                     Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
@@ -39,6 +44,7 @@ namespace Common_Utilities.EventHandlers
                         ev.IsAllowed = false;
                         break;
                     }
+
                     r -= chance;
                 }
             }
@@ -46,17 +52,17 @@ namespace Common_Utilities.EventHandlers
 
         public void OnScp914UpgradingInventoryItem(UpgradingInventoryItemEventArgs ev)
         {
-            if (_plugin.Config.Scp914ItemChanges != null && _plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ItemChanges != null && plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
-                IEnumerable<ItemUpgradeChance> itemUpgradeChance = _plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Item.Type);
+                IEnumerable<ItemUpgradeChance> itemUpgradeChance = plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Item.Type);
 
-                foreach ((ItemType sourceItem, ItemType destinationItem, double chance) in itemUpgradeChance)
+                foreach ((ItemType sourceItem, ItemType destinationItem, double chance, int count) in itemUpgradeChance)
                 {
                     double r;
-                    if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * itemUpgradeChance.Sum(x => x.Chance);
+                    if (plugin.Config.AdditiveProbabilities)
+                        r = plugin.Rng.NextDouble() * itemUpgradeChance.Sum(x => x.Chance);
                     else
-                        r = _plugin.Rng.NextDouble() * 100;
+                        r = plugin.Rng.NextDouble() * 100;
 
                     Log.Debug($"{nameof(OnScp914UpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
@@ -66,6 +72,7 @@ namespace Common_Utilities.EventHandlers
                             ev.Player.AddItem(destinationItem);
                         break;
                     }
+
                     r -= chance;
                 }
             }
@@ -73,64 +80,77 @@ namespace Common_Utilities.EventHandlers
 
         public void OnScp914UpgradingPlayer(UpgradingPlayerEventArgs ev)
         {
-            if (_plugin.Config.Scp914ClassChanges != null && _plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ClassChanges != null && plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
             {
-                IEnumerable<PlayerUpgradeChance> playerUpgradeChance = _plugin.Config.Scp914ClassChanges[ev.KnobSetting].Where(x => x.Original == ev.Player.Role);
+                IEnumerable<PlayerUpgradeChance> playerUpgradeChance = plugin.Config.Scp914ClassChanges[ev.KnobSetting].Where(x => x.Original == ev.Player.Role);
 
-                foreach ((RoleTypeId sourceRole, RoleTypeId destinationRole, double chance, bool keepInventory) in playerUpgradeChance)
+                foreach ((RoleTypeId sourceRole, string destinationRole, double chance, bool keepInventory) in playerUpgradeChance)
                 {
                     double r;
-                    if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * playerUpgradeChance.Sum(x => x.Chance);
+                    if (plugin.Config.AdditiveProbabilities)
+                        r = plugin.Rng.NextDouble() * playerUpgradeChance.Sum(x => x.Chance);
                     else
-                        r = _plugin.Rng.NextDouble() * 100;
+                        r = plugin.Rng.NextDouble() * 100;
 
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})");
                     if (r <= chance)
                     {
-                        ev.Player.Role.Set(destinationRole, SpawnReason.Respawn, keepInventory ? RoleSpawnFlags.None : RoleSpawnFlags.AssignInventory);
+                        if (Enum.TryParse(destinationRole, true, out RoleTypeId roleType))
+                        {
+                            ev.Player.Role.Set(roleType, SpawnReason.Respawn, RoleSpawnFlags.None);
+                        }
+                        else if (CustomRole.TryGet(destinationRole, out CustomRole? customRole))
+                        {
+                            if (customRole is not null)
+                            {
+                                customRole.AddRole(ev.Player);
+                                Timing.CallDelayed(0.5f, () => ev.Player.Teleport(ev.OutputPosition));
+                            }
+                        }
 
                         ev.Player.Position = ev.OutputPosition;
                         break;
                     }
+
                     r -= chance;
                 }
             }
 
-            if (_plugin.Config.Scp914EffectChances != null && _plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting) && (ev.Player.Role.Side != Side.Scp || !_plugin.Config.ScpsImmuneTo914Effects))
+            if (plugin.Config.Scp914EffectChances != null && plugin.Config.Scp914EffectChances.ContainsKey(ev.KnobSetting) && (ev.Player.Role.Side != Side.Scp || !plugin.Config.ScpsImmuneTo914Effects))
             {
-                IEnumerable<Scp914EffectChance> scp914EffectChances = _plugin.Config.Scp914EffectChances[ev.KnobSetting];
+                IEnumerable<Scp914EffectChance> scp914EffectChances = plugin.Config.Scp914EffectChances[ev.KnobSetting];
 
                 foreach ((EffectType effect, double chance, float duration) in scp914EffectChances)
                 {
                     double r;
-                    if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * scp914EffectChances.Sum(x => x.Chance);
+                    if (plugin.Config.AdditiveProbabilities)
+                        r = plugin.Rng.NextDouble() * scp914EffectChances.Sum(x => x.Chance);
                     else
-                        r = _plugin.Rng.NextDouble() * 100;
+                        r = plugin.Rng.NextDouble() * 100;
 
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect. {effect} ({chance}). Should be added: {r <= chance} ({r})");
                     if (r <= chance)
                     {
                         ev.Player.EnableEffect(effect, duration);
-                        if (_plugin.Config.Scp914EffectsExclusivity)
+                        if (plugin.Config.Scp914EffectsExclusivity)
                             break;
                     }
+
                     r -= chance;
                 }
             }
 
-            if (_plugin.Config.Scp914TeleportChances != null && _plugin.Config.Scp914TeleportChances.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914TeleportChances != null && plugin.Config.Scp914TeleportChances.ContainsKey(ev.KnobSetting))
             {
-                IEnumerable<Scp914TeleportChance> scp914TeleportChances = _plugin.Config.Scp914TeleportChances[ev.KnobSetting];
+                IEnumerable<Scp914TeleportChance> scp914TeleportChances = plugin.Config.Scp914TeleportChances[ev.KnobSetting];
 
-                foreach ((RoomType roomType, Vector3 offset, double chance, float damage, ZoneType zone) in _plugin.Config.Scp914TeleportChances[ev.KnobSetting])
+                foreach ((RoomType roomType, Vector3 offset, double chance, float damage, ZoneType zone) in plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     double r;
-                    if (_plugin.Config.AdditiveProbabilities)
-                        r = _plugin.Rng.NextDouble() * scp914TeleportChances.Sum(x => x.Chance);
+                    if (plugin.Config.AdditiveProbabilities)
+                        r = plugin.Rng.NextDouble() * scp914TeleportChances.Sum(x => x.Chance);
                     else
-                        r = _plugin.Rng.NextDouble() * 100;
+                        r = plugin.Rng.NextDouble() * 100;
 
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {r <= chance} ({r})");
                     if (r <= chance)
@@ -165,6 +185,7 @@ namespace Common_Utilities.EventHandlers
 
                         break;
                     }
+
                     r -= chance;
                 }
             }

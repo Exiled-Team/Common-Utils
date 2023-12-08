@@ -1,14 +1,14 @@
-using PlayerRoles;
-
 namespace Common_Utilities
 {
     using System.Collections.Generic;
     using System.ComponentModel;
+
     using ConfigObjects;
     using Configs;
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Interfaces;
+    using PlayerRoles;
     using Scp914;
     using UnityEngine;
 
@@ -20,7 +20,7 @@ namespace Common_Utilities
         [Description("The SCP Roles able to use V to talk to humans.")]
         public List<RoleTypeId> ScpSpeech { get; set; } = new()
         {
-            RoleTypeId.Scp049
+            RoleTypeId.Scp049,
         };
 
         [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
@@ -31,18 +31,22 @@ namespace Common_Utilities
         
         [Description("The text displayed at the timed interval specified below.")]
         public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
+
         [Description("The time each timed broadcast will be displayed.")]
         public ushort TimedBroadcastDuration { get; set; } = 5;
+
         [Description("The delay between each timed broadcast. To disable timed broadcasts, set this to 0")]
         public float TimedBroadcastDelay { get; set; } = 300f;
 
         [Description("The message displayed to the player when they first join the server. Setting this to empty will disable these broadcasts.")]
         public string JoinMessage { get; set; } = "<color=lime>Welcome %player%! Please read our rules!</color>";
+
         [Description("The amount of time (in seconds) the join message is displayed.")]
         public ushort JoinMessageDuration { get; set; } = 5;
 
         [Description("The amount of time (in seconds) after the round starts, before the facilities auto-nuke will start.")]
         public float AutonukeTime { get; set; } = 1500f;
+
         [Description("Wether or not the nuke should be unable to be disabled during the auto-nuke countdown.")]
         public bool AutonukeLock { get; set; } = true;
 
@@ -52,7 +56,7 @@ namespace Common_Utilities
             Content = "The auto nuke has been activated.",
             Duration = 10,
             Show = true,
-            Type = global::Broadcast.BroadcastFlags.Normal
+            Type = global::Broadcast.BroadcastFlags.Normal,
         };
 
         [Description("Whether or not to show player's health under their name when you look at them.")]
@@ -77,6 +81,7 @@ namespace Common_Utilities
             RoleTypeId.Spectator,
             RoleTypeId.Tutorial,
         };
+
         [Description("Whether or not probabilities should be additive (50 + 50 = 100) or not (50 + 50 = 2 seperate 50% chances)")]
         public bool AdditiveProbabilities { get; set; } = false;
 
@@ -118,10 +123,10 @@ namespace Common_Utilities
                             Type = ItemType.Ammo556x45,
                             Amount = 200,
                             Group = "none",
-                        }
-                    }
+                        },
+                    },
                 }
-            }
+            },
         };
 
         [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
@@ -137,7 +142,7 @@ namespace Common_Utilities
                             New = ItemType.MicroHID,
                             Chance = 50,
                         }
-                    }
+                    },
                 }
             },
         };
@@ -152,10 +157,10 @@ namespace Common_Utilities
                         new()
                         {
                             Original = RoleTypeId.ClassD,
-                            New = RoleTypeId.Spectator,
+                            New = RoleTypeId.Spectator.ToString(),
                             Chance = 100,
                         }
-                    }
+                    },
                 }
             },
         };
@@ -170,9 +175,9 @@ namespace Common_Utilities
                     {
                         Room = RoomType.LczClassDSpawn,
                         Chance = 100,
-                    }
+                    },
                 }
-            }
+            },
         };
 
         [Description("A dictionary of random effects to apply to players when going through 914 on certain settings.")]
@@ -185,9 +190,9 @@ namespace Common_Utilities
                     {
                         Effect = EffectType.Bleeding,
                         Chance = 100,
-                    }
+                    },
                 }
-            }
+            },
         };
 
         [Description("Determines if 914 effects are exclusive, meaning only one can be applied each time a player is processed by 914.")]
@@ -221,7 +226,7 @@ namespace Common_Utilities
         {
             {
                 DamageType.E11Sr, 1.0f
-            }
+            },
         };
 
         [Description("A list of roles and how much health they should be given when they kill someone.")]
@@ -243,7 +248,7 @@ namespace Common_Utilities
             },
             {
                 RoleTypeId.NtfCaptain, 150
-            }
+            },
         };
 
         [Description("If the plugin is enabled or not.")]

@@ -1,41 +1,45 @@
 namespace Common_Utilities.EventHandlers
 {
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
+
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
+
     using Exiled.API.Enums;
     using Exiled.API.Features;
-    using MEC;
-    using UnityEngine;
-    using System;
     using Exiled.API.Features.Pickups;
     using Exiled.Events.EventArgs.Server;
     using Exiled.Events.EventArgs.Warhead;
-    using PlayerRoles;
-    using System.Collections.Generic;
     using InventorySystem.Configs;
+    using MEC;
+    using PlayerRoles;
+    using UnityEngine;
 
     public class ServerHandlers
     {
-        private readonly Plugin _plugin;
-        public ServerHandlers(Plugin plugin) => _plugin = plugin;
+        private readonly Main plugin;
 
         private bool friendlyFireDisable = false;
-        
+
+        public ServerHandlers(Main plugin) => this.plugin = plugin;
+
         public void OnRoundStarted()
         {
-            if (_plugin.Config.AutonukeTime > -1)
-                _plugin.Coroutines.Add(Timing.CallDelayed(_plugin.Config.AutonukeTime, AutoNuke));
+            if (plugin.Config.AutonukeTime > -1)
+                plugin.Coroutines.Add(Timing.CallDelayed(plugin.Config.AutonukeTime, AutoNuke));
 
-            if (_plugin.Config.RagdollCleanupDelay > 0)
-                _plugin.Coroutines.Add(Timing.RunCoroutine(RagdollCleanup()));
+            if (plugin.Config.RagdollCleanupDelay > 0)
+                plugin.Coroutines.Add(Timing.RunCoroutine(RagdollCleanup()));
 
-            if (_plugin.Config.ItemCleanupDelay > 0)
-                _plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
+            if (plugin.Config.ItemCleanupDelay > 0)
+                plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
 
-            if (_plugin.Config.DisarmSwitchTeams)
-                _plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
+            if (plugin.Config.DisarmSwitchTeams)
+                plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
         }
 
-        private IEnumerator<float> BetterDisarm()
+        public IEnumerator<float> BetterDisarm()
         {
             for (; ; )
             {
@@ -68,10 +72,10 @@ namespace Common_Utilities.EventHandlers
 
         public void OnWaitingForPlayers()
         {
-            if (_plugin.Config.AfkLimit > 0)
+            if (plugin.Config.AfkLimit > 0)
             {
-                _plugin.AfkDict.Clear();
-                _plugin.Coroutines.Add(Timing.RunCoroutine(AfkCheck()));
+                plugin.AfkDict.Clear();
+                plugin.Coroutines.Add(Timing.RunCoroutine(AfkCheck()));
             }
 
             if (friendlyFireDisable)
@@ -81,8 +85,8 @@ namespace Common_Utilities.EventHandlers
                 friendlyFireDisable = false;
             }
 
-            if (_plugin.Config.TimedBroadcastDelay > 0)
-                _plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
+            if (plugin.Config.TimedBroadcastDelay > 0)
+                plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
 
             // Fix GrandLoadout not able to give this 2 inventory
             StartingInventories.DefinedInventories[RoleTypeId.Tutorial] = new(Array.Empty<ItemType>(), new());
@@ -93,76 +97,80 @@ namespace Common_Utilities.EventHandlers
         
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
-            if (_plugin.Config.FriendlyFireOnRoundEnd && !Server.FriendlyFire)
+            if (plugin.Config.FriendlyFireOnRoundEnd && !Server.FriendlyFire)
             {
                 Log.Debug($"{nameof(OnRoundEnded)}: Enabling friendly fire.");
                 Server.FriendlyFire = true;
                 friendlyFireDisable = true;
             }
 
-            foreach (CoroutineHandle coroutine in _plugin.Coroutines)
+            foreach (CoroutineHandle coroutine in plugin.Coroutines)
                 Timing.KillCoroutines(coroutine);
-            _plugin.Coroutines.Clear();
+            plugin.Coroutines.Clear();
         }
 
-        private IEnumerator<float> ServerBroadcast()
+        public IEnumerator<float> ServerBroadcast()
         {
             for (; ; )
             {
-                yield return Timing.WaitForSeconds(_plugin.Config.TimedBroadcastDelay);
+                yield return Timing.WaitForSeconds(plugin.Config.TimedBroadcastDelay);
 
-                Map.Broadcast(_plugin.Config.TimedBroadcastDuration, _plugin.Config.TimedBroadcast);
+                Map.Broadcast(plugin.Config.TimedBroadcastDuration, plugin.Config.TimedBroadcast);
             }
         }
 
-        private IEnumerator<float> ItemCleanup()
+        public IEnumerator<float> ItemCleanup()
         {
             for (; ; )
             {
-                yield return Timing.WaitForSeconds(_plugin.Config.ItemCleanupDelay);
+                yield return Timing.WaitForSeconds(plugin.Config.ItemCleanupDelay);
 
                 foreach (Pickup pickup in Pickup.List.ToList())
-                    if (!_plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
+                {
+                    if (!plugin.Config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
                         pickup.Destroy();
+                }
             }
         }
 
-        private IEnumerator<float> RagdollCleanup()
+        public IEnumerator<float> RagdollCleanup()
         {
             for (; ; )
             {
-                yield return Timing.WaitForSeconds(_plugin.Config.RagdollCleanupDelay);
+                yield return Timing.WaitForSeconds(plugin.Config.RagdollCleanupDelay);
 
                 foreach (Ragdoll ragdoll in Ragdoll.List.ToList())
-                    if (!_plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
+                {
+                    if (!plugin.Config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
                         ragdoll.Destroy();
+                }
             }
         }
 
-        private void AutoNuke()
+        public void AutoNuke()
         {
             if (!Warhead.IsInProgress)
             {
-                switch (_plugin.Config.AutonukeBroadcast.Duration)
+                switch (plugin.Config.AutonukeBroadcast.Duration)
                 {
                     case 0:
                         break;
                     case 1:
-                        Cassie.Message(_plugin.Config.AutonukeBroadcast.Content);
+                        Cassie.Message(plugin.Config.AutonukeBroadcast.Content);
                         break;
                     default:
-                        Map.Broadcast(_plugin.Config.AutonukeBroadcast);
+                        Map.Broadcast(plugin.Config.AutonukeBroadcast);
                         break;
                 }
 
                 Warhead.Start();
             }
 
-            if (_plugin.Config.AutonukeLock)
+            if (plugin.Config.AutonukeLock)
                 Warhead.IsLocked = true;
         }
 
-        private IEnumerator<float> AfkCheck()
+        public IEnumerator<float> AfkCheck()
         {
             for (; ; )
             {
@@ -170,50 +178,49 @@ namespace Common_Utilities.EventHandlers
 
                 foreach (Player player in Player.List)
                 {
-                    if (!_plugin.AfkDict.ContainsKey(player))
-                        _plugin.AfkDict.Add(player, new Tuple<int, Vector3>(0, player.Position));
+                    if (!plugin.AfkDict.ContainsKey(player))
+                        plugin.AfkDict.Add(player, new Tuple<int, Vector3>(0, player.Position));
 
-                    if (player.Role.Type == RoleTypeId.None || player.IsNoclipPermitted || player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity) || _plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
+                    if (player.Role.Type == RoleTypeId.None || player.IsNoclipPermitted || player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity) || plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
                     {
                         Log.Debug($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted} AFKImunity: {player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity)}");
                         continue;
                     }
 
-                    if ((_plugin.AfkDict[player].Item2 - player.Position).sqrMagnitude > 2)
+                    if ((plugin.AfkDict[player].Item2 - player.Position).sqrMagnitude > 2)
                     {
                         Log.Debug($"Player {player.Nickname} has moved, resetting AFK timer.");
-                        _plugin.AfkDict[player] = new Tuple<int, Vector3>(0, player.Position);
+                        plugin.AfkDict[player] = new Tuple<int, Vector3>(0, player.Position);
                     }
 
-                    if (_plugin.AfkDict[player].Item1 >= _plugin.Config.AfkLimit)
+                    if (plugin.AfkDict[player].Item1 >= plugin.Config.AfkLimit)
                     {
-                        _plugin.AfkDict.Remove(player);
+                        plugin.AfkDict.Remove(player);
                         Log.Debug($"Kicking {player.Nickname} for being AFK.");
                         player.Kick("You were kicked by a plugin for being AFK.");
                     }
-                    else if (_plugin.AfkDict[player].Item1 >= (_plugin.Config.AfkLimit / 2))
+                    else if (plugin.AfkDict[player].Item1 >= (plugin.Config.AfkLimit / 2))
                     {
                         player.ClearBroadcasts();
-                        player.Broadcast(5,
-                            $"You have been AFK for {_plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {_plugin.Config.AfkLimit} seconds.");
+                        player.Broadcast(5, $"You have been AFK for {plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {plugin.Config.AfkLimit} seconds.");
                     }
 
-                    _plugin.AfkDict[player] = new Tuple<int, Vector3>(_plugin.AfkDict[player].Item1 + 1, _plugin.AfkDict[player].Item2);
+                    plugin.AfkDict[player] = new Tuple<int, Vector3>(plugin.AfkDict[player].Item1 + 1, plugin.AfkDict[player].Item2);
                 }
             }
         }
 
         public void OnRestartingRound()
         {
-            foreach (CoroutineHandle coroutine in _plugin.Coroutines)
+            foreach (CoroutineHandle coroutine in plugin.Coroutines)
                 Timing.KillCoroutines(coroutine);
-            _plugin.Coroutines.Clear();
+            plugin.Coroutines.Clear();
         }
 
         public void OnWarheadStarting(StartingEventArgs _)
         {
             foreach (Room room in Room.List)
-                room.Color = _plugin.Config.WarheadColor;
+                room.Color = plugin.Config.WarheadColor;
         }
 
         public void OnWarheadStopping(StoppingEventArgs _)

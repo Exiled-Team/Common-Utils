@@ -1,39 +1,47 @@
-using PlayerRoles;
-
 namespace Common_Utilities
 {
+#pragma warning disable SA1401 // Fields should be private
     using System;
     using System.Collections.Generic;
+
     using ConfigObjects;
     using Configs;
     using EventHandlers;
     using Exiled.API.Enums;
-    using MEC;
     using Exiled.API.Features;
     using HarmonyLib;
+    using MEC;
+    using PlayerRoles;
     using Scp914;
     using UnityEngine;
-    using Server = Exiled.Events.Handlers.Server;
+
     using Player = Exiled.Events.Handlers.Player;
     using Random = System.Random;
     using Scp914 = Exiled.Events.Handlers.Scp914;
+    using Server = Exiled.Events.Handlers.Server;
 
-    public class Plugin : Plugin<Config>
+    public class Main : Plugin<Config>
     {
-        public override string Name { get; } = "Common Utilities";
-        public override string Author { get; } = "Joker119";
-        public override Version RequiredExiledVersion { get; } = new(7, 0, 0);
-        public override string Prefix { get; } = "CommonUtilities";
-        public override PluginPriority Priority => PluginPriority.Higher;
-
+        public static Main Singleton;
         public PlayerHandlers PlayerHandlers;
         public ServerHandlers ServerHandlers;
         public MapHandlers MapHandlers;
         public Random Rng = new();
-        public static Plugin Singleton;
-        public string HarmonyName;
         public Harmony Instance;
+        public string HarmonyName;
+
+        public override string Name { get; } = "Common Utilities";
+
+        public override string Author { get; } = "Exiled-Team";
+
+        public override Version RequiredExiledVersion { get; } = new(8, 4, 3);
+
+        public override string Prefix { get; } = "CommonUtilities";
+
+        public override PluginPriority Priority => PluginPriority.Higher;
+
         public List<CoroutineHandle> Coroutines { get; } = new();
+
         public Dictionary<Exiled.API.Features.Player, Tuple<int, Vector3>> AfkDict { get; } = new();
 
         public override void OnEnabled()
@@ -48,8 +56,9 @@ namespace Common_Utilities
                         for (int i = 0; i < inv.Value.UsedSlots; i++)
                         {
                             foreach (ItemChance chance in inv.Value[i])
-                                Log.Debug(
-                                    $"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
+                            {
+                                Log.Debug($"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
+                            }
                         }
 
                         foreach ((ItemType type, ushort amount, string group) in inv.Value.Ammo)
@@ -64,7 +73,7 @@ namespace Common_Utilities
                     Log.Debug($"{Config.Scp914ItemChanges.Count}");
                     foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
                     {
-                        foreach ((ItemType oldItem, ItemType newItem, double chance) in upgrade.Value)
+                        foreach ((ItemType oldItem, ItemType newItem, double chance, int count) in upgrade.Value)
                             Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
                     }
                 }
@@ -75,7 +84,7 @@ namespace Common_Utilities
                     foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config
                         .Scp914ClassChanges)
                     {
-                        foreach ((RoleTypeId oldRole, RoleTypeId newRole, double chance, bool keepInventory) in upgrade.Value)
+                        foreach ((RoleTypeId oldRole, string newRole, double chance, bool keepInventory) in upgrade.Value)
                             Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory}");
                     }
                 }
