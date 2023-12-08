@@ -7,15 +7,12 @@ namespace Common_Utilities.EventHandlers
     using Common_Utilities.ConfigObjects;
     using Exiled.API.Enums;
     using Exiled.API.Features;
-    using Exiled.API.Features.Items;
     using Exiled.API.Features.Pickups;
     using Exiled.CustomRoles.API.Features;
     using Exiled.Events.EventArgs.Scp914;
     using MEC;
     using PlayerRoles;
     using UnityEngine;
-
-    using Firearm = Exiled.API.Features.Items.Firearm;
 
     public class MapHandlers
     {
@@ -40,7 +37,7 @@ namespace Common_Utilities.EventHandlers
                     Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {r <= chance} ({r})");
                     if (r <= chance)
                     {
-                        UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition);
+                        UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition, count);
                         ev.IsAllowed = false;
                         break;
                     }
@@ -69,7 +66,16 @@ namespace Common_Utilities.EventHandlers
                     {
                         ev.Player.RemoveItem(ev.Item);
                         if (destinationItem is not ItemType.None)
-                            ev.Player.AddItem(destinationItem);
+                        {
+                            for (int i = 0; i < count; i++)
+                            {
+                                if (!ev.Player.IsInventoryFull)
+                                    ev.Player.AddItem(destinationItem);
+                                else
+                                    Pickup.CreateAndSpawn(destinationItem, Scp914.OutputPosition, ev.Player.Rotation, ev.Player);
+                            }
+                        }
+
                         break;
                     }
 
@@ -191,18 +197,18 @@ namespace Common_Utilities.EventHandlers
             }
         }
 
-        internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos)
+        internal void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos, int count)
         {
+            Quaternion quaternion = oldItem.Rotation;
+            Player previousOwner = oldItem.PreviousOwner;
+            oldItem.Destroy();
             if (newItem is not ItemType.None)
             {
-                Item item = Item.Create(newItem);
-                if (oldItem is FirearmPickup oldFirearm && item is Firearm firearm)
-                    firearm.Ammo = oldFirearm.Ammo <= firearm.MaxAmmo ? oldFirearm.Ammo : firearm.MaxAmmo;
-
-                item.CreatePickup(pos);
+                for (int i = 0; i < count; i++)
+                {
+                    Pickup.CreateAndSpawn(newItem, pos, quaternion, previousOwner);
+                }
             }
-
-            oldItem.Destroy();
         }
     }
 }

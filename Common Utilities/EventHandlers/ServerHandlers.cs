@@ -9,6 +9,7 @@ namespace Common_Utilities.EventHandlers
     using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Pickups;
+    using Exiled.API.Features.Roles;
     using Exiled.Events.EventArgs.Server;
     using Exiled.Events.EventArgs.Warhead;
     using InventorySystem.Configs;
@@ -181,9 +182,11 @@ namespace Common_Utilities.EventHandlers
                     if (!plugin.AfkDict.ContainsKey(player))
                         plugin.AfkDict.Add(player, new Tuple<int, Vector3>(0, player.Position));
 
-                    if (player.Role.Type == RoleTypeId.None || player.IsNoclipPermitted || player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity) || plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
+                    if (player.Role.IsDead || player.IsGodModeEnabled || player.IsNoclipPermitted || player.Role is FpcRole { IsGrounded: false } || player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity) || plugin.Config.AfkIgnoredRoles.Contains(player.Role.Type))
                     {
-                        Log.Debug($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted} AFKImunity: {player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity)}");
+#pragma warning disable SA1013 // Closing braces should be spaced correctly
+                        Log.Debug($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted} GodMode: {player.IsGodModeEnabled} IsNotGrounded: {player.Role is FpcRole { IsGrounded: false }} AFKImunity: {player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity)}");
+#pragma warning restore SA1013 // Closing braces should be spaced correctly
                         continue;
                     }
 
@@ -197,12 +200,11 @@ namespace Common_Utilities.EventHandlers
                     {
                         plugin.AfkDict.Remove(player);
                         Log.Debug($"Kicking {player.Nickname} for being AFK.");
-                        player.Kick("You were kicked by a plugin for being AFK.");
+                        player.Kick("You were kicked by CommonUtilities for being AFK.");
                     }
                     else if (plugin.AfkDict[player].Item1 >= (plugin.Config.AfkLimit / 2))
                     {
-                        player.ClearBroadcasts();
-                        player.Broadcast(5, $"You have been AFK for {plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {plugin.Config.AfkLimit} seconds.");
+                        player.Broadcast(2, $"You have been AFK for {plugin.AfkDict[player].Item1} seconds. You will be automatically kicked if you remain AFK for a total of {plugin.Config.AfkLimit} seconds.", shouldClearPrevious: true);
                     }
 
                     plugin.AfkDict[player] = new Tuple<int, Vector3>(plugin.AfkDict[player].Item1 + 1, plugin.AfkDict[player].Item2);

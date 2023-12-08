@@ -35,7 +35,7 @@ namespace Common_Utilities.EventHandlers
                 return;
             }
 
-            if (plugin.Config.StartingInventories != null && plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.ShouldPreserveInventory)
+            if (plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.ShouldPreserveInventory)
             {
                 if (ev.Items == null)
                 {
@@ -89,7 +89,7 @@ namespace Common_Utilities.EventHandlers
 
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (ev.Player != null && plugin.Config.HealthOnKill != null && plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))
+            if (ev.Player != null && plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))
             {
                 if (ev.Player.Health + plugin.Config.HealthOnKill[ev.Player.Role] <= ev.Player.MaxHealth)
                     ev.Player.Health += plugin.Config.HealthOnKill[ev.Player.Role];

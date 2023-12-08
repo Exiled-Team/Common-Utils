@@ -57,21 +57,27 @@ namespace Common_Utilities
             MapHandlers = new MapHandlers(this);
             
             Log.Info($"Registering EventHandlers..");
-            Player.Died += PlayerHandlers.OnPlayerDied;
-            Player.Jumping += PlayerHandlers.AntiAfkEventHandler;
-            Player.Shooting += PlayerHandlers.AntiAfkEventHandler;
-            Player.UsingItem += PlayerHandlers.AntiAfkEventHandler;
+            if (Config.HealthOnKill != null)
+                Player.Died += PlayerHandlers.OnPlayerDied;
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
             Player.Verified += PlayerHandlers.OnPlayerVerified;
-            Player.MakingNoise += PlayerHandlers.AntiAfkEventHandler;
-            Player.ReloadingWeapon += PlayerHandlers.AntiAfkEventHandler;
-            Player.ChangingRole += PlayerHandlers.OnChangingRole;
+            if (Config.StartingInventories != null)
+                Player.ChangingRole += PlayerHandlers.OnChangingRole;
             Player.Spawned += PlayerHandlers.OnSpawned;
-            Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
-            Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
-            Player.ChangingMoveState += PlayerHandlers.AntiAfkEventHandler;
+            if (Config.RadioBatteryDrainMultiplier is not 1)
+                Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
+            if (Config.AfkLimit > 0)
+            {
+                Player.Jumping += PlayerHandlers.AntiAfkEventHandler;
+                Player.Shooting += PlayerHandlers.AntiAfkEventHandler;
+                Player.UsingItem += PlayerHandlers.AntiAfkEventHandler;
+                Player.MakingNoise += PlayerHandlers.AntiAfkEventHandler;
+                Player.ReloadingWeapon += PlayerHandlers.AntiAfkEventHandler;
+                Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
+                Player.ChangingMoveState += PlayerHandlers.AntiAfkEventHandler;
+            }
 
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
@@ -158,7 +164,7 @@ namespace Common_Utilities
                 foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
                 {
                     foreach ((ItemType oldItem, ItemType newItem, double chance, int count) in upgrade.Value)
-                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem} - {chance}");
+                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem}x({count}) - {chance}");
                 }
             }
 
