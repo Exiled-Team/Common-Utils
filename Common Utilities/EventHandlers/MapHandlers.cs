@@ -22,7 +22,7 @@ namespace Common_Utilities.EventHandlers
         
         public void OnScp914UpgradingItem(UpgradingPickupEventArgs ev)
         {
-            if (plugin.Config.Scp914ItemChanges != null && plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
                 IEnumerable<ItemUpgradeChance> itemUpgradeChance = plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Pickup.Type);
 
@@ -49,7 +49,7 @@ namespace Common_Utilities.EventHandlers
 
         public void OnScp914UpgradingInventoryItem(UpgradingInventoryItemEventArgs ev)
         {
-            if (plugin.Config.Scp914ItemChanges != null && plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ItemChanges.ContainsKey(ev.KnobSetting))
             {
                 IEnumerable<ItemUpgradeChance> itemUpgradeChance = plugin.Config.Scp914ItemChanges[ev.KnobSetting].Where(x => x.Original == ev.Item.Type);
 

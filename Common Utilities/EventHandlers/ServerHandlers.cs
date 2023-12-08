@@ -35,40 +35,6 @@ namespace Common_Utilities.EventHandlers
 
             if (plugin.Config.ItemCleanupDelay > 0)
                 plugin.Coroutines.Add(Timing.RunCoroutine(ItemCleanup()));
-
-            if (plugin.Config.DisarmSwitchTeams)
-                plugin.Coroutines.Add(Timing.RunCoroutine(BetterDisarm()));
-        }
-
-        public IEnumerator<float> BetterDisarm()
-        {
-            for (; ; )
-            {
-                yield return Timing.WaitForSeconds(.5f);
-
-                foreach (Player player in Player.List)
-                {
-                    if (!player.IsCuffed || (player.Role.Team != Team.ChaosInsurgency && player.Role.Team != Team.FoundationForces) || (Escape.WorldPos - player.Position).sqrMagnitude > Escape.RadiusSqr)
-                        continue;
-
-                    switch (player.Role.Type)
-                    {
-                        case RoleTypeId.FacilityGuard:
-                        case RoleTypeId.NtfPrivate:
-                        case RoleTypeId.NtfSergeant:
-                        case RoleTypeId.NtfCaptain:
-                        case RoleTypeId.NtfSpecialist:
-                            player.Role.Set(RoleTypeId.ChaosConscript, SpawnReason.Escaped, RoleSpawnFlags.All);
-                            break;
-                        case RoleTypeId.ChaosConscript:
-                        case RoleTypeId.ChaosMarauder:
-                        case RoleTypeId.ChaosRepressor:
-                        case RoleTypeId.ChaosRifleman:
-                            player.Role.Set(RoleTypeId.NtfPrivate, SpawnReason.Escaped, RoleSpawnFlags.All);
-                            break;
-                    }
-                }
-            }
         }
 
         public void OnWaitingForPlayers()

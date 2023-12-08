@@ -5,6 +5,7 @@ namespace Common_Utilities.EventHandlers
     using System.Linq;
 
     using Common_Utilities.ConfigObjects;
+    using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.CustomItems.API.Features;
     using Exiled.Events.EventArgs.Interfaces;
@@ -185,6 +186,21 @@ namespace Common_Utilities.EventHandlers
             {
                 Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
                 plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+            }
+        }
+
+        public void OnEscaping(EscapingEventArgs ev)
+        {
+            if (ev.EscapeScenario is EscapeScenario.CustomEscape)
+            {
+                ev.NewRole = ev.Player.Role.Type switch
+                {
+                    RoleTypeId.FacilityGuard or RoleTypeId.NtfPrivate or RoleTypeId.NtfSergeant or RoleTypeId.NtfCaptain or RoleTypeId.NtfSpecialist => RoleTypeId.ChaosConscript,
+                    RoleTypeId.ChaosConscript or RoleTypeId.ChaosMarauder or RoleTypeId.ChaosRepressor or RoleTypeId.ChaosRifleman => RoleTypeId.ChaosConscript,
+                    _ => RoleTypeId.None,
+                };
+
+                ev.IsAllowed = ev.NewRole is not RoleTypeId.None;
             }
         }
 

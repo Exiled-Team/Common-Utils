@@ -68,6 +68,8 @@ namespace Common_Utilities
             if (Config.RadioBatteryDrainMultiplier is not 1)
                 Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
+            if (Config.DisarmSwitchTeams)
+                Player.Escaping += PlayerHandlers.OnEscaping;
             if (Config.AfkLimit > 0)
             {
                 Player.Jumping += PlayerHandlers.AntiAfkEventHandler;
@@ -78,15 +80,16 @@ namespace Common_Utilities
                 Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
                 Player.ChangingMoveState += PlayerHandlers.AntiAfkEventHandler;
             }
-
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
 
-            Scp914.UpgradingPickup += MapHandlers.OnScp914UpgradingItem;
+            if (Config.Scp914ItemChanges != null)
+                Scp914.UpgradingPickup += MapHandlers.OnScp914UpgradingItem;
+            if (Config.Scp914ItemChanges != null)
+                Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
             Scp914.UpgradingPlayer += MapHandlers.OnScp914UpgradingPlayer;
-            Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
 
             Exiled.Events.Handlers.Warhead.Starting += ServerHandlers.OnWarheadStarting;
             Exiled.Events.Handlers.Warhead.Stopping += ServerHandlers.OnWarheadStopping;
@@ -115,7 +118,8 @@ namespace Common_Utilities
             Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
             Player.ChangingMoveState -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingElevator -= PlayerHandlers.OnInteractingElevator;
-            
+            Player.Escaping -= PlayerHandlers.OnEscaping;
+
             Server.RoundEnded -= ServerHandlers.OnRoundEnded;
             Server.RoundStarted -= ServerHandlers.OnRoundStarted;
             Server.RestartingRound -= ServerHandlers.OnRestartingRound;
