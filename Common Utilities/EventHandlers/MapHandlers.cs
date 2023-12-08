@@ -99,7 +99,7 @@ namespace Common_Utilities.EventHandlers
                         {
                             ev.Player.Role.Set(roleType, SpawnReason.Respawn, RoleSpawnFlags.None);
                         }
-                        else if (CustomRole.TryGet(destinationRole, out CustomRole? customRole))
+                        else if (CustomRole.TryGet(destinationRole, out CustomRole customRole))
                         {
                             if (customRole is not null)
                             {

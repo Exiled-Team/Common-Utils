@@ -22,12 +22,12 @@ namespace Common_Utilities
 
     public class Main : Plugin<Config>
     {
-        public static Main Singleton;
+        public static Main Instance;
         public PlayerHandlers PlayerHandlers;
         public ServerHandlers ServerHandlers;
         public MapHandlers MapHandlers;
         public Random Rng = new();
-        public Harmony Instance;
+        public Harmony Harmony;
         public string HarmonyName;
 
         public override string Name { get; } = "Common Utilities";
@@ -111,7 +111,7 @@ namespace Common_Utilities
                 }
             }
 
-            Singleton = this;
+            Instance = this;
 
             Log.Info($"Instantiating Events..");
             PlayerHandlers = new PlayerHandlers(this);
@@ -148,8 +148,8 @@ namespace Common_Utilities
             Exiled.Events.Handlers.Warhead.Stopping += ServerHandlers.OnWarheadStopping;
 
             HarmonyName = $"com-joker.cu-{DateTime.UtcNow.Ticks}";
-            Instance = new Harmony(HarmonyName);
-            Instance.PatchAll();
+            Harmony = new Harmony(HarmonyName);
+            Harmony.PatchAll();
 
             base.OnEnabled();
         }
@@ -184,7 +184,7 @@ namespace Common_Utilities
             Exiled.Events.Handlers.Warhead.Starting -= ServerHandlers.OnWarheadStarting;
             Exiled.Events.Handlers.Warhead.Stopping -= ServerHandlers.OnWarheadStopping;
             
-            Instance.UnpatchAll(HarmonyName);
+            Harmony.UnpatchAll(HarmonyName);
 
             ServerHandlers = null;
             PlayerHandlers = null;

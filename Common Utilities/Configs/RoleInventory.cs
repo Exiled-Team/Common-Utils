@@ -34,25 +34,25 @@ namespace Common_Utilities.Configs
             }
         }
 
-        public List<ItemChance>? Slot1 { get; set; } = new();
+        public List<ItemChance> Slot1 { get; set; } = new();
 
-        public List<ItemChance>? Slot2 { get; set; } = new();
+        public List<ItemChance> Slot2 { get; set; } = new();
 
-        public List<ItemChance>? Slot3 { get; set; } = new();
+        public List<ItemChance> Slot3 { get; set; } = new();
 
-        public List<ItemChance>? Slot4 { get; set; } = new();
+        public List<ItemChance> Slot4 { get; set; } = new();
 
-        public List<ItemChance>? Slot5 { get; set; } = new();
+        public List<ItemChance> Slot5 { get; set; } = new();
 
-        public List<ItemChance>? Slot6 { get; set; } = new();
+        public List<ItemChance> Slot6 { get; set; } = new();
 
-        public List<ItemChance>? Slot7 { get; set; } = new();
+        public List<ItemChance> Slot7 { get; set; } = new();
 
-        public List<ItemChance>? Slot8 { get; set; } = new();
+        public List<ItemChance> Slot8 { get; set; } = new();
 
-        public List<StartingAmmo>? Ammo { get; set; } = new();
+        public List<StartingAmmo> Ammo { get; set; } = new();
 
-        public IEnumerable<ItemChance>? this[int i] => i switch
+        public IEnumerable<ItemChance> this[int i] => i switch
         {
             0 => Slot1,
             1 => Slot2,

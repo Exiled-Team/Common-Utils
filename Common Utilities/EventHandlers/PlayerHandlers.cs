@@ -121,7 +121,7 @@ namespace Common_Utilities.EventHandlers
                             items.Add(type);
                             break;
                         }
-                        else if (CustomItem.TryGet(item, out CustomItem? customItem))
+                        else if (CustomItem.TryGet(item, out CustomItem customItem))
                         {
                             if (player != null)
                                 customItem!.Give(player);
