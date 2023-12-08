@@ -80,6 +80,7 @@ namespace Common_Utilities
                 Player.ThrownProjectile += PlayerHandlers.AntiAfkEventHandler;
                 Player.ChangingMoveState += PlayerHandlers.AntiAfkEventHandler;
             }
+
             Server.RoundEnded += ServerHandlers.OnRoundEnded;
             Server.RoundStarted += ServerHandlers.OnRoundStarted;
             Server.RestartingRound += ServerHandlers.OnRestartingRound;

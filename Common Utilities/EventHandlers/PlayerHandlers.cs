@@ -7,6 +7,7 @@ namespace Common_Utilities.EventHandlers
     using Common_Utilities.ConfigObjects;
     using Exiled.API.Enums;
     using Exiled.API.Features;
+    using Exiled.API.Features.Roles;
     using Exiled.CustomItems.API.Features;
     using Exiled.Events.EventArgs.Interfaces;
     using Exiled.Events.EventArgs.Player;
@@ -79,7 +80,7 @@ namespace Common_Utilities.EventHandlers
                 ev.Player.MaxHealth = health;
             }
 
-            if (newRole is not RoleTypeId.Spectator && plugin.Config.PlayerHealthInfo)
+            if (ev.Player.Role is FpcRole && plugin.Config.PlayerHealthInfo)
             {
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
             }
