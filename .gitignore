@@ -4,5 +4,6 @@
 /packages
 /packages/*
 /.idea/*
+/.vs/*
 /bin/*
 /obj/*

@@ -7,9 +7,10 @@
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
         <Version>7.0.4</Version>
         <LangVersion>default</LangVersion>
-        <Nullable>enable</Nullable>
         <AssemblyVersion>7.0.6</AssemblyVersion>
         <FileVersion>7.0.6</FileVersion>
+        <Nullable>disable</Nullable>
+        <RunPostBuildEvent>Always</RunPostBuildEvent>
     </PropertyGroup>
 
     <Import Project="../Plugin.props" />
@@ -21,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="EXILED" Version="$(ExiledVersion)" />
+        <PackageReference Include="EXILED" Version="8.4.3" />
         <PackageReference Include="StyleCop.Analyzers" Version="$(StyleCopVersion)" IncludeAssets="All" PrivateAssets="All" />
         <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
     </ItemGroup>

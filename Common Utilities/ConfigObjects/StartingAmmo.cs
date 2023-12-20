@@ -1,17 +1,18 @@
-namespace Common_Utilities.ConfigObjects;
-
-public class StartingAmmo
+namespace Common_Utilities.ConfigObjects
 {
-    public ItemType Type { get; set; }
-
-    public ushort Amount { get; set; }
-
-    public string Group { get; set; } = "none";
-
-    public void Deconstruct(out ItemType type, out ushort limit, out string group)
+    public class StartingAmmo
     {
-        type = Type;
-        limit = Amount;
-        group = Group;
+        public ItemType Type { get; set; }
+
+        public ushort Amount { get; set; }
+
+        public string Group { get; set; } = "none";
+
+        public void Deconstruct(out ItemType type, out ushort limit, out string group)
+        {
+            type = Type;
+            limit = Amount;
+            group = Group;
+        }
     }
 }
