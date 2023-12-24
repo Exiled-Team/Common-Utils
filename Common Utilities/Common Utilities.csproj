@@ -5,12 +5,13 @@
         <AssemblyName>$(ProjectName)</AssemblyName>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-        <Version>7.0.4</Version>
+        <Version>7.1.0</Version>
         <LangVersion>default</LangVersion>
         <AssemblyVersion>7.0.6</AssemblyVersion>
         <FileVersion>7.0.6</FileVersion>
         <Nullable>disable</Nullable>
         <RunPostBuildEvent>Always</RunPostBuildEvent>
+        <Authors>Exiled-Team</Authors>
     </PropertyGroup>
 
     <Import Project="../Plugin.props" />

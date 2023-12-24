@@ -34,7 +34,9 @@ namespace Common_Utilities
 
         public override string Author { get; } = "Exiled-Team";
 
-        public override Version RequiredExiledVersion { get; } = new(8, 4, 3);
+        public override Version Version { get; } = new(7, 1, 0);
+
+        public override Version RequiredExiledVersion { get; } = new(8, 5, 0);
 
         public override string Prefix { get; } = "CommonUtilities";
 
