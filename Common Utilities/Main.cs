@@ -180,8 +180,8 @@ namespace Common_Utilities
                 Log.Debug($"{Config.Scp914ClassChanges.Count}");
                 foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
                 {
-                    foreach ((RoleTypeId oldRole, string newRole, double chance, bool keepInventory) in upgrade.Value)
-                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory}");
+                    foreach ((RoleTypeId oldRole, string newRole, double chance, bool keepInventory, bool keepHealth) in upgrade.Value)
+                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory} keepHealth: {keepHealth}");
                 }
             }
 
