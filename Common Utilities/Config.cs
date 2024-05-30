@@ -17,12 +17,6 @@ namespace Common_Utilities
         [Description("Whether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("The SCP Roles able to use V to talk to humans.")]
-        public List<RoleTypeId> ScpSpeech { get; set; } = new()
-        {
-            RoleTypeId.Scp049,
-        };
-
         [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
         public bool DisarmSwitchTeams { get; set; } = true;
 
@@ -30,7 +24,7 @@ namespace Common_Utilities
         public bool RestrictiveDisarming { get; set; } = true;
         
         [Description("The text displayed at the timed interval specified below.")]
-        public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
+        public string TimedBroadcast { get; set; } = "<color=#bfff00>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
 
         [Description("The time each timed broadcast will be displayed.")]
         public ushort TimedBroadcastDuration { get; set; } = 5;
@@ -165,7 +159,7 @@ namespace Common_Utilities
             },
         };
 
-        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone, instead of the room type defined.")]
+        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone that isn't in the ignoredRooms list, instead of the room type defined.")]
         public Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>> Scp914TeleportChances { get; set; } = new()
         {
             {
@@ -175,6 +169,14 @@ namespace Common_Utilities
                     {
                         Room = RoomType.LczClassDSpawn,
                         Chance = 100,
+                    },
+                    new()
+                    {
+                        Zone = ZoneType.LightContainment,
+                        IgnoredRooms = new()
+                        {
+                            RoomType.Lcz173,
+                        },
                     },
                 }
             },

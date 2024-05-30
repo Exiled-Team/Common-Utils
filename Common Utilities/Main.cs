@@ -178,19 +178,17 @@ namespace Common_Utilities
             if (Config.Scp914ClassChanges != null)
             {
                 Log.Debug($"{Config.Scp914ClassChanges.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config
-                    .Scp914ClassChanges)
+                foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
                 {
-                    foreach ((RoleTypeId oldRole, string newRole, double chance, bool keepInventory) in upgrade.Value)
-                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory}");
+                    foreach ((RoleTypeId oldRole, string newRole, double chance, bool keepInventory, bool keepHealth) in upgrade.Value)
+                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory} keepHealth: {keepHealth}");
                 }
             }
 
             if (Config.Scp914EffectChances != null)
             {
                 Log.Debug($"{Config.Scp914EffectChances.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config
-                    .Scp914EffectChances)
+                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config.Scp914EffectChances)
                 {
                     foreach ((EffectType effect, double chance, float duration) in upgrade.Value)
                         Log.Debug($"914 Effect Config: {upgrade.Key}: {effect} + {duration} - {chance}");
@@ -202,8 +200,18 @@ namespace Common_Utilities
                 Log.Debug($"{Config.Scp914TeleportChances.Count}");
                 foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
                 {
-                    foreach ((RoomType room, Vector3 offset, double chance, float damage, ZoneType zone) in upgrade.Value)
+                    foreach ((RoomType room, List<RoomType> ignoredRooms, Vector3 offset, double chance, float damage, ZoneType zone) in upgrade.Value)
+                    {
                         Log.Debug($"914 Teleport Config: {upgrade.Key}: {room}/{zone} + {offset} - {chance} [{damage}]");
+                        Log.Debug("Ignored rooms:");
+                        if (ignoredRooms != null)
+                        {
+                            foreach (RoomType roomType in ignoredRooms)
+                            {
+                                Log.Debug(roomType);
+                            }
+                        }
+                    }
                 }
             }
         }

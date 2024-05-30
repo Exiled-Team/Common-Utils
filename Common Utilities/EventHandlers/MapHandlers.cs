@@ -1,3 +1,6 @@
+using Exiled.API.Extensions;
+using Exiled.API.Features.Items;
+
 namespace Common_Utilities.EventHandlers
 {
     using System;
@@ -86,11 +89,11 @@ namespace Common_Utilities.EventHandlers
 
         public void OnScp914UpgradingPlayer(UpgradingPlayerEventArgs ev)
         {
-            if (plugin.Config.Scp914ClassChanges != null && plugin.Config.Scp914ClassChanges.ContainsKey(ev.KnobSetting))
+            if (plugin.Config.Scp914ClassChanges != null && plugin.Config.Scp914ClassChanges.TryGetValue(ev.KnobSetting, out var change))
             {
-                IEnumerable<PlayerUpgradeChance> playerUpgradeChance = plugin.Config.Scp914ClassChanges[ev.KnobSetting].Where(x => x.Original == ev.Player.Role);
+                IEnumerable<PlayerUpgradeChance> playerUpgradeChance = change.Where(x => x.Original == ev.Player.Role);
 
-                foreach ((RoleTypeId sourceRole, string destinationRole, double chance, bool keepInventory) in playerUpgradeChance)
+                foreach ((RoleTypeId sourceRole, string destinationRole, double chance, bool keepInventory, bool keepHealth) in playerUpgradeChance)
                 {
                     double r;
                     if (plugin.Config.AdditiveProbabilities)
@@ -101,6 +104,10 @@ namespace Common_Utilities.EventHandlers
                     Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {r <= chance} ({r})");
                     if (r <= chance)
                     {
+                        float originalHealth = ev.Player.Health;
+                        var originalItems = ev.Player.Items;
+                        var originalAmmo = ev.Player.Ammo;
+                        
                         if (Enum.TryParse(destinationRole, true, out RoleTypeId roleType))
                         {
                             ev.Player.Role.Set(roleType, SpawnReason.Respawn, RoleSpawnFlags.None);
@@ -114,6 +121,24 @@ namespace Common_Utilities.EventHandlers
                             }
                         }
 
+                        if (keepHealth)
+                        {
+                            ev.Player.Health = originalHealth;
+                        }
+
+                        if (keepInventory)
+                        {
+                            foreach (var item in originalItems)
+                            {
+                                ev.Player.AddItem(item);
+                            }
+
+                            foreach (var kvp in originalAmmo)
+                            {
+                                ev.Player.SetAmmo(kvp.Key.GetAmmoType(), kvp.Value);
+                            }
+                        }
+                        
                         ev.Player.Position = ev.OutputPosition;
                         break;
                     }
@@ -150,7 +175,7 @@ namespace Common_Utilities.EventHandlers
             {
                 IEnumerable<Scp914TeleportChance> scp914TeleportChances = plugin.Config.Scp914TeleportChances[ev.KnobSetting];
 
-                foreach ((RoomType roomType, Vector3 offset, double chance, float damage, ZoneType zone) in plugin.Config.Scp914TeleportChances[ev.KnobSetting])
+                foreach ((RoomType roomType, List<RoomType> ignoredRooms, Vector3 offset, double chance, float damage, ZoneType zone) in plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     double r;
                     if (plugin.Config.AdditiveProbabilities)
@@ -163,7 +188,7 @@ namespace Common_Utilities.EventHandlers
                     {
                         if (zone != ZoneType.Unspecified)
                         {
-                            ev.OutputPosition = Room.Random(zone).Position + ((Vector3.up * 1.5f) + offset);
+                            ev.OutputPosition = Room.List.Where(x => x.Zone == zone && !ignoredRooms.Contains(x.Type)).GetRandomValue().Position + ((Vector3.up * 1.5f) + offset);
                             if (damage > 0f)
                             {
                                 float amount = ev.Player.MaxHealth * damage;

@@ -12,12 +12,15 @@ namespace Common_Utilities.ConfigObjects
 
         public bool KeepInventory { get; set; } = true;
 
-        public void Deconstruct(out RoleTypeId old, out string newRole, out double i, out bool keepInventory)
+        public bool KeepHealth { get; set; } = true;
+
+        public void Deconstruct(out RoleTypeId old, out string newRole, out double i, out bool keepInventory, out bool keepHealth)
         {
             old = Original;
             newRole = New;
             i = Chance;
             keepInventory = KeepInventory;
+            keepHealth = KeepHealth;
         }
     }
 }

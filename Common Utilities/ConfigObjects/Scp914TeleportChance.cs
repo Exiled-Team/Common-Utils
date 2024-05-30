@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Common_Utilities.ConfigObjects
 {
     using Exiled.API.Enums;
@@ -6,6 +8,8 @@ namespace Common_Utilities.ConfigObjects
     public class Scp914TeleportChance
     {
         public ZoneType Zone { get; set; } = ZoneType.Unspecified;
+        
+        public List<RoomType> IgnoredRooms { get; set; }
 
         public RoomType Room { get; set; }
 
@@ -15,9 +19,10 @@ namespace Common_Utilities.ConfigObjects
 
         public float Damage { get; set; } = 0f;
 
-        public void Deconstruct(out RoomType room, out Vector3 offset, out double chance, out float damage, out ZoneType zone)
+        public void Deconstruct(out RoomType room, out List<RoomType> ignoredRooms, out Vector3 offset, out double chance, out float damage, out ZoneType zone)
         {
             room = Room;
+            ignoredRooms = IgnoredRooms;
             offset = Offset;
             chance = Chance;
             damage = Damage;
