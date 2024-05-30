@@ -92,12 +92,9 @@ namespace Common_Utilities.EventHandlers
 
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (ev.Player != null && plugin.Config.HealthOnKill.ContainsKey(ev.Player.Role))
+            if (ev.Attacker != null && plugin.Config.HealthOnKill.ContainsKey(ev.Attacker.Role))
             {
-                if (ev.Player.Health + plugin.Config.HealthOnKill[ev.Player.Role] <= ev.Player.MaxHealth)
-                    ev.Player.Health += plugin.Config.HealthOnKill[ev.Player.Role];
-                else
-                    ev.Player.Health = ev.Player.MaxHealth;
+                ev.Attacker.Heal(plugin.Config.HealthOnKill[ev.Attacker.Role]);
             }
         }
 
