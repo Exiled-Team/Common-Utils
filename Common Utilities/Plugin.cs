@@ -28,7 +28,7 @@ public class Plugin : Plugin<Config>
 {
     public static Plugin Instance;
     public static Random Random;
-    private PlayerHandlers playerHandlers;
+    public PlayerHandlers playerHandlers;
     private ServerHandlers serverHandlers;
     private MapHandlers mapHandlers;
     private Harmony harmony;
@@ -48,7 +48,7 @@ public class Plugin : Plugin<Config>
 
     public override PluginPriority Priority => PluginPriority.Higher;
 
-    public List<CoroutineHandle> Coroutines { get; } = new();
+    public static List<CoroutineHandle> Coroutines { get; } = new();
 
     public override void OnEnabled()
     {
@@ -70,8 +70,6 @@ public class Plugin : Plugin<Config>
         player.Hurting += playerHandlers.OnPlayerHurting;
         player.Verified += playerHandlers.OnPlayerVerified;
         player.Spawned += playerHandlers.OnSpawned;
-        player.InteractingDoor += playerHandlers.OnInteractingDoor;
-        player.InteractingElevator += playerHandlers.OnInteractingElevator;
         player.Escaping += playerHandlers.OnEscaping;
             
         if (Config.HealthOnKill != null)
@@ -92,6 +90,8 @@ public class Plugin : Plugin<Config>
             player.ReloadingWeapon += playerHandlers.AntiAfkEventHandler;
             player.ThrownProjectile += playerHandlers.AntiAfkEventHandler;
             player.ChangingMoveState += playerHandlers.AntiAfkEventHandler;
+            player.InteractingDoor += playerHandlers.AntiAfkEventHandler;
+            player.InteractingElevator += playerHandlers.AntiAfkEventHandler;
         }
 
         server.RoundEnded += serverHandlers.OnRoundEnded;
@@ -118,34 +118,34 @@ public class Plugin : Plugin<Config>
 
     public override void OnDisabled()
     {
+        player.Hurting -= playerHandlers.OnPlayerHurting;
+        player.Verified -= playerHandlers.OnPlayerVerified;
+        player.Spawned -= playerHandlers.OnSpawned;
+        player.Escaping -= playerHandlers.OnEscaping;
         player.Died -= playerHandlers.OnPlayerDied;
+        player.ChangingRole -= playerHandlers.OnChangingRole;
+        player.UsingRadioBattery -= playerHandlers.OnUsingRadioBattery;
         player.Jumping -= playerHandlers.AntiAfkEventHandler;
         player.Shooting -= playerHandlers.AntiAfkEventHandler;
         player.UsingItem -= playerHandlers.AntiAfkEventHandler;
-        player.Hurting -= playerHandlers.OnPlayerHurting;
-        player.Verified -= playerHandlers.OnPlayerVerified;
         player.MakingNoise -= playerHandlers.AntiAfkEventHandler;
         player.ReloadingWeapon -= playerHandlers.AntiAfkEventHandler;
-        player.ChangingRole -= playerHandlers.OnChangingRole;
-        player.Spawned -= playerHandlers.OnSpawned;
         player.ThrownProjectile -= playerHandlers.AntiAfkEventHandler;
-        player.InteractingDoor -= playerHandlers.OnInteractingDoor;
-        player.UsingRadioBattery -= playerHandlers.OnUsingRadioBattery;
         player.ChangingMoveState -= playerHandlers.AntiAfkEventHandler;
-        player.InteractingElevator -= playerHandlers.OnInteractingElevator;
-        player.Escaping -= playerHandlers.OnEscaping;
+        player.InteractingDoor -= playerHandlers.AntiAfkEventHandler;
+        player.InteractingElevator -= playerHandlers.AntiAfkEventHandler;
 
         server.RoundEnded -= serverHandlers.OnRoundEnded;
         server.RoundStarted -= serverHandlers.OnRoundStarted;
         server.RestartingRound -= serverHandlers.OnRestartingRound;
         server.WaitingForPlayers -= serverHandlers.OnWaitingForPlayers;
 
-        scp914.UpgradingPickup -= mapHandlers.OnScp914UpgradingItem;
         scp914.UpgradingPlayer -= mapHandlers.OnScp914UpgradingPlayer;
+        scp914.UpgradingPickup -= mapHandlers.OnScp914UpgradingItem;
         scp914.UpgradingInventoryItem -= mapHandlers.OnScp914UpgradingInventoryItem;
 
-        warhead.Stopping -= serverHandlers.OnWarheadStopping;
         warhead.Starting -= serverHandlers.OnWarheadStarting;
+        warhead.Stopping -= serverHandlers.OnWarheadStopping;
             
         harmony.UnpatchAll(harmonyName);
 

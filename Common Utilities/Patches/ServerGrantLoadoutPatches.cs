@@ -21,7 +21,7 @@
             if (resetInventory)
                 player.ClearInventory();
 
-            player.AddItem(Plugin.Instance.PlayerHandlers.StartItems(roleTypeId, player));
+            player.AddItem(Plugin.Instance.playerHandlers.StartItems(roleTypeId, player));
 
             if (startingInventories.Ammo != null && startingInventories.Ammo.Count > 0)
             {
