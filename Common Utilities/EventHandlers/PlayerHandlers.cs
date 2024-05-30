@@ -49,17 +49,17 @@ public class PlayerHandlers
             ev.Items.Clear();
             ev.Items.AddRange(StartItems(ev.NewRole, ev.Player));
 
-            if (config.StartingInventories[ev.NewRole].Ammo != null && config.StartingInventories[ev.NewRole].Ammo.Count > 0)
+            if (config.StartingInventories[ev.NewRole].Ammo == null || config.StartingInventories[ev.NewRole].Ammo.Count <= 0) 
+                return;
+            
+            if (config.StartingInventories[ev.NewRole].Ammo.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
             {
-                if (config.StartingInventories[ev.NewRole].Ammo.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
+                ev.Ammo.Clear();
+                foreach ((ItemType type, ushort amount, string group) in config.StartingInventories[ev.NewRole].Ammo)
                 {
-                    ev.Ammo.Clear();
-                    foreach ((ItemType type, ushort amount, string group) in config.StartingInventories[ev.NewRole].Ammo)
+                    if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
                     {
-                        if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
-                        {
-                            ev.Ammo.Add(type, amount);
-                        }
+                        ev.Ammo.Add(type, amount);
                     }
                 }
             }
