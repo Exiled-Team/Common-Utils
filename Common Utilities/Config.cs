@@ -159,7 +159,7 @@ namespace Common_Utilities
             },
         };
 
-        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone, instead of the room type defined.")]
+        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone that isn't in the ignoredRooms list, instead of the room type defined.")]
         public Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>> Scp914TeleportChances { get; set; } = new()
         {
             {
@@ -169,6 +169,14 @@ namespace Common_Utilities
                     {
                         Room = RoomType.LczClassDSpawn,
                         Chance = 100,
+                    },
+                    new()
+                    {
+                        Zone = ZoneType.LightContainment,
+                        IgnoredRooms = new()
+                        {
+                            RoomType.Lcz173,
+                        },
                     },
                 }
             },

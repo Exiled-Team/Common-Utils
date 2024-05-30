@@ -1,3 +1,5 @@
+using Exiled.API.Extensions;
+
 namespace Common_Utilities.EventHandlers
 {
     using System;
@@ -150,7 +152,7 @@ namespace Common_Utilities.EventHandlers
             {
                 IEnumerable<Scp914TeleportChance> scp914TeleportChances = plugin.Config.Scp914TeleportChances[ev.KnobSetting];
 
-                foreach ((RoomType roomType, Vector3 offset, double chance, float damage, ZoneType zone) in plugin.Config.Scp914TeleportChances[ev.KnobSetting])
+                foreach ((RoomType roomType, List<RoomType> ignoredRooms, Vector3 offset, double chance, float damage, ZoneType zone) in plugin.Config.Scp914TeleportChances[ev.KnobSetting])
                 {
                     double r;
                     if (plugin.Config.AdditiveProbabilities)
@@ -163,7 +165,7 @@ namespace Common_Utilities.EventHandlers
                     {
                         if (zone != ZoneType.Unspecified)
                         {
-                            ev.OutputPosition = Room.Random(zone).Position + ((Vector3.up * 1.5f) + offset);
+                            ev.OutputPosition = Room.List.Where(x => x.Zone == zone && !ignoredRooms.Contains(x.Type)).GetRandomValue().Position + ((Vector3.up * 1.5f) + offset);
                             if (damage > 0f)
                             {
                                 float amount = ev.Player.MaxHealth * damage;
