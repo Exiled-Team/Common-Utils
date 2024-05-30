@@ -193,6 +193,9 @@ namespace Common_Utilities.EventHandlers
 
         public void OnWarheadStopping(StoppingEventArgs _)
         {
+            if (Warhead.IsLocked)
+                return;
+            
             foreach (Room room in Room.List)
                 room.ResetColor();
         }
