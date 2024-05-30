@@ -17,12 +17,6 @@ namespace Common_Utilities
         [Description("Whether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("The SCP Roles able to use V to talk to humans.")]
-        public List<RoleTypeId> ScpSpeech { get; set; } = new()
-        {
-            RoleTypeId.Scp049,
-        };
-
         [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
         public bool DisarmSwitchTeams { get; set; } = true;
 
