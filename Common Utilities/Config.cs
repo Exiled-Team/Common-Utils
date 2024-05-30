@@ -24,7 +24,7 @@ namespace Common_Utilities
         public bool RestrictiveDisarming { get; set; } = true;
         
         [Description("The text displayed at the timed interval specified below.")]
-        public string TimedBroadcast { get; set; } = "<color=lime>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
+        public string TimedBroadcast { get; set; } = "<color=#bfff00>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
 
         [Description("The time each timed broadcast will be displayed.")]
         public ushort TimedBroadcastDuration { get; set; } = 5;
