@@ -204,9 +204,12 @@ namespace Common_Utilities
                     {
                         Log.Debug($"914 Teleport Config: {upgrade.Key}: {room}/{zone} + {offset} - {chance} [{damage}]");
                         Log.Debug("Ignored rooms:");
-                        foreach (RoomType roomType in ignoredRooms)
+                        if (ignoredRooms != null)
                         {
-                            Log.Debug(roomType);
+                            foreach (RoomType roomType in ignoredRooms)
+                            {
+                                Log.Debug(roomType);
+                            }
                         }
                     }
                 }
