@@ -19,11 +19,11 @@ namespace Common_Utilities.EventHandlers
 
     public class ServerHandlers
     {
-        private readonly Main plugin;
+        private readonly Plugin plugin;
 
         private bool friendlyFireDisable = false;
 
-        public ServerHandlers(Main plugin) => this.plugin = plugin;
+        public ServerHandlers(Plugin plugin) => this.plugin = plugin;
 
         public void OnRoundStarted()
         {

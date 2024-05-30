@@ -15,13 +15,13 @@
     {
         public static bool Prefix(ReferenceHub target, RoleTypeId roleTypeId, bool resetInventory = true)
         {
-            if (Main.Instance.Config.StartingInventories == null || !Main.Instance.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) || !Player.TryGet(target, out Player player))
+            if (Plugin.Instance.Config.StartingInventories == null || !Plugin.Instance.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) || !Player.TryGet(target, out Player player))
                 return true;
 
             if (resetInventory)
                 player.ClearInventory();
 
-            player.AddItem(Main.Instance.PlayerHandlers.StartItems(roleTypeId, player));
+            player.AddItem(Plugin.Instance.PlayerHandlers.StartItems(roleTypeId, player));
 
             if (startingInventories.Ammo != null && startingInventories.Ammo.Count > 0)
             {

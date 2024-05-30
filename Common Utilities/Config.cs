@@ -14,14 +14,23 @@ namespace Common_Utilities
 
     public class Config : IConfig
     {
+        [Description("If the plugin is enabled or not.")]
+        public bool IsEnabled { get; set; } = true;
+        
         [Description("Whether or not debug messages should be shown.")]
         public bool Debug { get; set; } = false;
 
-        [Description("Whether or not MTF/CI can 'escape' while disarmed to switch teams.")]
-        public bool DisarmSwitchTeams { get; set; } = true;
-
-        [Description("Whether or not disarmed people will be prevented from interacting with doors/elevators.")]
-        public bool RestrictiveDisarming { get; set; } = true;
+        [Description("Roles that when cuffed in the escape area will change into the target one.")]
+        public Dictionary<RoleTypeId, RoleTypeId> DisarmedEscapeSwitchRole { get; set; } =
+            new()
+            {
+                {
+                    RoleTypeId.NtfCaptain, RoleTypeId.ChaosMarauder
+                },
+                {
+                    RoleTypeId.ChaosMarauder, RoleTypeId.NtfCaptain
+                },
+            };
         
         [Description("The text displayed at the timed interval specified below.")]
         public string TimedBroadcast { get; set; } = "<color=#bfff00>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
@@ -62,8 +71,8 @@ namespace Common_Utilities
         [Description("The multiplier applied to radio battery usage. Set to 0 to disable radio battery drain.")]
         public float RadioBatteryDrainMultiplier { get; set; } = 1f;
 
-        [Description("The color to use for lights while the warhead is active.")]
-        public Color WarheadColor { get; set; } = new(1f, 0.2f, 0.2f);
+        [Description("The color to use for lights while the warhead is active. In the RGBA format using values between 0 and 1.")]
+        public Color WarheadColor { get; set; } = new(1f, 0.2f, 0.2f, 1);
 
         [Description("The maximum time, in seconds, that a player can be AFK before being kicked. Set to -1 to disable AFK system.")]
         public int AfkLimit { get; set; } = 120;
@@ -124,7 +133,7 @@ namespace Common_Utilities
         };
 
         [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
-        public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChanges { get; set; } = new()
+        public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChances { get; set; } = new()
         {
             {
                 Scp914KnobSetting.Rough, new List<ItemUpgradeChance>
@@ -252,8 +261,5 @@ namespace Common_Utilities
                 RoleTypeId.NtfCaptain, 150
             },
         };
-
-        [Description("If the plugin is enabled or not.")]
-        public bool IsEnabled { get; set; } = true;
     }
 }

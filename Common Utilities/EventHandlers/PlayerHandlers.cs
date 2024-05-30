@@ -1,3 +1,5 @@
+using PluginAPI.Roles;
+
 namespace Common_Utilities.EventHandlers
 {
 #pragma warning disable IDE0018
@@ -19,15 +21,15 @@ namespace Common_Utilities.EventHandlers
 
     public class PlayerHandlers
     {
-        private readonly Main plugin;
+        private readonly Config config;
 
-        public PlayerHandlers(Main plugin) => this.plugin = plugin;
+        public PlayerHandlers(Plugin plugin) => this.config = plugin.Config;
 
         public void OnPlayerVerified(VerifiedEventArgs ev)
         {
             string message = FormatJoinMessage(ev.Player);
             if (!string.IsNullOrEmpty(message))
-                ev.Player.Broadcast(plugin.Config.JoinMessageDuration, message);
+                ev.Player.Broadcast(config.JoinMessageDuration, message);
         }
 
         public void OnChangingRole(ChangingRoleEventArgs ev)
@@ -38,7 +40,7 @@ namespace Common_Utilities.EventHandlers
                 return;
             }
 
-            if (plugin.Config.StartingInventories.ContainsKey(ev.NewRole) && !ev.ShouldPreserveInventory)
+            if (config.StartingInventories.ContainsKey(ev.NewRole) && !ev.ShouldPreserveInventory)
             {
                 if (ev.Items == null)
                 {
@@ -49,12 +51,12 @@ namespace Common_Utilities.EventHandlers
                 ev.Items.Clear();
                 ev.Items.AddRange(StartItems(ev.NewRole, ev.Player));
 
-                if (plugin.Config.StartingInventories[ev.NewRole].Ammo != null && plugin.Config.StartingInventories[ev.NewRole].Ammo.Count > 0)
+                if (config.StartingInventories[ev.NewRole].Ammo != null && config.StartingInventories[ev.NewRole].Ammo.Count > 0)
                 {
-                    if (plugin.Config.StartingInventories[ev.NewRole].Ammo.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
+                    if (config.StartingInventories[ev.NewRole].Ammo.Any(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == ev.Player.Group)))
                     {
                         ev.Ammo.Clear();
-                        foreach ((ItemType type, ushort amount, string group) in plugin.Config.StartingInventories[ev.NewRole].Ammo)
+                        foreach ((ItemType type, ushort amount, string group) in config.StartingInventories[ev.NewRole].Ammo)
                         {
                             if (string.IsNullOrEmpty(group) || group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(group, out UserGroup userGroup) && userGroup == ev.Player.Group))
                             {
@@ -75,26 +77,26 @@ namespace Common_Utilities.EventHandlers
             }
 
             RoleTypeId newRole = ev.Player.Role.Type;
-            if (plugin.Config.HealthValues != null && plugin.Config.HealthValues.TryGetValue(newRole, out int health))
+            if (config.HealthValues != null && config.HealthValues.TryGetValue(newRole, out int health))
             {
                 ev.Player.Health = health;
                 ev.Player.MaxHealth = health;
             }
 
-            if (ev.Player.Role is FpcRole && plugin.Config.PlayerHealthInfo)
+            if (ev.Player.Role is FpcRole && config.PlayerHealthInfo)
             {
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
             }
 
-            if (plugin.Config.AfkIgnoredRoles.Contains(newRole) && plugin.AfkDict.TryGetValue(ev.Player, out Tuple<int, Vector3> value))
-                plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(newRole is RoleTypeId.Spectator ? value.Item1 : 0, ev.Player.Position);
+            if (config.AfkIgnoredRoles.Contains(newRole) && Plugin.AfkDict.TryGetValue(ev.Player, out Tuple<int, Vector3> value))
+                Plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(newRole is RoleTypeId.Spectator ? value.Item1 : 0, ev.Player.Position);
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (ev.Attacker != null && plugin.Config.HealthOnKill.ContainsKey(ev.Attacker.Role))
+            if (ev.Attacker != null && config.HealthOnKill.ContainsKey(ev.Attacker.Role))
             {
-                ev.Attacker.Heal(plugin.Config.HealthOnKill[ev.Attacker.Role]);
+                ev.Attacker.Heal(config.HealthOnKill[ev.Attacker.Role]);
             }
         }
 
@@ -102,14 +104,14 @@ namespace Common_Utilities.EventHandlers
         {
             List<ItemType> items = new();
 
-            for (int i = 0; i < plugin.Config.StartingInventories[role].UsedSlots; i++)
+            for (int i = 0; i < config.StartingInventories[role].UsedSlots; i++)
             {
-                IEnumerable<ItemChance> itemChances = plugin.Config.StartingInventories[role][i].Where(x => player == null || string.IsNullOrEmpty(x.Group) || x.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group));
+                IEnumerable<ItemChance> itemChances = config.StartingInventories[role][i].Where(x => player == null || string.IsNullOrEmpty(x.Group) || x.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group));
                 double r;
-                if (plugin.Config.AdditiveProbabilities)
-                    r = plugin.Rng.NextDouble() * itemChances.Sum(val => val.Chance);
+                if (config.AdditiveProbabilities)
+                    r = Plugin.Random.NextDouble() * itemChances.Sum(val => val.Chance);
                 else
-                    r = plugin.Rng.NextDouble() * 100;
+                    r = Plugin.Random.NextDouble() * 100;
                 Log.Debug($"[StartItems] ActualChance ({r})/{itemChances.Sum(val => val.Chance)}");
                 foreach ((string item, double chance, string groupKey) in itemChances)
                 {
@@ -142,77 +144,65 @@ namespace Common_Utilities.EventHandlers
         }
 
         public string FormatJoinMessage(Player player) => 
-            string.IsNullOrEmpty(plugin.Config.JoinMessage) ? string.Empty : plugin.Config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
+            string.IsNullOrEmpty(config.JoinMessage) ? string.Empty : config.JoinMessage.Replace("%player%", player.Nickname).Replace("%server%", Server.Name).Replace("%count%", $"{Player.Dictionary.Count}");
         
         public void OnPlayerHurting(HurtingEventArgs ev)
         {
             float damageMultiplier;
-            if (plugin.Config.RoleDamageMultipliers != null && ev.Attacker != null && plugin.Config.RoleDamageMultipliers.TryGetValue(ev.Attacker.Role, out damageMultiplier))
+            if (config.RoleDamageMultipliers != null && ev.Attacker != null && config.RoleDamageMultipliers.TryGetValue(ev.Attacker.Role, out damageMultiplier))
                 ev.Amount *= damageMultiplier;
 
-            if (plugin.Config.DamageMultipliers != null && plugin.Config.DamageMultipliers.TryGetValue(ev.DamageHandler.Type, out damageMultiplier))
+            if (config.DamageMultipliers != null && config.DamageMultipliers.TryGetValue(ev.DamageHandler.Type, out damageMultiplier))
                 ev.Amount *= damageMultiplier;
 
-            if (plugin.Config.PlayerHealthInfo)
+            if (config.PlayerHealthInfo)
                 ev.Player.CustomInfo = $"({ev.Player.Health}/{ev.Player.MaxHealth}) {(!string.IsNullOrEmpty(ev.Player.CustomInfo) ? ev.Player.CustomInfo.Substring(ev.Player.CustomInfo.LastIndexOf(')') + 1) : string.Empty)}";
 
-            if (ev.Attacker is not null && plugin.AfkDict.ContainsKey(ev.Attacker))
+            if (ev.Attacker is not null && Plugin.AfkDict.ContainsKey(ev.Attacker))
             {
                 Log.Debug($"Resetting {ev.Attacker.Nickname} AFK timer.");
-                plugin.AfkDict[ev.Attacker] = new Tuple<int, Vector3>(0, ev.Attacker.Position);
+                Plugin.AfkDict[ev.Attacker] = new Tuple<int, Vector3>(0, ev.Attacker.Position);
             }
         }
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
-            if (ev.Player.IsCuffed && plugin.Config.RestrictiveDisarming)
-                ev.IsAllowed = false;
-
-            if (plugin.AfkDict.ContainsKey(ev.Player))
+            if (Plugin.AfkDict.ContainsKey(ev.Player))
             {
                 Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
-                plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+                Plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
             }
         }
 
         public void OnInteractingElevator(InteractingElevatorEventArgs ev)
         {
-            if (ev.Player.IsCuffed && plugin.Config.RestrictiveDisarming)
-                ev.IsAllowed = false;
-
-            if (plugin.AfkDict.ContainsKey(ev.Player))
+            if (Plugin.AfkDict.ContainsKey(ev.Player))
             {
                 Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
-                plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+                Plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
             }
         }
 
         public void OnEscaping(EscapingEventArgs ev)
         {
-            if (ev.EscapeScenario is EscapeScenario.CustomEscape)
+            if (ev.Player.IsCuffed && config.DisarmedEscapeSwitchRole.TryGetValue(ev.Player.Role, out RoleTypeId newRole))
             {
-                ev.NewRole = ev.Player.Role.Type switch
-                {
-                    RoleTypeId.FacilityGuard or RoleTypeId.NtfPrivate or RoleTypeId.NtfSergeant or RoleTypeId.NtfCaptain or RoleTypeId.NtfSpecialist => RoleTypeId.ChaosConscript,
-                    RoleTypeId.ChaosConscript or RoleTypeId.ChaosMarauder or RoleTypeId.ChaosRepressor or RoleTypeId.ChaosRifleman => RoleTypeId.ChaosConscript,
-                    _ => RoleTypeId.None,
-                };
-
-                ev.IsAllowed = ev.NewRole is not RoleTypeId.None;
+                ev.NewRole = newRole;
+                ev.IsAllowed = newRole != RoleTypeId.None;
             }
         }
 
         public void OnUsingRadioBattery(UsingRadioBatteryEventArgs ev)
         {
-            ev.Drain *= plugin.Config.RadioBatteryDrainMultiplier;
+            ev.Drain *= config.RadioBatteryDrainMultiplier;
         }
 
         public void AntiAfkEventHandler(IPlayerEvent ev)
         {
-            if (ev.Player != null && plugin.AfkDict.ContainsKey(ev.Player))
+            if (ev.Player != null && Plugin.AfkDict.ContainsKey(ev.Player))
             {
                 Log.Debug($"Resetting {ev.Player.Nickname} AFK timer.");
-                plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
+                Plugin.AfkDict[ev.Player] = new Tuple<int, Vector3>(0, ev.Player.Position);
             }
         }
     }
