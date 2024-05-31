@@ -4,7 +4,6 @@ namespace Common_Utilities.EventHandlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using ConfigObjects;
 using Exiled.API.Features;
 using Exiled.API.Features.Roles;
@@ -20,7 +19,7 @@ public class PlayerHandlers
 {
     private readonly Config config;
 
-    public PlayerHandlers(Plugin plugin) => this.config = plugin.Config;
+    public PlayerHandlers(Plugin plugin) => config = plugin.Config;
 
     public void OnPlayerVerified(VerifiedEventArgs ev)
     {

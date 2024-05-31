@@ -7,7 +7,6 @@ namespace Common_Utilities.EventHandlers
     using System.Collections.Generic;
     using System.Linq;
 
-    using Exiled.API.Enums;
     using Exiled.API.Features;
     using Exiled.API.Features.Pickups;
     using Exiled.API.Features.Roles;
@@ -23,7 +22,7 @@ namespace Common_Utilities.EventHandlers
         private readonly Config config;
         private bool friendlyFireDisable;
 
-        public ServerHandlers(Plugin plugin) => config = config;
+        public ServerHandlers(Plugin plugin) => config = plugin.Config;
 
         public void OnRoundStarted()
         {
@@ -55,6 +54,7 @@ namespace Common_Utilities.EventHandlers
             if (config.TimedBroadcastDelay > 0)
                 Plugin.Coroutines.Add(Timing.RunCoroutine(ServerBroadcast()));
 
+            // TODO: test if the stuff below is actually necessary
             // Fix GrandLoadout not able to give this 2 inventory
             StartingInventories.DefinedInventories[RoleTypeId.Tutorial] = new(Array.Empty<ItemType>(), new());
             StartingInventories.DefinedInventories[RoleTypeId.ClassD] = new(Array.Empty<ItemType>(), new());
@@ -71,14 +71,36 @@ namespace Common_Utilities.EventHandlers
                 friendlyFireDisable = true;
             }
 
+            Timing.KillCoroutines(Plugin.Coroutines.ToArray());
+            
+            Plugin.Coroutines.Clear();
+        }
+
+        public void OnRestartingRound()
+        {
             foreach (CoroutineHandle coroutine in Plugin.Coroutines)
                 Timing.KillCoroutines(coroutine);
             Plugin.Coroutines.Clear();
         }
 
+        public void OnWarheadStarting(StartingEventArgs _)
+        {
+            foreach (Room room in Room.List)
+                room.Color = config.WarheadColor;
+        }
+
+        public void OnWarheadStopping(StoppingEventArgs _)
+        {
+            if (Warhead.IsLocked)
+                return;
+            
+            foreach (Room room in Room.List)
+                room.ResetColor();
+        }
+        
         private IEnumerator<float> ServerBroadcast()
         {
-            for (; ; )
+            while(true)
             {
                 yield return Timing.WaitForSeconds(config.TimedBroadcastDelay);
 
@@ -88,11 +110,11 @@ namespace Common_Utilities.EventHandlers
 
         private IEnumerator<float> ItemCleanup()
         {
-            for (; ; )
+            while(true)
             {
                 yield return Timing.WaitForSeconds(config.ItemCleanupDelay);
 
-                foreach (Pickup pickup in Pickup.List.ToList())
+                foreach (Pickup pickup in Pickup.List)
                 {
                     if (!config.ItemCleanupOnlyPocket || pickup.Position.y < -1500f)
                         pickup.Destroy();
@@ -102,11 +124,11 @@ namespace Common_Utilities.EventHandlers
 
         private IEnumerator<float> RagdollCleanup()
         {
-            for (; ; )
+            while(true)
             {
                 yield return Timing.WaitForSeconds(config.RagdollCleanupDelay);
 
-                foreach (Ragdoll ragdoll in Ragdoll.List.ToList())
+                foreach (Ragdoll ragdoll in Ragdoll.List)
                 {
                     if (!config.RagdollCleanupOnlyPocket || ragdoll.Position.y < -1500f)
                         ragdoll.Destroy();
@@ -139,7 +161,7 @@ namespace Common_Utilities.EventHandlers
 
         private IEnumerator<float> AfkCheck()
         {
-            for (; ; )
+            while(true)
             {
                 yield return Timing.WaitForSeconds(1f);
 
@@ -148,7 +170,12 @@ namespace Common_Utilities.EventHandlers
                     if (!Plugin.AfkDict.ContainsKey(player))
                         Plugin.AfkDict.Add(player, new Tuple<int, Vector3>(0, player.Position));
 
-                    if (player.Role.IsDead || player.IsGodModeEnabled || player.IsNoclipPermitted || player.Role is FpcRole { IsGrounded: false } || player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity) || config.AfkIgnoredRoles.Contains(player.Role.Type))
+                    if (player.Role.IsDead 
+                        || player.IsGodModeEnabled 
+                        || player.IsNoclipPermitted 
+                        || player.Role is FpcRole { IsGrounded: false } 
+                        || player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity) 
+                        || config.AfkIgnoredRoles.Contains(player.Role.Type))
                     {
 #pragma warning disable SA1013
                         Log.Debug($"Player {player.Nickname} ({player.Role.Type}) is not a checkable player. NoClip: {player.IsNoclipPermitted} GodMode: {player.IsGodModeEnabled} IsNotGrounded: {player.Role is FpcRole { IsGrounded: false }} AFKImunity: {player.RemoteAdminPermissions.HasFlag(PlayerPermissions.AFKImmunity)}");
@@ -176,28 +203,6 @@ namespace Common_Utilities.EventHandlers
                     Plugin.AfkDict[player] = new Tuple<int, Vector3>(Plugin.AfkDict[player].Item1 + 1, Plugin.AfkDict[player].Item2);
                 }
             }
-        }
-
-        public void OnRestartingRound()
-        {
-            foreach (CoroutineHandle coroutine in Plugin.Coroutines)
-                Timing.KillCoroutines(coroutine);
-            Plugin.Coroutines.Clear();
-        }
-
-        public void OnWarheadStarting(StartingEventArgs _)
-        {
-            foreach (Room room in Room.List)
-                room.Color = config.WarheadColor;
-        }
-
-        public void OnWarheadStopping(StoppingEventArgs _)
-        {
-            if (Warhead.IsLocked)
-                return;
-            
-            foreach (Room room in Room.List)
-                room.ResetColor();
         }
     }
 }
