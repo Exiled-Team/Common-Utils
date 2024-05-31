@@ -2,7 +2,7 @@ namespace Common_Utilities.ConfigObjects
 {
     using PlayerRoles;
 
-    public class PlayerUpgradeChance
+    public class PlayerUpgradeChance : IChanceObject
     {
         public RoleTypeId Original { get; set; }
 

@@ -5,7 +5,7 @@ namespace Common_Utilities.ConfigObjects
     using Exiled.API.Enums;
     using UnityEngine;
 
-    public class Scp914TeleportChance
+    public class Scp914TeleportChance : IChanceObject
     {
         public ZoneType Zone { get; set; } = ZoneType.Unspecified;
         

@@ -1,6 +1,6 @@
 namespace Common_Utilities.ConfigObjects
 {
-    public class ItemUpgradeChance
+    public class ItemUpgradeChance : IChanceObject
     {
         public ItemType Original { get; set; }
 

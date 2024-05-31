@@ -142,27 +142,36 @@ public class PlayerHandlers
     public List<ItemType> StartItems(RoleTypeId role, Player player = null)
     {
         List<ItemType> items = new();
-
+        
+        // iterate through slots
         for (int i = 0; i < config.StartingInventories[role].UsedSlots; i++)
         {
-            var itemChances = (List<ItemChance>)config.StartingInventories[role][i].Where(x => player == null || string.IsNullOrEmpty(x.Group) || x.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group));
-            double r;
-            if (config.AdditiveProbabilities)
-                r = Plugin.Random.NextDouble() * itemChances.Sum(val => val.Chance);
-            else
-                r = Plugin.Random.NextDouble() * 100;
-            Log.Debug($"[StartItems] ActualChance ({r})/{itemChances.Sum(val => val.Chance)}");
-            foreach ((string item, double chance, string groupKey) in itemChances)
+#pragma warning disable SA1119
+            // item chances for that slot
+            var itemChances = (List<ItemChance>)config.StartingInventories[role][i]
+                .Where(x => player == null 
+                || string.IsNullOrEmpty(x.Group) 
+                || x.Group == "none" 
+                || ((ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group)));
+#pragma warning restore SA1119
+
+            double rolledChance = API.RollChance(itemChances);
+            
+            Log.Debug($"[StartItems] RolledChance ({rolledChance})/{itemChances.Sum(val => val.Chance)}");
+            
+            foreach ((string item, double chance) in itemChances)
             {
-                Log.Debug($"[StartItems] Probability ({r})/{chance}");
-                if (r <= chance)
+                Log.Debug($"[StartItems] Probability ({rolledChance})/{chance}");
+               
+                if (rolledChance <= chance)
                 {
                     if (Enum.TryParse(item, true, out ItemType type))
                     {
                         items.Add(type);
                         break;
                     }
-                    else if (CustomItem.TryGet(item, out CustomItem customItem))
+
+                    if (CustomItem.TryGet(item, out CustomItem customItem))
                     {
                         if (player != null)
                             customItem!.Give(player);
@@ -171,11 +180,12 @@ public class PlayerHandlers
                             
                         break;
                     }
-                    else
-                        Log.Warn($"{nameof(StartItems)}: {item} is not a valid ItemType or it is a CustomItem that is not installed! It is being skipper in inventory decisions.");
+
+                    Log.Warn($"{nameof(StartItems)}: {item} is not a valid ItemType or CustomItem! It is being skipped in inventory decisions.");
                 }
 
-                r -= chance;
+                if (config.AdditiveProbabilities) 
+                    rolledChance -= chance;
             }
         }
 
