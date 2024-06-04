@@ -34,6 +34,8 @@ public class Plugin : Plugin<Config>
     private Harmony harmony;
     private string harmonyName;
         
+    public static List<CoroutineHandle> Coroutines { get; } = new();
+    
     public static Dictionary<Player, Tuple<int, Vector3>> AfkDict { get; } = new();
 
     public override string Name { get; } = "Common Utilities";
@@ -42,13 +44,11 @@ public class Plugin : Plugin<Config>
 
     public override Version Version { get; } = new(7, 1, 1);
 
-    public override Version RequiredExiledVersion { get; } = new(8, 9, 2);
+    public override Version RequiredExiledVersion { get; } = new(8, 8, 1);
 
     public override string Prefix { get; } = "CommonUtilities";
 
     public override PluginPriority Priority => PluginPriority.Higher;
-
-    public static List<CoroutineHandle> Coroutines { get; } = new();
 
     public override void OnEnabled()
     {
