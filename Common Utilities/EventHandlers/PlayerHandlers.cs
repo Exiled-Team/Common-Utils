@@ -46,7 +46,7 @@ public class PlayerHandlers
             }
 
             ev.Items.Clear();
-            ev.Items.AddRange(StartItems(ev.NewRole, ev.Player));
+            ev.Items.AddRange(GetStartingInventory(ev.NewRole, ev.Player));
 
             if (config.StartingInventories[ev.NewRole].Ammo == null || config.StartingInventories[ev.NewRole].Ammo.Count <= 0) 
                 return;
@@ -138,7 +138,7 @@ public class PlayerHandlers
         }
     }
         
-    public List<ItemType> StartItems(RoleTypeId role, Player player = null)
+    public List<ItemType> GetStartingInventory(RoleTypeId role, Player player = null)
     {
         List<ItemType> items = new();
         
@@ -149,9 +149,9 @@ public class PlayerHandlers
             // item chances for that slot
             var itemChances = (List<ItemChance>)config.StartingInventories[role][i]
                 .Where(x => player == null 
-                || string.IsNullOrEmpty(x.Group) 
-                || x.Group == "none" 
-                || ((ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group)));
+                            || string.IsNullOrEmpty(x.Group) 
+                            || x.Group == "none" 
+                            || ((ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group)));
 #pragma warning restore SA1119
 
             double rolledChance = API.RollChance(itemChances);
@@ -175,12 +175,12 @@ public class PlayerHandlers
                         if (player != null)
                             customItem!.Give(player);
                         else
-                            Log.Warn($"{nameof(StartItems)}: Tried to give {customItem!.Name} to a null player.");
+                            Log.Warn($"{nameof(GetStartingInventory)}: Tried to give {customItem!.Name} to a null player.");
                             
                         break;
                     }
 
-                    Log.Warn($"{nameof(StartItems)}: {item} is not a valid ItemType or CustomItem! It is being skipped in inventory decisions.");
+                    Log.Warn($"{nameof(GetStartingInventory)}: {item} is not a valid ItemType or CustomItem! It is being skipped in inventory decisions.");
                 }
 
                 if (config.AdditiveProbabilities) 
