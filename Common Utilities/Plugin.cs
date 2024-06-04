@@ -102,9 +102,9 @@ public class Plugin : Plugin<Config>
         scp914.UpgradingPlayer += mapHandlers.OnScp914UpgradingPlayer;
             
         if (Config.Scp914ItemChances != null)
-            scp914.UpgradingPickup += mapHandlers.OnScp914UpgradingItem;
+            scp914.UpgradingPickup += mapHandlers.OnUpgradingPickup;
         if (Config.Scp914ItemChances != null)
-            scp914.UpgradingInventoryItem += mapHandlers.OnScp914UpgradingInventoryItem;
+            scp914.UpgradingInventoryItem += mapHandlers.OnUpgradingInventoryItem;
 
         warhead.Starting += serverHandlers.OnWarheadStarting;
         warhead.Stopping += serverHandlers.OnWarheadStopping;
@@ -141,8 +141,8 @@ public class Plugin : Plugin<Config>
         server.WaitingForPlayers -= serverHandlers.OnWaitingForPlayers;
 
         scp914.UpgradingPlayer -= mapHandlers.OnScp914UpgradingPlayer;
-        scp914.UpgradingPickup -= mapHandlers.OnScp914UpgradingItem;
-        scp914.UpgradingInventoryItem -= mapHandlers.OnScp914UpgradingInventoryItem;
+        scp914.UpgradingPickup -= mapHandlers.OnUpgradingPickup;
+        scp914.UpgradingInventoryItem -= mapHandlers.OnUpgradingInventoryItem;
 
         warhead.Starting -= serverHandlers.OnWarheadStarting;
         warhead.Stopping -= serverHandlers.OnWarheadStopping;
@@ -183,7 +183,7 @@ public class Plugin : Plugin<Config>
             Log.Debug($"{Config.Scp914ItemChances.Count}");
             foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChances)
             {
-                foreach ((ItemType oldItem, ItemType newItem, double chance, int count) in upgrade.Value)
+                foreach ((string oldItem, string newItem, double chance, int count) in upgrade.Value)
                     Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem}x({count}) - {chance}");
             }
         }
@@ -193,7 +193,7 @@ public class Plugin : Plugin<Config>
             Log.Debug($"{Config.Scp914ClassChanges.Count}");
             foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
             {
-                foreach ((RoleTypeId oldRole, string newRole, double chance, bool keepInventory, bool keepHealth) in upgrade.Value)
+                foreach ((string oldRole, string newRole, double chance, bool keepInventory, bool keepHealth) in upgrade.Value)
                     Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory} keepHealth: {keepHealth}");
             }
         }

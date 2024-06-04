@@ -1,5 +1,6 @@
 namespace Common_Utilities.EventHandlers;
 
+using Exiled.CustomItems.API.Features;
 using Exiled.API.Extensions;
 using System;
 using System.Collections.Generic;
@@ -20,21 +21,36 @@ public class MapHandlers
 
     public MapHandlers(Plugin plugin) => config = plugin.Config;
         
-    public void OnScp914UpgradingItem(UpgradingPickupEventArgs ev)
+    public void OnUpgradingPickup(UpgradingPickupEventArgs ev)
     {
-        if (config.Scp914ItemChances.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance> chances))
+        if (config.Scp914ItemChances.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance> itemUpgradeChances))
         {
-            var itemUpgradeChance = (List<ItemUpgradeChance>)chances.Where(x => x.Original == ev.Pickup.Type);
+            var itemUpgradeChance = (List<ItemUpgradeChance>)itemUpgradeChances.Where(x => x.OriginalItem == ev.Pickup.Type.ToString() || (CustomItem.TryGet(ev.Pickup, out CustomItem item) && item!.Name == x.OriginalItem));
 
             double rolledChance = API.RollChance(itemUpgradeChance);
 
-            foreach ((ItemType sourceItem, ItemType destinationItem, double chance, int count) in itemUpgradeChance)
+            foreach ((string sourceItem, string destinationItem, double chance, int count) in itemUpgradeChance)
             {
-                Log.Debug($"{nameof(OnScp914UpgradingItem)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {rolledChance <= chance} ({rolledChance})");
-               
+                Log.Debug($"{nameof(OnUpgradingPickup)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {rolledChance <= chance} ({rolledChance})");
+
                 if (rolledChance <= chance)
                 {
-                    UpgradeItem(ev.Pickup, destinationItem, ev.OutputPosition, count);
+                    if (Enum.TryParse(destinationItem, out ItemType itemType))
+                    {
+                        if (itemType is not ItemType.None)
+                        {
+                            UpgradePickup(ev.Pickup, ev.OutputPosition, count, false, itemType: itemType);
+                        }
+                    }
+                    else if (CustomItem.TryGet(destinationItem, out CustomItem customItem))
+                    {
+                        if (customItem is not null)
+                        {
+                            UpgradePickup(ev.Pickup, ev.OutputPosition, count, true, customItem: customItem);
+                        }
+                    }
+                    
+                    ev.Pickup.Destroy();
                     ev.IsAllowed = false;
                     break;
                 }
@@ -45,30 +61,32 @@ public class MapHandlers
         }
     }
 
-    public void OnScp914UpgradingInventoryItem(UpgradingInventoryItemEventArgs ev)
+    public void OnUpgradingInventoryItem(UpgradingInventoryItemEventArgs ev)
     {
-        if (config.Scp914ItemChances.ContainsKey(ev.KnobSetting))
+        if (config.Scp914ItemChances.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance> itemUpgradeChances))
         {
-            var itemUpgradeChance = (List<ItemUpgradeChance>)config.Scp914ItemChances[ev.KnobSetting].Where(x => x.Original == ev.Item.Type);
+            var itemUpgradeChance = (List<ItemUpgradeChance>)itemUpgradeChances.Where(x => x.OriginalItem == ev.Item.Type.ToString() || (CustomItem.TryGet(ev.Item, out CustomItem item) && item!.Name == x.OriginalItem));
             
             double rolledChance = API.RollChance(itemUpgradeChance);
 
-            foreach ((ItemType sourceItem, ItemType destinationItem, double chance, int count) in itemUpgradeChance)
+            foreach ((string sourceItem, string destinationItem, double chance, int count) in itemUpgradeChance)
             {
-                Log.Debug($"{nameof(OnScp914UpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {rolledChance <= chance} ({rolledChance})");
+                Log.Debug($"{nameof(OnUpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {rolledChance <= chance} ({rolledChance})");
              
                 if (rolledChance <= chance)
                 {
-                    if (destinationItem is not ItemType.None)
+                    if (Enum.TryParse(destinationItem, out ItemType itemType))
                     {
-                        ev.Player.RemoveItem(ev.Item);
-                    
-                        for (int i = 0; i < count; i++)
+                        if (itemType is not ItemType.None)
                         {
-                            if (!ev.Player.IsInventoryFull)
-                                ev.Player.AddItem(destinationItem);
-                            else
-                                Pickup.CreateAndSpawn(destinationItem, Scp914.OutputPosition, ev.Player.Rotation, ev.Player);
+                            UpgradeInventoryItem(ev, count, false, itemType: itemType);
+                        }
+                    }
+                    else if (CustomItem.TryGet(destinationItem, out CustomItem customItem))
+                    {
+                        if (customItem is not null)
+                        {
+                            UpgradeInventoryItem(ev, count, true, customItem: customItem);
                         }
                     }
 
@@ -85,20 +103,22 @@ public class MapHandlers
     {
         if (config.Scp914ClassChanges != null && config.Scp914ClassChanges.TryGetValue(ev.KnobSetting, out var change))
         {
-            var playerUpgradeChance = (List<PlayerUpgradeChance>)change.Where(x => x.Original == ev.Player.Role);
+            var playerUpgradeChance = (List<PlayerUpgradeChance>)change.Where(
+                x => x.OriginalRole == ev.Player.Role.ToString() 
+                || (CustomRole.TryGet(ev.Player, out IReadOnlyCollection<CustomRole> customRoles) && customRoles.Select(r => r.Name).Contains(x.OriginalRole)));
 
             double rolledChance = API.RollChance(playerUpgradeChance);
 
-            foreach ((RoleTypeId sourceRole, string destinationRole, double chance, bool keepInventory, bool keepHealth) in playerUpgradeChance)
+            foreach ((string sourceRole, string destinationRole, double chance, bool keepInventory, bool keepHealth) in playerUpgradeChance)
             {
-                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role})is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {rolledChance <= chance} ({rolledChance})");
+                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role}) is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {rolledChance <= chance} ({rolledChance})");
                 if (rolledChance <= chance)
                 {
                     float originalHealth = ev.Player.Health;
                     var originalItems = ev.Player.Items;
                     var originalAmmo = ev.Player.Ammo;
                         
-                    if (Enum.TryParse(destinationRole, true, out RoleTypeId roleType))
+                    if (Enum.TryParse(destinationRole,  out RoleTypeId roleType))
                     {
                         ev.Player.Role.Set(roleType, SpawnReason.Respawn, RoleSpawnFlags.None);
                     }
@@ -185,7 +205,7 @@ public class MapHandlers
         }
     }
 
-    private static Vector3 ChoosePosition(ZoneType zone, List<RoomType> ignoredRooms, Vector3 offset, RoomType roomType)
+    private Vector3 ChoosePosition(ZoneType zone, List<RoomType> ignoredRooms, Vector3 offset, RoomType roomType)
     {
         Vector3 pos1 = Room.List.Where(x => x.Zone == zone && !ignoredRooms.Contains(x.Type)).GetRandomValue().Position + ((Vector3.up * 1.5f) + offset);
         Vector3 pos2 = Room.Get(roomType).Position + (Vector3.up * 1.5f) + offset;
@@ -207,16 +227,47 @@ public class MapHandlers
         }
     }
 
-    private void UpgradeItem(Pickup oldItem, ItemType newItem, Vector3 pos, int count)
+    private void UpgradePickup(Pickup oldItem, Vector3 outputPos, int count, bool isCustomItem, ItemType itemType = ItemType.None, CustomItem customItem = null)
     {
-        Quaternion quaternion = oldItem.Rotation;
-        Player previousOwner = oldItem.PreviousOwner;
-        oldItem.Destroy();
-        if (newItem is not ItemType.None)
+        if (!isCustomItem)
+        {
+            Quaternion quaternion = oldItem.Rotation;
+            Player previousOwner = oldItem.PreviousOwner;
+            for (int i = 0; i < count; i++)
+            {
+                Pickup.CreateAndSpawn(itemType, outputPos, quaternion, previousOwner);
+            }
+        }
+        else
         {
             for (int i = 0; i < count; i++)
             {
-                Pickup.CreateAndSpawn(newItem, pos, quaternion, previousOwner);
+                customItem!.Spawn(outputPos, oldItem.PreviousOwner);
+            }
+        }
+    }
+    
+    private void UpgradeInventoryItem(UpgradingInventoryItemEventArgs ev, int count, bool isCustomItem, ItemType itemType = ItemType.None, CustomItem customItem = null)
+    {
+        ev.Player.RemoveItem(ev.Item);
+        if (!isCustomItem)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (!ev.Player.IsInventoryFull)
+                    ev.Player.AddItem(itemType);
+                else
+                    Pickup.CreateAndSpawn(itemType, Scp914.OutputPosition, ev.Player.Rotation, ev.Player);
+            }   
+        }
+        else
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (!ev.Player.IsInventoryFull)
+                    customItem!.Give(ev.Player);
+                else
+                    customItem!.Spawn(Scp914.OutputPosition, ev.Player);
             }
         }
     }

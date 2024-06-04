@@ -88,6 +88,7 @@ namespace Common_Utilities
         [Description("Whether or not probabilities should be additive (50 + 50 = 100) or not (50 + 50 = 2 seperate 50% chances)")]
         public bool AdditiveProbabilities { get; set; } = false;
 
+        //TODO: check out starting inventory logic
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
         public Dictionary<RoleTypeId, RoleInventory> StartingInventories { get; set; } = new()
@@ -123,7 +124,7 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            Type = ItemType.Ammo556x45,
+                            AmmoType = ItemType.Ammo556x45,
                             Amount = 200,
                             Group = "none",
                         },
@@ -132,7 +133,7 @@ namespace Common_Utilities
             },
         };
 
-        [Description("The list of custom 914 recipies. Original is the item being upgraded, New is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
+        [Description("The list of custom 914 recipies. OriginalItem is the item being upgraded, NewItem is the item to upgrade to, and Chance is the percent chance of the upgrade happening. You can specify multiple upgrade choices for the same item.")]
         public Dictionary<Scp914KnobSetting, List<ItemUpgradeChance>> Scp914ItemChances { get; set; } = new()
         {
             {
@@ -141,8 +142,8 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            Original = ItemType.KeycardO5,
-                            New = ItemType.MicroHID,
+                            OriginalItem = ItemType.KeycardO5.ToString(),
+                            NewItem = ItemType.MicroHID.ToString(),
                             Chance = 50,
                         }
                     },
@@ -159,8 +160,8 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            Original = RoleTypeId.ClassD,
-                            New = RoleTypeId.Spectator.ToString(),
+                            OriginalRole = RoleTypeId.ClassD.ToString(),
+                            NewRole = RoleTypeId.Spectator.ToString(),
                             Chance = 100,
                         }
                     },
