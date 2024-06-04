@@ -26,6 +26,7 @@ using Random = System.Random;
 
 public class Plugin : Plugin<Config>
 {
+#pragma warning disable SA1307
     public static Plugin Instance;
     public static Random Random;
     public PlayerHandlers playerHandlers;
@@ -33,6 +34,7 @@ public class Plugin : Plugin<Config>
     private MapHandlers mapHandlers;
     private Harmony harmony;
     private string harmonyName;
+#pragma warning restore SA1307
         
     public static List<CoroutineHandle> Coroutines { get; } = new();
     

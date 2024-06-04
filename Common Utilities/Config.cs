@@ -88,7 +88,7 @@ namespace Common_Utilities
         [Description("Whether or not probabilities should be additive (50 + 50 = 100) or not (50 + 50 = 2 seperate 50% chances)")]
         public bool AdditiveProbabilities { get; set; } = false;
 
-        //TODO: check out starting inventory logic
+        // TODO: check out starting inventory logic
         [Description(
             "The list of starting items for roles. ItemName is the item to give them, and Chance is the percent chance of them spawning with it, and Group allows you to restrict the item to only players with certain RA groups (Leave this as 'none' to allow all players to get the item). You can specify the same item multiple times.")]
         public Dictionary<RoleTypeId, RoleInventory> StartingInventories { get; set; } = new()
