@@ -2,7 +2,7 @@ namespace Common_Utilities.ConfigObjects
 {
     using Exiled.API.Enums;
 
-    public class Scp914EffectChance
+    public class Scp914EffectChance : IChanceObject
     {
         public EffectType Effect { get; set; }
 

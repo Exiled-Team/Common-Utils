@@ -1,6 +1,6 @@
 namespace Common_Utilities.ConfigObjects;
 
-public class ItemChance
+public class ItemChance : IChanceObject
 {
     public string ItemName { get; set; } = ItemType.None.ToString();
 
@@ -8,10 +8,9 @@ public class ItemChance
 
     public string Group { get; set; } = "none";
 
-    public void Deconstruct(out string name, out double i, out string groupKey)
+    public void Deconstruct(out string name, out double i)
     {
         name = ItemName;
         i = Chance;
-        groupKey = Group;
     }
 }

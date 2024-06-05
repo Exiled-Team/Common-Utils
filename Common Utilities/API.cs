@@ -1,16 +1,20 @@
-namespace Common_Utilities
-{ 
-    using System.Collections.Generic;
+﻿namespace Common_Utilities;
 
-    using Exiled.API.Features;
-    using PlayerRoles;
+using System.Collections.Generic;
+using System.Linq;
+using ConfigObjects;
 
-    public static class API
+public class API
+{
+    public static double RollChance(IEnumerable<IChanceObject> scp914EffectChances)
     {
-        public static List<ItemType> GetStartItems(RoleTypeId role) => Main.Instance.PlayerHandlers.StartItems(role);
-
-        public static List<ItemType> GetStartItems(RoleTypeId role, Player player) => Main.Instance.PlayerHandlers.StartItems(role, player);
-
-        public static float GetHealthOnKill(RoleTypeId role) => Main.Instance.Config.HealthOnKill?.ContainsKey(role) ?? false ? Main.Instance.Config.HealthOnKill[role] : 0f;
+        double rolledChance;
+        
+        if (Plugin.Instance.Config.AdditiveProbabilities)
+            rolledChance = Plugin.Random.NextDouble() * scp914EffectChances.Sum(x => x.Chance);
+        else
+            rolledChance = Plugin.Random.NextDouble() * 100;
+        
+        return rolledChance;
     }
 }

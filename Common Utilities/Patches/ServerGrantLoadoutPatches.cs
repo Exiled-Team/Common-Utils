@@ -1,10 +1,11 @@
-﻿namespace Common_Utilities.Patches
+﻿/*
+namespace Common_Utilities.Patches
 {
     using System.Collections.Generic;
     using System.Linq;
 
-    using Common_Utilities.ConfigObjects;
-    using Common_Utilities.Configs;
+    using ConfigObjects;
+    using Configs;
     using Exiled.API.Features;
     using HarmonyLib;
     using InventorySystem;
@@ -15,17 +16,25 @@
     {
         public static bool Prefix(ReferenceHub target, RoleTypeId roleTypeId, bool resetInventory = true)
         {
-            if (Main.Instance.Config.StartingInventories == null || !Main.Instance.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) || !Player.TryGet(target, out Player player))
+            if (Plugin.Instance.Config.StartingInventories == null 
+                || !Plugin.Instance.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) 
+                || !Player.TryGet(target, out Player player))
                 return true;
 
             if (resetInventory)
                 player.ClearInventory();
 
-            player.AddItem(Main.Instance.PlayerHandlers.StartItems(roleTypeId, player));
+            player.AddItem(Plugin.Instance.playerHandlers.GetStartingInventory(roleTypeId, player));
 
-            if (startingInventories.Ammo != null && startingInventories.Ammo.Count > 0)
+            if (startingInventories.Ammo is { Count: > 0 })
             {
-                IEnumerable<StartingAmmo> startingAmmo = startingInventories.Ammo.Where(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == player.Group));
+#pragma warning disable SA1119
+                List<StartingAmmo> startingAmmo = (List<StartingAmmo>)startingInventories.Ammo
+                    .Where(s => 
+                        string.IsNullOrEmpty(s.Group) 
+                        || s.Group == "none" 
+                        || ((ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == player.Group)));
+#pragma warning restore SA1119
                 if (startingAmmo.Any())
                 {
                     player.Ammo.Clear();
@@ -36,8 +45,9 @@
                     }
                 }
             }
-
+            
             return false;
         }
     }
 }
+*/
