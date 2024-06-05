@@ -7,10 +7,10 @@ using UnityEngine;
 public class Scp914TeleportChance : IChanceObject
 {
     public ZoneType Zone { get; set; } = ZoneType.Unspecified;
-        
-    public List<RoomType> IgnoredRooms { get; set; }
 
-    public RoomType Room { get; set; }
+    public List<RoomType> IgnoredRooms { get; set; } = new();
+
+    public RoomType Room { get; set; } = RoomType.Unknown;
 
     public Vector3 Offset { get; set; } = Vector3.zero;
 

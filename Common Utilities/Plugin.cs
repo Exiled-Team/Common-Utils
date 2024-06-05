@@ -101,7 +101,7 @@ public class Plugin : Plugin<Config>
         server.RestartingRound += serverHandlers.OnRestartingRound;
         server.WaitingForPlayers += serverHandlers.OnWaitingForPlayers;
 
-        scp914.UpgradingPlayer += mapHandlers.OnScp914UpgradingPlayer;
+        scp914.UpgradingPlayer += mapHandlers.OnUpgradingPlayer;
             
         if (Config.Scp914ItemChances != null)
             scp914.UpgradingPickup += mapHandlers.OnUpgradingPickup;
@@ -142,7 +142,7 @@ public class Plugin : Plugin<Config>
         server.RestartingRound -= serverHandlers.OnRestartingRound;
         server.WaitingForPlayers -= serverHandlers.OnWaitingForPlayers;
 
-        scp914.UpgradingPlayer -= mapHandlers.OnScp914UpgradingPlayer;
+        scp914.UpgradingPlayer -= mapHandlers.OnUpgradingPlayer;
         scp914.UpgradingPickup -= mapHandlers.OnUpgradingPickup;
         scp914.UpgradingInventoryItem -= mapHandlers.OnUpgradingInventoryItem;
 

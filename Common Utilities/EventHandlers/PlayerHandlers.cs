@@ -1,3 +1,5 @@
+using Exiled.API.Enums;
+
 namespace Common_Utilities.EventHandlers;
 
 #pragma warning disable IDE0018
@@ -44,7 +46,7 @@ public class PlayerHandlers
                 Log.Warn("items is null");
                 return;
             }
-
+            
             ev.Items.Clear();
             ev.Items.AddRange(GetStartingInventory(ev.NewRole, ev.Player));
 
@@ -148,10 +150,12 @@ public class PlayerHandlers
 #pragma warning disable SA1119
             // item chances for that slot
             List<ItemChance> itemChances = config.StartingInventories[role][i]
-                .Where(x => player == null 
-                            || string.IsNullOrEmpty(x.Group) 
-                            || x.Group == "none" 
-                            || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group)).ToList();
+                .Where(x => 
+                    player == null 
+                    || string.IsNullOrEmpty(x.Group) 
+                    || x.Group == "none" 
+                    || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group))
+                .ToList();
 #pragma warning restore SA1119
 
             double rolledChance = API.RollChance(itemChances);

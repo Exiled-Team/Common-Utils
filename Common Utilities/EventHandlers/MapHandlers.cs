@@ -23,13 +23,17 @@ public class MapHandlers
         
     public void OnUpgradingPickup(UpgradingPickupEventArgs ev)
     {
-        if (config.Scp914ItemChances.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance> itemUpgradeChances))
+        if (config.Scp914ItemChances.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance> outItemUpgradeChances))
         {
-            var itemUpgradeChance = (List<ItemUpgradeChance>)itemUpgradeChances.Where(x => x.OriginalItem == ev.Pickup.Type.ToString() || (CustomItem.TryGet(ev.Pickup, out CustomItem item) && item!.Name == x.OriginalItem));
+            List<ItemUpgradeChance> itemUpgradeChances = outItemUpgradeChances
+                .Where(x => 
+                    x.OriginalItem == ev.Pickup.Type.ToString() 
+                    || (CustomItem.TryGet(ev.Pickup, out CustomItem item) && item!.Name == x.OriginalItem))
+                .ToList();
 
-            double rolledChance = API.RollChance(itemUpgradeChance);
+            double rolledChance = API.RollChance(itemUpgradeChances);
 
-            foreach ((string sourceItem, string destinationItem, double chance, int count) in itemUpgradeChance)
+            foreach ((string sourceItem, string destinationItem, double chance, int count) in itemUpgradeChances)
             {
                 Log.Debug($"{nameof(OnUpgradingPickup)}: SCP-914 is trying to upgrade a {ev.Pickup.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {rolledChance <= chance} ({rolledChance})");
 
@@ -63,13 +67,17 @@ public class MapHandlers
 
     public void OnUpgradingInventoryItem(UpgradingInventoryItemEventArgs ev)
     {
-        if (config.Scp914ItemChances.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance> itemUpgradeChances))
+        if (config.Scp914ItemChances.TryGetValue(ev.KnobSetting, out List<ItemUpgradeChance> outItemUpgradeChances))
         {
-            var itemUpgradeChance = (List<ItemUpgradeChance>)itemUpgradeChances.Where(x => x.OriginalItem == ev.Item.Type.ToString() || (CustomItem.TryGet(ev.Item, out CustomItem item) && item!.Name == x.OriginalItem));
+            List<ItemUpgradeChance> itemUpgradeChances = outItemUpgradeChances
+                .Where(x => 
+                    x.OriginalItem == ev.Item.Type.ToString() 
+                    || (CustomItem.TryGet(ev.Item, out CustomItem item) && item!.Name == x.OriginalItem))
+                .ToList();
             
-            double rolledChance = API.RollChance(itemUpgradeChance);
+            double rolledChance = API.RollChance(itemUpgradeChances);
 
-            foreach ((string sourceItem, string destinationItem, double chance, int count) in itemUpgradeChance)
+            foreach ((string sourceItem, string destinationItem, double chance, int count) in itemUpgradeChances)
             {
                 Log.Debug($"{nameof(OnUpgradingInventoryItem)}: {ev.Player.Nickname} is attempting to upgrade hit {ev.Item.Type}. {sourceItem} -> {destinationItem} ({chance}). Should process: {rolledChance <= chance} ({rolledChance})");
              
@@ -99,19 +107,21 @@ public class MapHandlers
         }
     }
 
-    public void OnScp914UpgradingPlayer(UpgradingPlayerEventArgs ev)
+    public void OnUpgradingPlayer(UpgradingPlayerEventArgs ev)
     {
-        if (config.Scp914ClassChanges != null && config.Scp914ClassChanges.TryGetValue(ev.KnobSetting, out var change))
+        if (config.Scp914ClassChanges != null && config.Scp914ClassChanges.TryGetValue(ev.KnobSetting, out var outPlayerUpgradeChances))
         {
-            var playerUpgradeChance = (List<PlayerUpgradeChance>)change.Where(
-                x => x.OriginalRole == ev.Player.Role.ToString() 
-                || (CustomRole.TryGet(ev.Player, out IReadOnlyCollection<CustomRole> customRoles) && customRoles.Select(r => r.Name).Contains(x.OriginalRole)));
+            List<PlayerUpgradeChance> playerUpgradeChances = outPlayerUpgradeChances
+                .Where(x => 
+                    x.OriginalRole == ev.Player.Role.ToString() 
+                    || (CustomRole.TryGet(ev.Player, out IReadOnlyCollection<CustomRole> customRoles) && customRoles.Select(r => r.Name).Contains(x.OriginalRole)))
+                .ToList();
 
-            double rolledChance = API.RollChance(playerUpgradeChance);
+            double rolledChance = API.RollChance(playerUpgradeChances);
 
-            foreach ((string sourceRole, string destinationRole, double chance, bool keepInventory, bool keepHealth) in playerUpgradeChance)
+            foreach ((string sourceRole, string destinationRole, double chance, bool keepInventory, bool keepHealth) in playerUpgradeChances)
             {
-                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role}) is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {rolledChance <= chance} ({rolledChance})");
+                Log.Debug($"{nameof(OnUpgradingPlayer)}: {ev.Player.Nickname} ({ev.Player.Role}) is trying to upgrade his class. {sourceRole} -> {destinationRole} ({chance}). Should be processed: {rolledChance <= chance} ({rolledChance})");
                 if (rolledChance <= chance)
                 {
                     float originalHealth = ev.Player.Health;
@@ -166,7 +176,7 @@ public class MapHandlers
 
             foreach ((EffectType effect, double chance, float duration) in scp914EffectChances)
             {
-                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect through SCP-914. {effect} ({chance}). Should be added: {rolledChance <= chance} ({rolledChance})");
+                Log.Debug($"{nameof(OnUpgradingPlayer)}: {ev.Player.Nickname} is trying to gain an effect through SCP-914. {effect} ({chance}). Should be added: {rolledChance <= chance} ({rolledChance})");
                 
                 if (rolledChance <= chance)
                 {
@@ -188,7 +198,7 @@ public class MapHandlers
 
             foreach ((RoomType roomType, List<RoomType> ignoredRooms, Vector3 offset, double chance, float damage, ZoneType zone) in config.Scp914TeleportChances[ev.KnobSetting])
             {
-                Log.Debug($"{nameof(OnScp914UpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {rolledChance <= chance} ({rolledChance})");
+                Log.Debug($"{nameof(OnUpgradingPlayer)}: {ev.Player.Nickname} is trying to be teleported by 914. {roomType} + {offset} ({chance}). Should be teleported: {rolledChance <= chance} ({rolledChance})");
 
                 if (rolledChance <= chance)
                 {
@@ -207,8 +217,11 @@ public class MapHandlers
 
     private Vector3 ChoosePosition(ZoneType zone, List<RoomType> ignoredRooms, Vector3 offset, RoomType roomType)
     {
-        Vector3 pos1 = Room.List.Where(x => x.Zone == zone && !ignoredRooms.Contains(x.Type)).GetRandomValue().Position + ((Vector3.up * 1.5f) + offset);
-        Vector3 pos2 = Room.Get(roomType).Position + (Vector3.up * 1.5f) + offset;
+        Room room1 = Room.List.Where(x => x.Zone == zone && !ignoredRooms.Contains(x.Type)).GetRandomValue();
+        Vector3 pos1 = (room1?.Position ?? Vector3.zero) + (Vector3.up * 1.5f);
+
+        Room room2 = Room.Get(roomType);
+        Vector3 pos2 = room2?.Position ?? Vector3.zero + (Vector3.up * 1.5f) + offset;
        
         return zone != ZoneType.Unspecified ? pos1 : pos2;
     }
@@ -222,7 +235,7 @@ public class MapHandlers
                 amount = damage;
 
             Log.Debug(
-                $"{nameof(OnScp914UpgradingPlayer)}: {player.Nickname} is being damaged for {amount}. -- {player.Health} * {damage}");
+                $"{nameof(OnUpgradingPlayer)}: {player.Nickname} is being damaged for {amount}. -- {player.Health} * {damage}");
             player.Hurt(amount, "SCP-914 Teleport", "SCP-914");
         }
     }

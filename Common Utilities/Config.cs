@@ -33,7 +33,7 @@ namespace Common_Utilities
             };
         
         [Description("The text displayed at the timed interval specified below.")]
-        public string TimedBroadcast { get; set; } = "<color=#bfff00>This server is running </color><color=red>EXILED Common-Utilities</color><color=lime>, enjoy your stay!</color>";
+        public string TimedBroadcast { get; set; } = "<color=#bfff00>This server is running </color><color=red>EXILED Common-Utilities</color><color=#bfff00>, enjoy your stay!</color>";
 
         [Description("The time each timed broadcast will be displayed.")]
         public ushort TimedBroadcastDuration { get; set; } = 5;
@@ -42,7 +42,7 @@ namespace Common_Utilities
         public float TimedBroadcastDelay { get; set; } = 300f;
 
         [Description("The message displayed to the player when they first join the server. Setting this to empty will disable these broadcasts.")]
-        public string JoinMessage { get; set; } = "<color=lime>Welcome %player%! Please read our rules!</color>";
+        public string JoinMessage { get; set; } = "<color=#bfff00>Welcome %player%! Please read our rules!</color>";
 
         [Description("The amount of time (in seconds) the join message is displayed.")]
         public ushort JoinMessageDuration { get; set; } = 5;
@@ -169,7 +169,7 @@ namespace Common_Utilities
             },
         };
 
-        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone that isn't in the ignoredRooms list, instead of the room type defined.")]
+        [Description("The list of 914 teleport settings. Note that if you set \"zone\" to anything other than Unspecified, it will always select a random room from that zone that isn't in the ignoredRooms list, instead of the provided room type.")]
         public Dictionary<Scp914KnobSetting, List<Scp914TeleportChance>> Scp914TeleportChances { get; set; } = new()
         {
             {
@@ -178,7 +178,7 @@ namespace Common_Utilities
                     new()
                     {
                         Room = RoomType.LczClassDSpawn,
-                        Chance = 100,
+                        Chance = 50,
                     },
                     new()
                     {
@@ -187,6 +187,7 @@ namespace Common_Utilities
                         {
                             RoomType.Lcz173,
                         },
+                        Chance = 100,
                     },
                 }
             },
