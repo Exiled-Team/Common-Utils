@@ -147,11 +147,11 @@ public class PlayerHandlers
         {
 #pragma warning disable SA1119
             // item chances for that slot
-            var itemChances = (List<ItemChance>)config.StartingInventories[role][i]
+            List<ItemChance> itemChances = config.StartingInventories[role][i]
                 .Where(x => player == null 
                             || string.IsNullOrEmpty(x.Group) 
                             || x.Group == "none" 
-                            || ((ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group)));
+                            || (ServerStatic.PermissionsHandler._groups.TryGetValue(x.Group, out var group) && group == player.Group)).ToList();
 #pragma warning restore SA1119
 
             double rolledChance = API.RollChance(itemChances);
