@@ -4,9 +4,9 @@ namespace Common_Utilities.ConfigObjects
 
     public class PlayerUpgradeChance
     {
-        public RoleTypeId Original { get; set; }
+        public object OriginalRole { get; set; }
 
-        public string New { get; set; } = RoleTypeId.Spectator.ToString();
+        public object NewRole { get; set; } = RoleTypeId.Spectator.ToString();
 
         public double Chance { get; set; }
 
@@ -14,10 +14,10 @@ namespace Common_Utilities.ConfigObjects
 
         public bool KeepHealth { get; set; } = true;
 
-        public void Deconstruct(out RoleTypeId old, out string newRole, out double i, out bool keepInventory, out bool keepHealth)
+        public void Deconstruct(out object old, out object newRole, out double i, out bool keepInventory, out bool keepHealth)
         {
-            old = Original;
-            newRole = New;
+            old = OriginalRole;
+            newRole = NewRole;
             i = Chance;
             keepInventory = KeepInventory;
             keepHealth = KeepHealth;

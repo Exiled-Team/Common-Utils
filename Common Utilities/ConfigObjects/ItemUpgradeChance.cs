@@ -2,18 +2,23 @@ namespace Common_Utilities.ConfigObjects
 {
     public class ItemUpgradeChance
     {
-        public ItemType Original { get; set; }
+        public object OriginalItem { get; set; }
 
-        public ItemType New { get; set; }
+        public object NewItem { get; set; }
 
         public double Chance { get; set; }
 
         public int Count { get; set; } = 1;
 
-        public void Deconstruct(out ItemType itemType, out ItemType itemType1, out double i, out int count)
+        public void Deconstruct(out object original, out double i, out int count)
         {
-            itemType = Original;
-            itemType1 = New;
+            Deconstruct(out original, out _, out i, out count);
+        }
+
+        public void Deconstruct(out object original, out object newItem, out double i, out int count)
+        {
+            original = OriginalItem;
+            newItem = NewItem;
             i = Chance;
             count = Count;
         }

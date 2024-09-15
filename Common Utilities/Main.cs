@@ -23,10 +23,10 @@ namespace Common_Utilities
     public class Main : Plugin<Config>
     {
         public static Main Instance;
+        public readonly Random Rng = new();
         public PlayerHandlers PlayerHandlers;
         public ServerHandlers ServerHandlers;
         public MapHandlers MapHandlers;
-        public Random Rng = new();
         public Harmony Harmony;
         public string HarmonyName;
 
@@ -53,19 +53,104 @@ namespace Common_Utilities
 
             Instance = this;
 
+            HarmonyName = $"com-joker.cu-{DateTime.UtcNow.Ticks}";
+            Harmony = new Harmony(HarmonyName);
+            Harmony.PatchAll();
+
+            base.OnEnabled();
+        }
+
+        public override void OnDisabled()
+        {
+            Harmony.UnpatchAll(HarmonyName);
+            
+            base.OnDisabled();
+        }
+        
+        public void DebugConfig()
+        {
+            if (Config.StartingInventories is not null)
+            {
+                Log.Debug($"{Config.StartingInventories.Count}");
+                foreach (KeyValuePair<RoleTypeId, RoleInventory> inv in Config.StartingInventories)
+                {
+                    for (int i = 0; i < inv.Value.UsedSlots; i++)
+                    {
+                        foreach (ItemChance chance in inv.Value[i])
+                            Log.Debug($"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.Item} ({chance.Chance})");
+                    }
+
+                    foreach ((ItemType type, ushort amount, string group) in inv.Value.Ammo)
+                        Log.Debug($"Ammo Config: {inv.Key} - {type} {amount} ({group})");
+                }
+            }
+
+            if (Config.Scp914ItemChanges is not null)
+            {
+                Log.Debug($"{Config.Scp914ItemChanges.Count}");
+                foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
+                {
+                    foreach ((object oldItem, object newItem, double chance, int count) in upgrade.Value)
+                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem}x({count}) - {chance}");
+                }
+            }
+
+            if (Config.Scp914ClassChanges is not null)
+            {
+                Log.Debug($"{Config.Scp914ClassChanges.Count}");
+                foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
+                {
+                    foreach ((object oldRole, object newRole, double chance, bool keepInventory, bool keepHealth) in upgrade.Value)
+                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory} keepHealth: {keepHealth}");
+                }
+            }
+
+            if (Config.Scp914EffectChances is not null)
+            {
+                Log.Debug($"{Config.Scp914EffectChances.Count}");
+                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config.Scp914EffectChances)
+                {
+                    foreach ((EffectType effect, double chance, float duration) in upgrade.Value)
+                        Log.Debug($"914 Effect Config: {upgrade.Key}: {effect} + {duration} - {chance}");
+                }
+            }
+
+            if (Config.Scp914TeleportChances is not null)
+            {
+                Log.Debug($"{Config.Scp914TeleportChances.Count}");
+                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
+                {
+                    foreach ((RoomType room, List<RoomType> ignoredRooms, Vector3 offset, double chance, float damage, ZoneType zone) in upgrade.Value)
+                    {
+                        Log.Debug($"914 Teleport Config: {upgrade.Key}: {room}/{zone} + {offset} - {chance} [{damage}]");
+                        Log.Debug("Ignored rooms:");
+                        if (ignoredRooms is not null)
+                        {
+                            foreach (RoomType roomType in ignoredRooms)
+                                Log.Debug(roomType);
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override void SubscribeEvents()
+        {
+            base.SubscribeEvents();
+            
             Log.Info($"Instantiating Events..");
             PlayerHandlers = new PlayerHandlers(this);
             ServerHandlers = new ServerHandlers(this);
             MapHandlers = new MapHandlers(this);
             
             Log.Info($"Registering EventHandlers..");
-            if (Config.HealthOnKill != null)
+            if (Config.HealthOnKill is not null)
                 Player.Died += PlayerHandlers.OnPlayerDied;
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
             Player.Verified += PlayerHandlers.OnPlayerVerified;
-            if (Config.StartingInventories != null)
+            if (Config.StartingInventories is not null)
                 Player.ChangingRole += PlayerHandlers.OnChangingRole;
-            Player.Spawned += PlayerHandlers.OnSpawned;
+            Player.ChangedRole += PlayerHandlers.OnChangedRole;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
             if (Config.RadioBatteryDrainMultiplier is not 1)
                 Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
@@ -88,24 +173,20 @@ namespace Common_Utilities
             Server.RestartingRound += ServerHandlers.OnRestartingRound;
             Server.WaitingForPlayers += ServerHandlers.OnWaitingForPlayers;
 
-            if (Config.Scp914ItemChanges != null)
+            if (Config.Scp914ItemChanges is not null)
                 Scp914.UpgradingPickup += MapHandlers.OnScp914UpgradingItem;
-            if (Config.Scp914ItemChanges != null)
+            if (Config.Scp914ItemChanges is not null)
                 Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
             Scp914.UpgradingPlayer += MapHandlers.OnScp914UpgradingPlayer;
 
             Exiled.Events.Handlers.Warhead.Starting += ServerHandlers.OnWarheadStarting;
             Exiled.Events.Handlers.Warhead.Stopping += ServerHandlers.OnWarheadStopping;
-
-            HarmonyName = $"com-joker.cu-{DateTime.UtcNow.Ticks}";
-            Harmony = new Harmony(HarmonyName);
-            Harmony.PatchAll();
-
-            base.OnEnabled();
         }
 
-        public override void OnDisabled()
+        protected override void UnsubscribeEvents()
         {
+            base.UnsubscribeEvents();
+            
             Player.Died -= PlayerHandlers.OnPlayerDied;
             Player.Jumping -= PlayerHandlers.AntiAfkEventHandler;
             Player.Shooting -= PlayerHandlers.AntiAfkEventHandler;
@@ -115,7 +196,7 @@ namespace Common_Utilities
             Player.MakingNoise -= PlayerHandlers.AntiAfkEventHandler;
             Player.ReloadingWeapon -= PlayerHandlers.AntiAfkEventHandler;
             Player.ChangingRole -= PlayerHandlers.OnChangingRole;
-            Player.Spawned -= PlayerHandlers.OnSpawned;
+            Player.ChangedRole -= PlayerHandlers.OnChangedRole;
             Player.ThrownProjectile -= PlayerHandlers.AntiAfkEventHandler;
             Player.InteractingDoor -= PlayerHandlers.OnInteractingDoor;
             Player.UsingRadioBattery -= PlayerHandlers.OnUsingRadioBattery;
@@ -135,85 +216,9 @@ namespace Common_Utilities
             Exiled.Events.Handlers.Warhead.Starting -= ServerHandlers.OnWarheadStarting;
             Exiled.Events.Handlers.Warhead.Stopping -= ServerHandlers.OnWarheadStopping;
             
-            Harmony.UnpatchAll(HarmonyName);
-
             ServerHandlers = null;
             PlayerHandlers = null;
             MapHandlers = null;
-            base.OnDisabled();
-        }
-
-        public void DebugConfig()
-        {
-            if (Config.StartingInventories != null)
-            {
-                Log.Debug($"{Config.StartingInventories.Count}");
-                foreach (KeyValuePair<RoleTypeId, RoleInventory> inv in Config.StartingInventories)
-                {
-                    for (int i = 0; i < inv.Value.UsedSlots; i++)
-                    {
-                        foreach (ItemChance chance in inv.Value[i])
-                        {
-                            Log.Debug($"Inventory Config: {inv.Key} - Slot{i + 1}: {chance.ItemName} ({chance.Chance})");
-                        }
-                    }
-
-                    foreach ((ItemType type, ushort amount, string group) in inv.Value.Ammo)
-                    {
-                        Log.Debug($"Ammo Config: {inv.Key} - {type} {amount} ({group})");
-                    }
-                }
-            }
-
-            if (Config.Scp914ItemChanges != null)
-            {
-                Log.Debug($"{Config.Scp914ItemChanges.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<ItemUpgradeChance>> upgrade in Config.Scp914ItemChanges)
-                {
-                    foreach ((ItemType oldItem, ItemType newItem, double chance, int count) in upgrade.Value)
-                        Log.Debug($"914 Item Config: {upgrade.Key}: {oldItem} -> {newItem}x({count}) - {chance}");
-                }
-            }
-
-            if (Config.Scp914ClassChanges != null)
-            {
-                Log.Debug($"{Config.Scp914ClassChanges.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<PlayerUpgradeChance>> upgrade in Config.Scp914ClassChanges)
-                {
-                    foreach ((RoleTypeId oldRole, string newRole, double chance, bool keepInventory, bool keepHealth) in upgrade.Value)
-                        Log.Debug($"914 Role Config: {upgrade.Key}: {oldRole} -> {newRole} - {chance} keepInventory: {keepInventory} keepHealth: {keepHealth}");
-                }
-            }
-
-            if (Config.Scp914EffectChances != null)
-            {
-                Log.Debug($"{Config.Scp914EffectChances.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914EffectChance>> upgrade in Config.Scp914EffectChances)
-                {
-                    foreach ((EffectType effect, double chance, float duration) in upgrade.Value)
-                        Log.Debug($"914 Effect Config: {upgrade.Key}: {effect} + {duration} - {chance}");
-                }
-            }
-
-            if (Config.Scp914TeleportChances != null)
-            {
-                Log.Debug($"{Config.Scp914TeleportChances.Count}");
-                foreach (KeyValuePair<Scp914KnobSetting, List<Scp914TeleportChance>> upgrade in Config.Scp914TeleportChances)
-                {
-                    foreach ((RoomType room, List<RoomType> ignoredRooms, Vector3 offset, double chance, float damage, ZoneType zone) in upgrade.Value)
-                    {
-                        Log.Debug($"914 Teleport Config: {upgrade.Key}: {room}/{zone} + {offset} - {chance} [{damage}]");
-                        Log.Debug("Ignored rooms:");
-                        if (ignoredRooms != null)
-                        {
-                            foreach (RoomType roomType in ignoredRooms)
-                            {
-                                Log.Debug(roomType);
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

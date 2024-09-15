@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace Common_Utilities.ConfigObjects
 {
+    using System.Collections.Generic;
+
     using Exiled.API.Enums;
     using UnityEngine;
 

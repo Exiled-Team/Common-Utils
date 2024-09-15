@@ -15,7 +15,9 @@
     {
         public static bool Prefix(ReferenceHub target, RoleTypeId roleTypeId, bool resetInventory = true)
         {
-            if (Main.Instance.Config.StartingInventories == null || !Main.Instance.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) || !Player.TryGet(target, out Player player))
+            if (Main.Instance.Config.StartingInventories is null ||
+                !Main.Instance.Config.StartingInventories.TryGetValue(roleTypeId, out RoleInventory startingInventories) ||
+                !Player.TryGet(target, out Player player))
                 return true;
 
             if (resetInventory)
@@ -23,17 +25,19 @@
 
             player.AddItem(Main.Instance.PlayerHandlers.StartItems(roleTypeId, player));
 
-            if (startingInventories.Ammo != null && startingInventories.Ammo.Count > 0)
+            if (startingInventories.Ammo is not null && startingInventories.Ammo.Count > 0)
             {
-                IEnumerable<StartingAmmo> startingAmmo = startingInventories.Ammo.Where(s => string.IsNullOrEmpty(s.Group) || s.Group == "none" || (ServerStatic.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) && userGroup == player.Group));
+                IEnumerable<StartingAmmo> startingAmmo = startingInventories.Ammo.Where(s =>
+                    string.IsNullOrEmpty(s.Group) || s.Group == "none" ||
+                    (Server.PermissionsHandler._groups.TryGetValue(s.Group, out UserGroup userGroup) &&
+                     userGroup == player.Group));
+
                 if (startingAmmo.Any())
                 {
                     player.Ammo.Clear();
 
-                    foreach ((ItemType type, ushort amount, string group) in startingAmmo)
-                    {
+                    foreach ((ItemType type, ushort amount, _) in startingAmmo)
                         player.Ammo.Add(type, amount);
-                    }
                 }
             }
 

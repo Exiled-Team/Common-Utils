@@ -90,13 +90,13 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            ItemName = ItemType.KeycardJanitor.ToString(),
+                            Item = ItemType.KeycardJanitor.ToString(),
                             Chance = 10,
                             Group = "none",
                         },
                         new()
                         {
-                            ItemName = ItemType.Coin.ToString(),
+                            Item = ItemType.Coin.ToString(),
                             Chance = 100,
                             Group = "none",
                         },
@@ -105,7 +105,7 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            ItemName = ItemType.Flashlight.ToString(),
+                            Item = ItemType.Flashlight.ToString(),
                             Chance = 100,
                             Group = "none",
                         },
@@ -132,8 +132,8 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            Original = ItemType.KeycardO5,
-                            New = ItemType.MicroHID,
+                            OriginalItem = ItemType.KeycardO5,
+                            NewItem = ItemType.MicroHID,
                             Chance = 50,
                         }
                     },
@@ -150,8 +150,8 @@ namespace Common_Utilities
                     {
                         new()
                         {
-                            Original = RoleTypeId.ClassD,
-                            New = RoleTypeId.Spectator.ToString(),
+                            OriginalRole = RoleTypeId.ClassD,
+                            NewRole = RoleTypeId.Spectator.ToString(),
                             Chance = 100,
                         }
                     },
@@ -216,7 +216,7 @@ namespace Common_Utilities
         public bool ItemCleanupOnlyPocket { get; set; } = false;
         
         [Description("A list of all roles and their damage modifiers. The number here is a multiplier, not a raw damage amount. Thus, setting it to 1 = normal damage, 1.5 = 50% more damage, and 0.5 = 50% less damage.")]
-        public Dictionary<RoleTypeId, float> RoleDamageMultipliers { get; set; } = new()
+        public Dictionary<object, float> RoleDamageMultipliers { get; set; } = new()
         {
             {
                 RoleTypeId.Scp173, 1.0f
@@ -232,7 +232,7 @@ namespace Common_Utilities
         };
 
         [Description("A list of roles and how much health they should be given when they kill someone.")]
-        public Dictionary<RoleTypeId, float> HealthOnKill { get; set; } = new()
+        public Dictionary<object, float> HealthOnKill { get; set; } = new()
         {
             {
                 RoleTypeId.Scp173, 0
@@ -243,7 +243,7 @@ namespace Common_Utilities
         };
         
         [Description("A list of roles and what their default starting health should be.")]
-        public Dictionary<RoleTypeId, int> HealthValues { get; set; } = new()
+        public Dictionary<object, int> HealthValues { get; set; } = new()
         {
             {
                 RoleTypeId.Scp173, 3200
