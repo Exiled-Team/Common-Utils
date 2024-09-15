@@ -2,12 +2,20 @@ namespace Common_Utilities.Configs
 { 
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
 
     using ConfigObjects;
     using YamlDotNet.Serialization;
 
+    /// <summary>
+    /// Represents a player's role inventory with item slots and starting ammunition.
+    /// </summary>
     public class RoleInventory
     {
+        /// <summary>
+        /// Gets the number of used slots in the inventory.
+        /// A slot is considered used if it is not null and not empty.
+        /// </summary>
         [YamlIgnore]
         public int UsedSlots
         {
@@ -34,24 +42,67 @@ namespace Common_Utilities.Configs
             }
         }
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 1.
+        /// </summary>
+        [Description("The list of items in slot 1.")]
         public List<ItemChance> Slot1 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 2.
+        /// </summary>
+        [Description("The list of items in slot 2.")]
         public List<ItemChance> Slot2 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 3.
+        /// </summary>
+        [Description("The list of items in slot 3.")]
         public List<ItemChance> Slot3 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 4.
+        /// </summary>
+        [Description("The list of items in slot 4.")]
         public List<ItemChance> Slot4 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 5.
+        /// </summary>
+        [Description("The list of items in slot 5.")]
         public List<ItemChance> Slot5 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 6.
+        /// </summary>
+        [Description("The list of items in slot 6.")]
         public List<ItemChance> Slot6 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 7.
+        /// </summary>
+        [Description("The list of items in slot 7.")]
         public List<ItemChance> Slot7 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of items in slot 8.
+        /// </summary>
+        [Description("The list of items in slot 8.")]
         public List<ItemChance> Slot8 { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the list of starting ammunition.
+        /// </summary>
+        [Description("The list of starting ammunition.")]
         public List<StartingAmmo> Ammo { get; set; } = new();
 
+        /// <summary>
+        /// Provides access to the item slots by index.
+        /// Index 0 corresponds to Slot1, 1 to Slot2, and so on.
+        /// </summary>
+        /// <param name="i">The index of the slot (0 to 7).</param>
+        /// <returns>The list of <see cref="ItemChance"/> for the specified slot.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the index is out of range.</exception>
         public IEnumerable<ItemChance> this[int i] => i switch
         {
             0 => Slot1,

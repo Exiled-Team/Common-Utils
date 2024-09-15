@@ -20,32 +20,67 @@ namespace Common_Utilities
     using Scp914 = Exiled.Events.Handlers.Scp914;
     using Server = Exiled.Events.Handlers.Server;
 
+    /// <inheritdoc/>
     public class Main : Plugin<Config>
     {
-        public static Main Instance;
-        public readonly Random Rng = new();
-        public PlayerHandlers PlayerHandlers;
-        public ServerHandlers ServerHandlers;
-        public MapHandlers MapHandlers;
-        public Harmony Harmony;
-        public string HarmonyName;
+        /// <summary>
+        /// Gets the <see cref="Main"/> instance.
+        /// </summary>
+        public static Main Instance { get; private set; }
 
+        /// <inheritdoc/>
         public override string Name { get; } = "Common Utilities";
 
+        /// <inheritdoc/>
         public override string Author { get; } = "Exiled-Team";
 
-        public override Version Version { get; } = new(7, 1, 1);
+        /// <inheritdoc/>
+        public override Version Version { get; } = new(8, 0, 0);
 
-        public override Version RequiredExiledVersion { get; } = new(8, 5, 0);
+        /// <inheritdoc/>
+        public override Version RequiredExiledVersion { get; } = new(9, 0, 0);
 
+        /// <inheritdoc/>
         public override string Prefix { get; } = "CommonUtilities";
 
+        /// <inheritdoc/>
         public override PluginPriority Priority => PluginPriority.Higher;
 
-        public List<CoroutineHandle> Coroutines { get; } = new();
+        /// <summary>
+        /// Gets an instance of <see cref="Random"/> used for generating random values throughout the game.
+        /// </summary>
+        public Random Rng { get; } = new();
 
-        public Dictionary<Exiled.API.Features.Player, Tuple<int, Vector3>> AfkDict { get; } = new();
+        /// <summary>
+        /// Gets the handler responsible for managing player-related events and actions.
+        /// </summary>
+        public PlayerHandlers PlayerHandlers { get; private set; }
 
+        /// <summary>
+        /// Gets the handler responsible for managing server-related events and actions.
+        /// </summary>
+        public ServerHandlers ServerHandlers { get; private set; }
+
+        /// <summary>
+        /// Gets the handler responsible for managing map-related events and actions.
+        /// </summary>
+        public MapHandlers MapHandlers { get; private set; }
+
+        /// <summary>
+        /// Gets the <see cref="Harmony"/> instance used for patching game methods.
+        /// </summary>
+        public Harmony Harmony { get; private set; }
+
+        /// <summary>
+        /// Gets the unique name assigned to this <see cref="Harmony"/> instance.
+        /// </summary>
+        public string HarmonyName { get; private set; }
+        
+        internal List<CoroutineHandle> Coroutines { get; } = new();
+
+        internal Dictionary<Exiled.API.Features.Player, Tuple<int, Vector3>> AfkDict { get; } = new();
+
+        /// <inheritdoc/>
         public override void OnEnabled()
         {
             if (Config.Debug)
@@ -60,6 +95,7 @@ namespace Common_Utilities
             base.OnEnabled();
         }
 
+        /// <inheritdoc/>
         public override void OnDisabled()
         {
             Harmony.UnpatchAll(HarmonyName);
@@ -67,6 +103,9 @@ namespace Common_Utilities
             base.OnDisabled();
         }
         
+        /// <summary>
+        /// Validates configuration by sending logs.
+        /// </summary>
         public void DebugConfig()
         {
             if (Config.StartingInventories is not null)
@@ -134,29 +173,35 @@ namespace Common_Utilities
             }
         }
 
+        /// <inheritdoc/>
         protected override void SubscribeEvents()
         {
             base.SubscribeEvents();
             
-            Log.Info($"Instantiating Events..");
             PlayerHandlers = new PlayerHandlers(this);
             ServerHandlers = new ServerHandlers(this);
             MapHandlers = new MapHandlers(this);
             
-            Log.Info($"Registering EventHandlers..");
             if (Config.HealthOnKill is not null)
                 Player.Died += PlayerHandlers.OnPlayerDied;
+            
             Player.Hurting += PlayerHandlers.OnPlayerHurting;
             Player.Verified += PlayerHandlers.OnPlayerVerified;
+            
             if (Config.StartingInventories is not null)
                 Player.ChangingRole += PlayerHandlers.OnChangingRole;
+            
             Player.ChangedRole += PlayerHandlers.OnChangedRole;
             Player.InteractingDoor += PlayerHandlers.OnInteractingDoor;
+            
             if (Config.RadioBatteryDrainMultiplier is not 1)
                 Player.UsingRadioBattery += PlayerHandlers.OnUsingRadioBattery;
+            
             Player.InteractingElevator += PlayerHandlers.OnInteractingElevator;
+            
             if (Config.DisarmSwitchTeams)
                 Player.Escaping += PlayerHandlers.OnEscaping;
+            
             if (Config.AfkLimit > 0)
             {
                 Player.Jumping += PlayerHandlers.AntiAfkEventHandler;
@@ -175,14 +220,17 @@ namespace Common_Utilities
 
             if (Config.Scp914ItemChanges is not null)
                 Scp914.UpgradingPickup += MapHandlers.OnScp914UpgradingItem;
+            
             if (Config.Scp914ItemChanges is not null)
                 Scp914.UpgradingInventoryItem += MapHandlers.OnScp914UpgradingInventoryItem;
+            
             Scp914.UpgradingPlayer += MapHandlers.OnScp914UpgradingPlayer;
 
             Exiled.Events.Handlers.Warhead.Starting += ServerHandlers.OnWarheadStarting;
             Exiled.Events.Handlers.Warhead.Stopping += ServerHandlers.OnWarheadStopping;
         }
 
+        /// <inheritdoc/>
         protected override void UnsubscribeEvents()
         {
             base.UnsubscribeEvents();
